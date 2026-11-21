@@ -107,6 +107,10 @@ testpaths = [
     "skills/futures-position-sizer/scripts/tests",
     "skills/fxmacrodata-calendar/scripts/tests",
     "skills/ibd-distribution-day-monitor/scripts/tests",
+    "skills/india-downtrend-duration-analyzer/scripts/tests",
+    "skills/india-position-sizer/scripts/tests",
+    "skills/india-stockbee-momentum-burst-screener/scripts/tests",
+    "skills/india-vcp-screener/scripts/tests",
     "skills/institutional-flow-tracker/scripts/tests",
     "skills/kanchi-dividend-review-monitor/scripts/tests",
     "skills/kanchi-dividend-sop/scripts/tests",
@@ -169,7 +173,7 @@ skips = [
 
 [tool.codespell]
 skip = ".venv,*.json,*.csv,*.baseline,skill-packages,*.pyc,__pycache__"
-ignore-words-list = "trough,ore,cna,acn,blok,hims,pont,claus,theses,ist"
+ignore-words-list = "trough,ore,cna,acn,blok,hims,pont,claus,theses,ist,sme,scrip,scrips,mis"
 ignore-regex = "(Depósito|Deposito) inicial"  # codespell:ignore inicial
 
 [tool.coverage.run]

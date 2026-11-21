@@ -2452,3 +2452,113 @@ skills:
   - final_research_report_json_and_markdown
   - self_contained_audit_bundle
   workflows: []
+- id: india-position-sizer
+  display_name: India Position Sizer
+  category: trade-planning
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Calculate risk-based position sizes for long NSE delivery trades in rupees, with whole
+    shares, SME lots, tick-rounded ATR stops, and Indian delivery charges inside the risk budget.
+  timeframe: event-driven
+  difficulty: beginner
+  integrations:
+  - id: local_calculation
+    type: calculation
+    requirement: not_required
+    note: Pure calculation with statutory NSE delivery charge rates; works offline
+  inputs:
+  - entry_price
+  - stop_price
+  - account_size
+  outputs:
+  - share_count
+  - risk_amount
+  - delivery_charges
+  workflows: []
+- id: india-vcp-screener
+  display_name: India VCP Screener
+  category: swing-opportunity
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Screen NSE stocks (default NIFTY 500) for Mark Minervini's Volatility Contraction Pattern
+    using free official NSE end-of-day data adjusted for bonuses and splits.
+  timeframe: daily
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day history and corporate actions over HTTP; no API key
+  - id: nse_index_csv
+    type: web
+    requirement: required
+    note: NSE index constituent CSV files for the screening universe
+  inputs:
+  - nse_daily_ohlcv
+  - nifty_constituents
+  outputs:
+  - vcp_candidates
+  - pivot_points
+  workflows: []
+- id: india-stockbee-momentum-burst-screener
+  display_name: India Stockbee Momentum Burst Screener
+  category: swing-opportunity
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Screen NSE stocks for Stockbee-style 3-5 day momentum burst candidates with rupee breakout,
+    rupee-turnover liquidity, NSE session freshness, and an upper-circuit warning.
+  timeframe: daily
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day history and corporate actions over HTTP; no API key
+  - id: nse_index_csv
+    type: web
+    requirement: optional
+    note: NSE index constituent CSV files when scanning a Nifty universe
+  - id: prices_json
+    type: local_file
+    requirement: optional
+    note: Offline OHLCV JSON for no-network screening and tests
+  inputs:
+  - nse_daily_ohlcv
+  - market_regime_report
+  outputs:
+  - momentum_burst_candidates
+  - setup_quality_scores
+  - trade_plan_inputs
+  workflows: []
+- id: india-downtrend-duration-analyzer
+  display_name: India Downtrend Duration Analyzer
+  category: market-regime
+  status: beta
+  operational_role:
+    type: research_only
+  summary: Analyze historical downtrend durations of NSE stocks by industry and Nifty size tier and
+    generate interactive HTML histograms.
+  timeframe: research
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day history and corporate actions over HTTP; no API key
+  - id: nse_index_csv
+    type: web
+    requirement: required
+    note: NSE index constituent CSV files for universe, industries, and size tiers
+  inputs:
+  - nse_daily_ohlcv
+  - nifty_constituents
+  outputs:
+  - duration_histogram_html
+  - sector_breakdown
+  workflows: []

@@ -268,6 +268,27 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--lookback-days"),
         )
     ],
+    "india-downtrend-duration-analyzer": [
+        SmokeContract(
+            "skills/india-downtrend-duration-analyzer/scripts/analyze_india_downtrends.py",
+            ("--help",),
+            expect_out=("usage:", "--sector"),
+        )
+    ],
+    "india-stockbee-momentum-burst-screener": [
+        SmokeContract(
+            "skills/india-stockbee-momentum-burst-screener/scripts/screen_india_momentum_burst.py",
+            ("--help",),
+            expect_out=("usage:", "--rupee-threshold"),
+        )
+    ],
+    "india-vcp-screener": [
+        SmokeContract(
+            "skills/india-vcp-screener/scripts/screen_india_vcp.py",
+            ("--help",),
+            expect_out=("usage:", "--min-turnover-cr"),
+        )
+    ],
     "institutional-flow-tracker": [
         SmokeContract(
             "skills/institutional-flow-tracker/scripts/track_institutional_flow.py",

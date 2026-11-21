@@ -283,6 +283,11 @@ jobs:
       - name: Shared price-bar helper drift check
         run: python3 scripts/generate_price_bars.py --check
 
+      # Vendored India data module: every india-* consumer's _india_data.py +
+      # contract test must match scripts/india_data/.
+      - name: India data module drift check
+        run: python3 scripts/generate_india_data.py --check
+
       - name: Packaged skill drift check
         run: python3 scripts/check_package_drift_for_changed_skills.py
 

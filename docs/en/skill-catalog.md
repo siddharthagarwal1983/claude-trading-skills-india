@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 74 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 78 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -74,6 +74,10 @@ A comprehensive catalog of all 74 Claude Trading Skills organized by category. B
 | `futures-position-sizer` | `workflow_step` | — |
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
+| `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
 | `kanchi-dividend-review-monitor` | `workflow_step` | — |
 | `kanchi-dividend-sop` | `workflow_step` | — |
@@ -130,7 +134,9 @@ A comprehensive catalog of all 74 Claude Trading Skills organized by category. B
 |-------|-------------|-----------------|
 | **[CANSLIM Screener]({{ '/en/skills/canslim-screener/' | relative_url }})** | Full 7-component CANSLIM growth stock scoring (C, A, N, S, L, I, M). Composite 0-100 ratings with bear market protection. Phase 3 implements 100% of O'Neil's methodology | <span class="badge badge-api">FMP Required</span> |
 | **[VCP Screener]({{ '/en/skills/vcp-screener/' | relative_url }})** | Detects Mark Minervini's Volatility Contraction Pattern. 3-phase pipeline: Pre-filter, Trend Template, VCP Detection with pivot points and trade setups | <span class="badge badge-api">FMP Required</span> |
+| **[India VCP Screener]({{ '/en/skills/india-vcp-screener/' | relative_url }})** | Minervini VCP screening for NSE stocks (default NIFTY 500) on free official NSE end-of-day data, adjusted for bonuses/splits. Rupee-turnover liquidity gate, relative strength vs an NSE index, demerger-distorted histories skipped. Beta | <span class="badge badge-free">No API</span> |
 | **[Stockbee Momentum Burst Screener]({{ '/en/skills/stockbee-momentum-burst-screener/' | relative_url }})** | Stockbee-style short-term momentum burst screening: 4% breakout, dollar breakout, and range-expansion triggers scored 0-100 (A/B/Watch) with setup-quality and risk-distance filters. Candidate generation only — routes survivors to technical-analyst and position-sizer | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">Local JSON Optional</span> |
+| **[India Stockbee Momentum Burst Screener]({{ '/en/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** | Stockbee momentum bursts on NSE: 4% breakout, rupee breakout (₹ and % guard), range expansion; ₹ crore turnover gate, NSE session freshness, upper-circuit warning. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
 | **[Stockbee Exhaustion Hammer Screener]({{ '/en/skills/stockbee-exhaustion-hammer-screener/' | relative_url }})** | Stockbee-style selling-exhaustion hammer screening for liquid stocks with prior momentum, pullback depth, undercut/reclaim behavior, long lower-wick reversal geometry, and risk-distance filters. Candidate generation only | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">Local JSON Optional</span> |
 | **[Finviz Screener]({{ '/en/skills/finviz-screener/' | relative_url }})** | Translates natural language (Japanese/English) into FinViz filter URLs. 500+ filter codes across fundamentals, technicals, and descriptives. **Theme cross-screening** (30+ themes × 268 sub-themes) for narrative-based searches like "AI × Logistics" or "Data Centers × Power". Opens results in Chrome | <span class="badge badge-optional">FINVIZ Optional</span> |
 | **Value Dividend Screener** | Multi-phase dividend stock screening: value characteristics (P/E, P/B), income (yield), growth (3-year trends), sustainability, and quality scoring | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">FINVIZ Recommended</span> |
@@ -159,6 +165,7 @@ A comprehensive catalog of all 74 Claude Trading Skills organized by category. B
 | **Market Top Detector** | Detects market top probability using O'Neil Distribution Days, Minervini Leading Stock Deterioration, and Defensive Rotation. 6-component tactical timing system | <span class="badge badge-api">FMP Required</span> |
 | **[IBD Distribution Day Monitor]({{ '/en/skills/ibd-distribution-day-monitor/' | relative_url }})** | Daily IBD Distribution Day detection for QQQ/SPY with 25-session expiration and 5% invalidation. Risk classification (NORMAL/CAUTION/HIGH/SEVERE) and TQQQ/QQQ exposure recommendation | <span class="badge badge-api">FMP Required</span> |
 | **[Downtrend Duration Analyzer]({{ '/en/skills/downtrend-duration-analyzer/' | relative_url }})** | Analyzes historical downtrend durations (peak-to-trough) and generates interactive HTML histograms segmented by sector and market cap | <span class="badge badge-api">FMP Required</span> |
+| **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** | Peak-to-trough decline durations for NSE stocks by NSE industry and Nifty size tier (100 / Midcap 150 / Smallcap 250 / Microcap 250), with interactive HTML histogram. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
 | **[COT Contrarian Detector]({{ '/en/skills/cot-contrarian-detector/' | relative_url }})** | Detects crowded large-speculator positioning across 65 CFTC futures markets via COT Index (3-year/26-week), implementing step 1 of Jason Shapiro's contrarian methodology | <span class="badge badge-api">FMP Required</span> |
 | **[News Reaction Failure Analyzer]({{ '/en/skills/news-reaction-failure-analyzer/' | relative_url }})** | Judges whether a crowded market failed to react to favorable news via a Monte-Carlo-verified drift-significance test, implementing step 2 of Jason Shapiro's contrarian methodology | <span class="badge badge-api">FMP Required</span> |
 | **[Contrarian Setup Gate]({{ '/en/skills/contrarian-setup-gate/' | relative_url }})** | Synthesizes crowding, news-failure, and price-action verdicts into one setup_status via a fail-closed precedence state machine, implementing the decision center of Jason Shapiro's contrarian methodology. Beta. Pure offline calculation | <span class="badge badge-free">No API</span> |
@@ -193,6 +200,7 @@ A comprehensive catalog of all 74 Claude Trading Skills organized by category. B
 | **[Drawdown Circuit Breaker]({{ '/en/skills/drawdown-circuit-breaker/' | relative_url }})** | Account-level risk gate that reads trader-memory-core state and returns TRADING_ALLOWED / COOLDOWN / HALTED from realized P&L, losing-streak, and weekly/monthly drawdown rules | <span class="badge badge-free">No API</span> |
 | **[Weekly Performance Digest]({{ '/en/skills/weekly-performance-digest/' | relative_url }})** | Aggregate the week's closed trades into win rate, expectancy, profit factor, R-multiple, and MAE/MFE, with win/loss pattern analysis by source skill, exit reason, thesis type, sector, and mechanism. Pure local calculation | <span class="badge badge-free">No API</span> |
 | **[Position Sizer]({{ '/en/skills/position-sizer/' | relative_url }})** | Risk-based position sizing using Fixed Fractional, ATR-based, and Kelly Criterion methods. Portfolio constraints (max position %, max sector %). Works offline | <span class="badge badge-free">No API</span> |
+| **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** | Rupee position sizing for NSE delivery trades: whole shares, SME lots, tick-rounded ATR stops, and STT / exchange / SEBI / stamp / GST / DP charges counted inside the risk budget. Works offline. Beta | <span class="badge badge-free">No API</span> |
 | **[Futures Position Sizer]({{ '/en/skills/futures-position-sizer/' | relative_url }})** | Contract-based futures position sizing from direction/entry/stop using a verified 23-market contract-spec table (multiplier, tick size, tick value). Explicit flags or contrarian-setup-gate READY_FOR_PLAN handoff. Beta. Works offline | <span class="badge badge-free">No API</span> |
 | **[Breakout Trade Planner]({{ '/en/skills/breakout-trade-planner/' | relative_url }})** | Generates Minervini-style breakout trade plans from VCP screener output. Worst-case entry Gate, stop-limit bracket templates (pre_place / post_confirm), portfolio heat management | <span class="badge badge-free">No API</span> |
 | **[Parabolic Short Trade Planner]({{ '/en/skills/parabolic-short-trade-planner/' | relative_url }})** | Daily Parabolic Short screener (5-factor weighted score) plus pre-market plan generator that emits three conditional triggers per candidate (5-min ORL break, first red 5-min, VWAP fail). Alpaca ETB-only short check via `requests` (no SDK), SEC Rule 201 SSR tracker, blocking vs advisory manual confirmation reasons | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">Alpaca Optional</span> |
@@ -299,6 +307,13 @@ A comprehensive catalog of all 74 Claude Trading Skills organized by category. B
 - **[manifoldbt Backtester]({{ '/en/skills/manifoldbt-backtester/' | relative_url }})** -- Executes a strategy spec and produces the metrics backtest-expert scores
 - **Strategy Pivot Designer** -- Generate new approaches when optimization stalls
 
+### I want to trade Indian (NSE) stocks
+
+- **[India VCP Screener]({{ '/en/skills/india-vcp-screener/' | relative_url }})** -- Minervini VCP setups in the Nifty 500 on free NSE data
+- **[India Stockbee Momentum Burst Screener]({{ '/en/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** -- 3-5 day momentum bursts with circuit and turnover checks
+- **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** -- How long NSE corrections last by industry and size tier
+- **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
+
 ---
 
 ## API Requirements Matrix
@@ -333,6 +348,10 @@ A comprehensive catalog of all 74 Claude Trading Skills organized by category. B
 | FTD Detector | Required | -- | -- |
 | Futures Position Sizer | -- | -- | -- |
 | IBD Distribution Day Monitor | Required | -- | -- |
+| India Downtrend Duration Analyzer | -- | -- | -- |
+| India Position Sizer | -- | -- | -- |
+| India Stockbee Momentum Burst Screener | -- | -- | -- |
+| India VCP Screener | -- | -- | -- |
 | Institutional Flow Tracker | Required | -- | -- |
 | Kanchi Dividend Review Monitor | Recommended | -- | -- |
 | Kanchi Dividend SOP | Recommended | -- | -- |

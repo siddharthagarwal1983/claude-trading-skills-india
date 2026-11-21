@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """India market data foundation for the ``india-*`` skills (NSE, end-of-day).
 
 Standard library only, Python 3.9+. The exchange calendar lazily imports

@@ -19,7 +19,7 @@ generated: true
 
 | 合計 | 本番 | ベータ | 知識のみ | 実行可能 | テストあり | テストなし |
 |---:|---:|---:|---:|---:|---:|---:|
-| 74 | 62 | 12 | 3 | 71 | 71 | 0 |
+| 78 | 62 | 16 | 3 | 75 | 75 | 0 |
 
 ## テストカバレッジ
 
@@ -38,8 +38,8 @@ generated: true
 | FMP | 32 |
 | FINVIZ | 4 |
 | ALPACA | 2 |
-| その他の外部プロバイダ | 8 |
-| オフライン（外部データなし） | 32 |
+| その他の外部プロバイダ | 11 |
+| オフライン（外部データなし） | 33 |
 
 ## ベータパイプライン
 
@@ -47,6 +47,10 @@ generated: true
 |---|---:|
 | `crypto-regime-analyzer` | not yet measured |
 | `fxmacrodata-calendar` | not yet measured |
+| `india-downtrend-duration-analyzer` | not yet measured |
+| `india-position-sizer` | not yet measured |
+| `india-stockbee-momentum-burst-screener` | not yet measured |
+| `india-vcp-screener` | not yet measured |
 | `manifoldbt-backtester` | not yet measured |
 | `mt5-robot-tester` | not yet measured |
 | `residual-edge-analyzer` | not yet measured |
@@ -90,6 +94,10 @@ generated: true
 | **Futures Position Sizer** (`futures-position-sizer`) | 本番 | はい | はい | 93.5% |
 | **FXMacroData Calendar** (`fxmacrodata-calendar`) | ベータ | はい | はい | 96.0% |
 | **IBD Distribution Day Monitor** (`ibd-distribution-day-monitor`) | 本番 | はい | はい | 97.1% |
+| **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | ベータ | はい | はい | not yet measured |
+| **India Position Sizer** (`india-position-sizer`) | ベータ | はい | はい | not yet measured |
+| **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | ベータ | はい | はい | not yet measured |
+| **India VCP Screener** (`india-vcp-screener`) | ベータ | はい | はい | not yet measured |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | 本番 | はい | はい | 78.5% |
 | **Kanchi Dividend Review Monitor** (`kanchi-dividend-review-monitor`) | 本番 | はい | はい | 82.2% |
 | **Kanchi Dividend SOP** (`kanchi-dividend-sop`) | 本番 | はい | はい | 84.4% |
@@ -143,7 +151,7 @@ generated: true
 
 | 入力 | 測定コミット | 測定 / 実行更新日時 | 出典 |
 |---|---|---|---|
-| catalog | a627d17dd1d8fde1c8fa73b3cc69ffe83b33cb71 | 2026-11-17T15:35:54Z | skills-index.yaml; config/ci-test-policy.yaml; examples/workflows/replay-coverage.yaml |
+| catalog | not-yet-measured | not-yet-measured | not-yet-measured |
 | per\_skill\_coverage\_pct | a627d17dd1d8fde1c8fa73b3cc69ffe83b33cb71 | 2026-11-17T14:45:44Z | https://github.com/tradermonty/claude-trading-skills/actions/runs/44104530531/artifacts/14338356752 |
 | beta\_since | not-yet-measured | not-yet-measured | not-yet-measured |
 | dual\_axis\_score\_distribution | not-yet-measured | not-yet-measured | not-yet-measured |

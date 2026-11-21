@@ -559,6 +559,105 @@
       "timeframe": "daily"
     },
     {
+      "category": "market-regime",
+      "difficulty": "intermediate",
+      "display_name": "India Downtrend Duration Analyzer",
+      "id": "india-downtrend-duration-analyzer",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "nse_index_csv",
+          "requirement": "required",
+          "type": "web"
+        }
+      ],
+      "operational_role": {
+        "type": "research_only"
+      },
+      "status": "beta",
+      "summary": "Analyze historical downtrend durations of NSE stocks by industry and Nifty size tier and generate interactive HTML histograms.",
+      "timeframe": "research"
+    },
+    {
+      "category": "trade-planning",
+      "difficulty": "beginner",
+      "display_name": "India Position Sizer",
+      "id": "india-position-sizer",
+      "integrations": [
+        {
+          "id": "local_calculation",
+          "requirement": "not_required",
+          "type": "calculation"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Calculate risk-based position sizes for long NSE delivery trades in rupees, with whole shares, SME lots, tick-rounded ATR stops, and Indian delivery charges inside the risk budget.",
+      "timeframe": "event-driven"
+    },
+    {
+      "category": "swing-opportunity",
+      "difficulty": "intermediate",
+      "display_name": "India Stockbee Momentum Burst Screener",
+      "id": "india-stockbee-momentum-burst-screener",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "nse_index_csv",
+          "requirement": "optional",
+          "type": "web"
+        },
+        {
+          "id": "prices_json",
+          "requirement": "optional",
+          "type": "local_file"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Screen NSE stocks for Stockbee-style 3-5 day momentum burst candidates with rupee breakout, rupee-turnover liquidity, NSE session freshness, and an upper-circuit warning.",
+      "timeframe": "daily"
+    },
+    {
+      "category": "swing-opportunity",
+      "difficulty": "intermediate",
+      "display_name": "India VCP Screener",
+      "id": "india-vcp-screener",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "nse_index_csv",
+          "requirement": "required",
+          "type": "web"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Screen NSE stocks (default NIFTY 500) for Mark Minervini's Volatility Contraction Pattern using free official NSE end-of-day data adjusted for bonuses and splits.",
+      "timeframe": "daily"
+    },
+    {
       "category": "advanced-satellite",
       "difficulty": "intermediate",
       "display_name": "Institutional Flow Tracker",

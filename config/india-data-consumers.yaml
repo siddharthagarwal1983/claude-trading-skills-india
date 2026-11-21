@@ -1,0 +1,6 @@
+# Consumers of the vendored India data module (india-* skills).
+# scripts/generate_india_data.py writes skills/<id>/scripts/_india_data.py and
+# skills/<id>/scripts/tests/test_india_data_contract.py for every id below.
+- india-vcp-screener
+- india-stockbee-momentum-burst-screener
+- india-downtrend-duration-analyzer

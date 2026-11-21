@@ -34,7 +34,7 @@ repos:
     hooks:
       - id: codespell
         args: [--skip, ".venv,*.json,*.csv,*.baseline,skill-packages,*.pyc,__pycache__,docs/Gemfile.lock",
-               --ignore-words-list, "trough,ore,cna,acn,blok,hims,pont,claus,theses,ist",
+               --ignore-words-list, "trough,ore,cna,acn,blok,hims,pont,claus,theses,ist,sme,scrip,scrips,mis",
                --ignore-regex, "(Depósito|Deposito) inicial"]
 
   - repo: https://github.com/Yelp/detect-secrets
@@ -246,6 +246,13 @@ repos:
         language: system
         # Copies at any depth under skills/ and examples/ (matches the recursive stray check)
         files: '^(scripts/price_bars/.*|scripts/generate_price_bars\.py|config/price-bars-consumers\.yaml|(skills|examples)/(.*/)?(_price_bars|test_price_bars_contract)\.py)$'
+        pass_filenames: false
+
+      - id: india-data-drift
+        name: Vendored India data module drift check (india-* skills)
+        entry: python3 scripts/generate_india_data.py --check
+        language: system
+        files: '^(scripts/india_data/.*|scripts/generate_india_data\.py|config/india-data-consumers\.yaml|(skills|examples)/(.*/)?(_india_data|test_india_data_contract)\.py)$'
         pass_filenames: false
 
       - id: compat-matrix-drift

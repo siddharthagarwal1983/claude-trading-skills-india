@@ -259,6 +259,10 @@ The table below is **auto-generated** from `skills-index.yaml` by `scripts/gener
 | **Finviz Screener** | ❌ Not used | 🟡 Optional | ❌ Not used | FINVIZ Elite API |
 | **Futures Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation; consumes contrarian-setup-gate's READY_FOR_PLAN report or explicit direction/entry/stop flags; works offline |
 | **IBD Distribution Day Monitor** | ✅ Required | ❌ Not used | ❌ Not used | Financial Modeling Prep API |
+| **India Downtrend Duration Analyzer** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for universe, industries, and size tiers |
+| **India Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation with statutory NSE delivery charge rates; works offline |
+| **India Stockbee Momentum Burst Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files when scanning a Nifty universe; Offline OHLCV JSON for no-network screening and tests |
+| **India VCP Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for the screening universe |
 | **Institutional Flow Tracker** | ✅ Required | ❌ Not used | ❌ Not used | Financial Modeling Prep API |
 | **Kanchi Dividend Review Monitor** | 🟡 Optional (Recommended) | ❌ Not used | ❌ Not used | Dividend / price monitoring via FMP |
 | **Kanchi Dividend SOP** | 🟡 Optional (Recommended) | ❌ Not used | ❌ Not used | US dividend stock data via FMP |

@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全74個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全78個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -74,6 +74,10 @@ permalink: /ja/skill-catalog/
 | `futures-position-sizer` | `workflow_step` | — |
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
+| `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
 | `kanchi-dividend-review-monitor` | `workflow_step` | — |
 | `kanchi-dividend-sop` | `workflow_step` | — |
@@ -130,7 +134,9 @@ permalink: /ja/skill-catalog/
 |--------|------|---------|
 | **CANSLIM Screener** | William O'NeilのCANSLIM手法で成長株を7コンポーネントスコアリング。四半期決算、年次成長、新高値、需給、リーダーシップ、機関投資家、市場方向を分析 | <span class="badge badge-api">FMP必須</span> |
 | **VCP Screener** | Mark MinerviniのVolatility Contraction Pattern を検出。Stage 2上昇トレンド銘柄のボラティリティ収縮とブレイクアウトポイントを識別 | <span class="badge badge-api">FMP必須</span> |
+| **[India VCP Screener]({{ '/ja/skills/india-vcp-screener/' | relative_url }})** | NSE銘柄（既定はNIFTY 500）のミネルヴィニVCPスクリーニング。NSE公式日足データ（無料、株式分割・ボーナス調整済み）を使用し、ルピー売買代金の流動性フィルター、NSE指数との相対強度、会社分割で歪んだ履歴の除外に対応。ベータ | <span class="badge badge-free">API不要</span> |
 | **Stockbee Momentum Burst Screener** | Stockbee型の短期モメンタムバースト候補をスクリーニング。4%ブレイクアウト、ドルブレイクアウト、レンジ拡大トリガーをセットアップ品質・リスク幅で0-100点（A/B/Watch）評価。候補生成専用で technical-analyst / position-sizer に接続 | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">ローカルJSON任意</span> |
+| **[India Stockbee Momentum Burst Screener]({{ '/ja/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** | NSE向けStockbeeモメンタムバースト。4%ブレイクアウト、ルピーブレイクアウト（金額と%の両条件）、レンジ拡大。売買代金（クロール）フィルター、NSEセッション鮮度、上限サーキット警告付き。無料のNSEデータ。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Stockbee Exhaustion Hammer Screener]({{ '/ja/skills/stockbee-exhaustion-hammer-screener/' | relative_url }})** | Stockbee型の売り枯れハンマー候補をスクリーニング。流動性、直前モメンタム、押し目の深さ、undercut/reclaim、長い下ヒゲ、終値位置、ストップまでのリスクを評価する候補生成専用スキル | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">ローカルJSON任意</span> |
 | **Finviz Screener** | 自然言語（日本語/英語）でFinVizスクリーニング条件を構築。500以上のフィルターコードに対応し、Chromeで結果を表示。**テーマクロス検索**（30以上のテーマ × 268サブテーマ）で「AI × 物流」「データセンター × 電力」等のナラティブベース検索が可能 | <span class="badge badge-optional">FINVIZ任意</span> |
 | **Value Dividend Screener** | 高配当バリュー株をスクリーニング。P/E、P/B、配当利回り、3年成長トレンドで多段階フィルタリング | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">FINVIZ推奨</span> |
@@ -159,6 +165,7 @@ permalink: /ja/skill-catalog/
 | **Market Top Detector** | O'NeilのDistribution Days、MinerviniのLeading Stock劣化、Defensive Rotationで天井確率を検出 | <span class="badge badge-api">FMP必須</span> |
 | **[IBD Distribution Day Monitor]({{ '/ja/skills/ibd-distribution-day-monitor/' | relative_url }})** | QQQ/SPYのIBD式Distribution Dayを日次検出。25セッション失効・5%上昇無効化を追跡し、d5/d15/d25クラスタからNORMAL/CAUTION/HIGH/SEVERE判定とTQQQ/QQQエクスポージャ推奨を生成 | <span class="badge badge-api">FMP必須</span> |
 | **[Downtrend Duration Analyzer]({{ '/ja/skills/downtrend-duration-analyzer/' | relative_url }})** | 過去の下落トレンド期間（ピーク→トラフ）を分析し、セクター・時価総額別のインタラクティブヒストグラムを生成 | <span class="badge badge-api">FMP必須</span> |
+| **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** | NSE銘柄の下落期間（ピーク→トラフ）をNSE業種とNifty規模区分（100 / Midcap 150 / Smallcap 250 / Microcap 250）別に分析し、インタラクティブなHTMLヒストグラムを生成。無料のNSEデータ。ベータ | <span class="badge badge-free">API不要</span> |
 | **[COT Contrarian Detector]({{ '/ja/skills/cot-contrarian-detector/' | relative_url }})** | COT Indexにより65のCFTC先物市場における大口投機筋の偏ったポジションを検出。ジェイソン・シャピロ式逆張り手法のステップ1 | <span class="badge badge-api">FMP必須</span> |
 | **[News Reaction Failure Analyzer]({{ '/ja/skills/news-reaction-failure-analyzer/' | relative_url }})** | モンテカルロ検証済みのドリフト有意性検定により、偏った市場が好材料に反応しなかったかを判定。ジェイソン・シャピロ式逆張り手法のステップ2 | <span class="badge badge-api">FMP必須</span> |
 | **[Contrarian Setup Gate]({{ '/ja/skills/contrarian-setup-gate/' | relative_url }})** | 偏りポジション・ニュースフェイリュア・価格アクションの3判定をフェイルクローズドな優先順位付き状態遷移マシンで統合し、ジェイソン・シャピロ式逆張り手法の判断中枢を担う。ベータ版、完全オフライン計算 | <span class="badge badge-free">API不要</span> |
@@ -193,6 +200,7 @@ permalink: /ja/skill-catalog/
 | **[Drawdown Circuit Breaker]({{ '/ja/skills/drawdown-circuit-breaker/' | relative_url }})** | trader-memory-coreの状態を読み、実現損益・連敗・週次/月次ドローダウンから TRADING_ALLOWED / COOLDOWN / HALTED を返す口座レベルの新規リスクゲート | <span class="badge badge-free">API不要</span> |
 | **[Weekly Performance Digest]({{ '/ja/skills/weekly-performance-digest/' | relative_url }})** | クローズドトレードから週次パフォーマンスサマリを生成。勝率・期待値・プロフィットファクター・Rマルチプル・MAE/MFE と、ソーススキル／エグジット理由／テシスタイプ／セクター／メカニズム別の勝敗パターン分析を出力。ローカル計算のみ | <span class="badge badge-free">API不要</span> |
 | **[Position Sizer]({{ '/ja/skills/position-sizer/' | relative_url }})** | Fixed Fractional、ATRベース、Kelly Criterionの3手法でリスクベースポジションサイズを計算 | <span class="badge badge-free">API不要</span> |
+| **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** | NSE現物（デリバリー）取引のルピー建てポジションサイズ計算。整数株、SMEロット、ティック丸めのATRストップに対応し、STT・取引所手数料・SEBI手数料・印紙税・GST・DP手数料をリスク予算に含める。オフライン動作。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Futures Position Sizer]({{ '/ja/skills/futures-position-sizer/' | relative_url }})** | 方向・エントリー・ストップから先物のコントラクト数を計算。検証済みの23銘柄契約仕様テーブル（乗数・ティックサイズ・ティック価値）を使用し、明示フラグまたはcontrarian-setup-gateのREADY_FOR_PLAN引き継ぎに対応。Beta。オフラインで動作 | <span class="badge badge-free">API不要</span> |
 | **[Breakout Trade Planner]({{ '/ja/skills/breakout-trade-planner/' | relative_url }})** | VCPスクリーナー出力からミネルヴィニ式ブレイクアウトトレードプランを生成。worst-case entryベースのGate、stop-limit bracketテンプレート（pre_place / post_confirm）、ポートフォリオヒート管理 | <span class="badge badge-free">API不要</span> |
 | **[Parabolic Short Trade Planner]({{ '/ja/skills/parabolic-short-trade-planner/' | relative_url }})** | Parabolic Short 候補の日次スクリーナー（5因子加重スコア）と寄り前プラン生成器。候補ごとに3種類のトリガー（5min ORL ブレイク / First Red 5-min / VWAP fail）を条件付きプランとして出力。Alpaca ETB-only ショート確認は `requests` 直叩き（SDK 非依存）、SEC Rule 201 SSR トラッカー、blocking / advisory 分離型 manual confirmation | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">Alpaca任意</span> |
@@ -296,6 +304,13 @@ permalink: /ja/skill-catalog/
 - **[Futures Position Sizer]({{ '/ja/skills/futures-position-sizer/' | relative_url }})** - 乗数とティック価値を考慮した先物コントラクト数の計算
 - **[Trader Memory Core]({{ '/ja/skills/trader-memory-core/' | relative_url }})** - 仮説登録からポストモーテムまで永続的にトラッキング
 
+### インド株（NSE）を取引したい
+
+- **[India VCP Screener]({{ '/ja/skills/india-vcp-screener/' | relative_url }})** - 無料のNSEデータでNifty 500のミネルヴィニVCPを検出
+- **[India Stockbee Momentum Burst Screener]({{ '/ja/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** - サーキット・売買代金チェック付きの3〜5日モメンタムバースト
+- **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** - NSE銘柄の調整期間を業種・規模区分別に分析
+- **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
+
 ---
 
 ## API要件マトリクス
@@ -330,6 +345,10 @@ permalink: /ja/skill-catalog/
 | FTD Detector | 必須 | - | - |
 | Futures Position Sizer | - | - | - |
 | IBD Distribution Day Monitor | 必須 | - | - |
+| India Downtrend Duration Analyzer | - | - | - |
+| India Position Sizer | - | - | - |
+| India Stockbee Momentum Burst Screener | - | - | - |
+| India VCP Screener | - | - | - |
 | Institutional Flow Tracker | 必須 | - | - |
 | Kanchi Dividend Review Monitor | 推奨 | - | - |
 | Kanchi Dividend SOP | 推奨 | - | - |
