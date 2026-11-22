@@ -1,0 +1,6 @@
+# Runtime dependencies for standalone .skill installs (issue #330).
+# Verified by scripts/check_skill_deps.py.
+# jsonschema and PyYAML are needed by the trader-memory-core thesis store this skill imports.
+jsonschema>=4.25.1
+pandas-market-calendars==5.2.2
+PyYAML>=6.0

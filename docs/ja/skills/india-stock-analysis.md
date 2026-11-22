@@ -3,7 +3,7 @@ layout: default
 title: "India Stock Analysis"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 45
+nav_order: 46
 lang_peer: /en/skills/india-stock-analysis/
 permalink: /ja/skills/india-stock-analysis/
 generated: true

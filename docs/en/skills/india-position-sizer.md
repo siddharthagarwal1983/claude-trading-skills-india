@@ -3,7 +3,7 @@ layout: default
 title: "India Position Sizer"
 grand_parent: English
 parent: Skill Guides
-nav_order: 44
+nav_order: 45
 lang_peer: /ja/skills/india-position-sizer/
 permalink: /en/skills/india-position-sizer/
 generated: true

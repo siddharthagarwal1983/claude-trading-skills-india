@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 86 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 87 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -82,6 +82,7 @@ A comprehensive catalog of all 86 Claude Trading Skills organized by category. B
 | `india-ftd-detector` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-ibd-distribution-day-monitor` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-paper-ledger` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -209,6 +210,7 @@ A comprehensive catalog of all 86 Claude Trading Skills organized by category. B
 |-------|-------------|-----------------|
 | **Portfolio Manager** | Portfolio analysis with Alpaca MCP Server integration. Asset allocation, sector diversification, risk metrics, HOLD/ADD/TRIM/SELL recommendations, rebalancing plans | <span class="badge badge-optional">Alpaca Optional</span> |
 | **[Trader Memory Core]({{ '/en/skills/trader-memory-core/' | relative_url }})** | Persistent thesis lifecycle tracker: register screener outputs as IDEA, manage state transitions through ENTRY_READY → ACTIVE → CLOSED, attach position sizing, schedule reviews, and generate postmortem reports with MAE/MFE | <span class="badge badge-optional">FMP Optional</span> |
+| **[India Paper Ledger]({{ '/en/skills/india-paper-ledger/' | relative_url }})** | NSE paper trading in rupees: close/limit/stop/stop-limit paper orders filled from official NSE end-of-day bars with Indian delivery charges, stop/target exits, dividends and circuit-lock checks; every position is a trader-memory-core thesis. Beta | <span class="badge badge-free">No API</span> |
 | **[Trade Performance Coach]({{ '/en/skills/trade-performance-coach/' | relative_url }})** | Post-trade coach: reviews closed trades, partial exits, and monthly aggregates across 5 axes (process, risk, execution, behavior patterns, review quality), emits OK/WARN/REVIEW_REQUIRED/RULE_VIOLATION/COOL_DOWN verdict and next-session operating rules with human decision gate. Beta. | <span class="badge badge-free">No API</span> |
 | **[Drawdown Circuit Breaker]({{ '/en/skills/drawdown-circuit-breaker/' | relative_url }})** | Account-level risk gate that reads trader-memory-core state and returns TRADING_ALLOWED / COOLDOWN / HALTED from realized P&L, losing-streak, and weekly/monthly drawdown rules | <span class="badge badge-free">No API</span> |
 | **[Weekly Performance Digest]({{ '/en/skills/weekly-performance-digest/' | relative_url }})** | Aggregate the week's closed trades into win rate, expectancy, profit factor, R-multiple, and MAE/MFE, with win/loss pattern analysis by source skill, exit reason, thesis type, sector, and mechanism. Pure local calculation | <span class="badge badge-free">No API</span> |
@@ -329,6 +331,7 @@ A comprehensive catalog of all 86 Claude Trading Skills organized by category. B
 - **[India Stockbee Momentum Burst Screener]({{ '/en/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** -- 3-5 day momentum bursts with circuit and turnover checks
 - **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** -- How long NSE corrections last by industry and size tier
 - **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
+- **[India Paper Ledger]({{ '/en/skills/india-paper-ledger/' | relative_url }})** -- Paper-trade NSE stocks in rupees with end-of-day fills
 - **[India Market Breadth Analyzer]({{ '/en/skills/india-market-breadth-analyzer/' | relative_url }})** -- How broad the NSE move is, scored 0-100
 - **[India IBD Distribution Day Monitor]({{ '/en/skills/india-ibd-distribution-day-monitor/' | relative_url }})** -- Institutional selling on NIFTY 50 / NIFTY 500
 - **[India FTD Detector]({{ '/en/skills/india-ftd-detector/' | relative_url }})** -- Bottom confirmation after an NSE correction
@@ -380,6 +383,7 @@ A comprehensive catalog of all 86 Claude Trading Skills organized by category. B
 | India FTD Detector | -- | -- | -- |
 | India IBD Distribution Day Monitor | -- | -- | -- |
 | India Market Breadth Analyzer | -- | -- | -- |
+| India Paper Ledger | -- | -- | -- |
 | India Position Sizer | -- | -- | -- |
 | India Stock Analysis | -- | -- | -- |
 | India Stockbee Momentum Burst Screener | -- | -- | -- |

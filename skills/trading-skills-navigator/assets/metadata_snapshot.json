@@ -758,6 +758,31 @@
       "timeframe": "daily"
     },
     {
+      "category": "trade-memory",
+      "difficulty": "intermediate",
+      "display_name": "India Paper Ledger",
+      "id": "india-paper-ledger",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "local_state",
+          "requirement": "required",
+          "type": "local_file"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Paper-trade NSE delivery swing trades in rupees with end-of-day fills from official NSE bars, Indian delivery charges, stop/target exits and dividends, journaled as trader-memory-core theses.",
+      "timeframe": "daily"
+    },
+    {
       "category": "trade-planning",
       "difficulty": "beginner",
       "display_name": "India Position Sizer",

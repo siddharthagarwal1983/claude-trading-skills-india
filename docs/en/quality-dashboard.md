@@ -19,7 +19,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 
 | Total | production | beta | Knowledge-only | Executable | With tests | Without tests |
 |---:|---:|---:|---:|---:|---:|---:|
-| 86 | 62 | 24 | 3 | 83 | 83 | 0 |
+| 87 | 62 | 25 | 3 | 84 | 84 | 0 |
 
 ## Test coverage
 
@@ -39,7 +39,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | other external provider | 13 |
-| offline (no external data source) | 39 |
+| offline (no external data source) | 40 |
 
 ## Beta pipeline
 
@@ -55,6 +55,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | `india-ftd-detector` | not yet measured |
 | `india-ibd-distribution-day-monitor` | not yet measured |
 | `india-market-breadth-analyzer` | not yet measured |
+| `india-paper-ledger` | not yet measured |
 | `india-position-sizer` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
@@ -110,6 +111,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | **India FTD Detector** (`india-ftd-detector`) | beta | yes | yes | not yet measured |
 | **India IBD Distribution Day Monitor** (`india-ibd-distribution-day-monitor`) | beta | yes | yes | not yet measured |
 | **India Market Breadth Analyzer** (`india-market-breadth-analyzer`) | beta | yes | yes | not yet measured |
+| **India Paper Ledger** (`india-paper-ledger`) | beta | yes | yes | not yet measured |
 | **India Position Sizer** (`india-position-sizer`) | beta | yes | yes | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | beta | yes | yes | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | beta | yes | yes | not yet measured |

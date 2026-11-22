@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全86個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全87個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -82,6 +82,7 @@ permalink: /ja/skill-catalog/
 | `india-ftd-detector` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-ibd-distribution-day-monitor` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-paper-ledger` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -209,6 +210,7 @@ permalink: /ja/skill-catalog/
 |--------|------|---------|
 | **Portfolio Manager** | Alpaca MCP Serverでリアルタイム保有データを取得。資産配分、リスク指標、HOLD/ADD/TRIM/SELL推奨を生成 | <span class="badge badge-optional">Alpaca任意</span> |
 | **[Trader Memory Core]({{ '/ja/skills/trader-memory-core/' | relative_url }})** | 投資仮説のライフサイクルを永続追跡。スクリーナー出力をIDEAとして登録し、ENTRY_READY→ACTIVE→CLOSEDのステート遷移、ポジションサイジング付与、レビュースケジュール、MAE/MFE付きポストモーテム生成をサポート | <span class="badge badge-optional">FMP任意</span> |
+| **[India Paper Ledger]({{ '/ja/skills/india-paper-ledger/' | relative_url }})** | ルピー建てのNSEペーパートレード。引け・指値・逆指値・逆指値付き指値のペーパー注文をNSE公式の日足で約定させ、インドのデリバリー手数料、損切り・利確、配当、サーキット張り付きを反映。各ポジションはtrader-memory-coreのテーゼとして記録。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Trade Performance Coach]({{ '/ja/skills/trade-performance-coach/' | relative_url }})** | クローズドトレード・部分クローズ・月次集計をプロセス／リスク／執行／行動パターン／レビュー品質の5軸でレビューし、OK/WARN/REVIEW_REQUIRED/RULE_VIOLATION/COOL_DOWN の verdict と次セッション運用ルール、人間判断ゲートを生成するポストトレードコーチ。Beta。 | <span class="badge badge-free">API不要</span> |
 | **[Drawdown Circuit Breaker]({{ '/ja/skills/drawdown-circuit-breaker/' | relative_url }})** | trader-memory-coreの状態を読み、実現損益・連敗・週次/月次ドローダウンから TRADING_ALLOWED / COOLDOWN / HALTED を返す口座レベルの新規リスクゲート | <span class="badge badge-free">API不要</span> |
 | **[Weekly Performance Digest]({{ '/ja/skills/weekly-performance-digest/' | relative_url }})** | クローズドトレードから週次パフォーマンスサマリを生成。勝率・期待値・プロフィットファクター・Rマルチプル・MAE/MFE と、ソーススキル／エグジット理由／テシスタイプ／セクター／メカニズム別の勝敗パターン分析を出力。ローカル計算のみ | <span class="badge badge-free">API不要</span> |
@@ -326,6 +328,7 @@ permalink: /ja/skill-catalog/
 - **[India Stockbee Momentum Burst Screener]({{ '/ja/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** - サーキット・売買代金チェック付きの3〜5日モメンタムバースト
 - **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** - NSE銘柄の調整期間を業種・規模区分別に分析
 - **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
+- **[India Paper Ledger]({{ '/ja/skills/india-paper-ledger/' | relative_url }})** - 日足約定でNSE銘柄をルピー建てでペーパートレード
 - **[India Market Breadth Analyzer]({{ '/ja/skills/india-market-breadth-analyzer/' | relative_url }})** - NSE全体の上昇の広がりを0-100でスコア化
 - **[India IBD Distribution Day Monitor]({{ '/ja/skills/india-ibd-distribution-day-monitor/' | relative_url }})** - NIFTY 50 / NIFTY 500の機関の売り抜けを検出
 - **[India FTD Detector]({{ '/ja/skills/india-ftd-detector/' | relative_url }})** - NSEの調整後の底打ち確認
@@ -377,6 +380,7 @@ permalink: /ja/skill-catalog/
 | India FTD Detector | - | - | - |
 | India IBD Distribution Day Monitor | - | - | - |
 | India Market Breadth Analyzer | - | - | - |
+| India Paper Ledger | - | - | - |
 | India Position Sizer | - | - | - |
 | India Stock Analysis | - | - | - |
 | India Stockbee Momentum Burst Screener | - | - | - |

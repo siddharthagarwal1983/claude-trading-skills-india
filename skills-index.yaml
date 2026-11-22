@@ -2452,6 +2452,37 @@ skills:
   - final_research_report_json_and_markdown
   - self_contained_audit_bundle
   workflows: []
+- id: india-paper-ledger
+  display_name: India Paper Ledger
+  category: trade-memory
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Paper-trade NSE delivery swing trades in rupees with end-of-day fills from official NSE
+    bars, Indian delivery charges, stop/target exits and dividends, journaled as trader-memory-core
+    theses.
+  timeframe: daily
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day bars and corporate actions over HTTP; no API key
+  - id: local_state
+    type: local_file
+    requirement: required
+    note: Paper state under state/india-paper/; the sibling trader-memory-core skill stores each
+      position as a thesis
+  inputs:
+  - paper_orders
+  - nse_daily_ohlcv
+  - position_sizer_report
+  outputs:
+  - paper_fills_journal
+  - paper_portfolio_report
+  - thesis_state
+  workflows: []
 - id: india-position-sizer
   display_name: India Position Sizer
   category: trade-planning

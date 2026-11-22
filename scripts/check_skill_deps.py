@@ -282,6 +282,13 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--sector"),
         )
     ],
+    "india-paper-ledger": [
+        SmokeContract(
+            "skills/india-paper-ledger/scripts/india_paper_ledger.py",
+            ("--help",),
+            expect_out=("usage:", "process"),
+        )
+    ],
     "india-earnings-calendar": [
         SmokeContract(
             "skills/india-earnings-calendar/scripts/india_results_calendar.py",
