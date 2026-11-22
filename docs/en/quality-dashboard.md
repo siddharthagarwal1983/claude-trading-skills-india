@@ -19,7 +19,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 
 | Total | production | beta | Knowledge-only | Executable | With tests | Without tests |
 |---:|---:|---:|---:|---:|---:|---:|
-| 88 | 62 | 26 | 3 | 85 | 85 | 0 |
+| 89 | 62 | 27 | 3 | 86 | 86 | 0 |
 
 ## Test coverage
 
@@ -39,7 +39,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | other external provider | 13 |
-| offline (no external data source) | 41 |
+| offline (no external data source) | 42 |
 
 ## Beta pipeline
 
@@ -50,6 +50,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | `india-breakout-trade-planner` | not yet measured |
 | `india-dividend-screener` | not yet measured |
 | `india-downtrend-duration-analyzer` | not yet measured |
+| `india-drawdown-circuit-breaker` | not yet measured |
 | `india-earnings-calendar` | not yet measured |
 | `india-earnings-trade-analyzer` | not yet measured |
 | `india-exposure-coach` | not yet measured |
@@ -107,6 +108,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | **India Breakout Trade Planner** (`india-breakout-trade-planner`) | beta | yes | yes | not yet measured |
 | **India Dividend Screener** (`india-dividend-screener`) | beta | yes | yes | not yet measured |
 | **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | beta | yes | yes | not yet measured |
+| **India Drawdown Circuit Breaker** (`india-drawdown-circuit-breaker`) | beta | yes | yes | not yet measured |
 | **India Earnings Calendar** (`india-earnings-calendar`) | beta | yes | yes | not yet measured |
 | **India Earnings Trade Analyzer** (`india-earnings-trade-analyzer`) | beta | yes | yes | not yet measured |
 | **India Exposure Coach** (`india-exposure-coach`) | beta | yes | yes | not yet measured |

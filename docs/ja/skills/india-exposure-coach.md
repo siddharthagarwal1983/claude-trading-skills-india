@@ -3,7 +3,7 @@ layout: default
 title: "India Exposure Coach"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 41
+nav_order: 42
 lang_peer: /en/skills/india-exposure-coach/
 permalink: /ja/skills/india-exposure-coach/
 generated: true

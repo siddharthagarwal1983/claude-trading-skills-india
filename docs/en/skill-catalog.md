@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 88 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 89 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -77,6 +77,7 @@ A comprehensive catalog of all 88 Claude Trading Skills organized by category. B
 | `india-breakout-trade-planner` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-dividend-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-drawdown-circuit-breaker` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-earnings-calendar` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-earnings-trade-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-exposure-coach` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -214,6 +215,7 @@ A comprehensive catalog of all 88 Claude Trading Skills organized by category. B
 | **[India Paper Ledger]({{ '/en/skills/india-paper-ledger/' | relative_url }})** | NSE paper trading in rupees: close/limit/stop/stop-limit paper orders filled from official NSE end-of-day bars with Indian delivery charges, stop/target exits, dividends and circuit-lock checks; every position is a trader-memory-core thesis. Beta | <span class="badge badge-free">No API</span> |
 | **[Trade Performance Coach]({{ '/en/skills/trade-performance-coach/' | relative_url }})** | Post-trade coach: reviews closed trades, partial exits, and monthly aggregates across 5 axes (process, risk, execution, behavior patterns, review quality), emits OK/WARN/REVIEW_REQUIRED/RULE_VIOLATION/COOL_DOWN verdict and next-session operating rules with human decision gate. Beta. | <span class="badge badge-free">No API</span> |
 | **[Drawdown Circuit Breaker]({{ '/en/skills/drawdown-circuit-breaker/' | relative_url }})** | Account-level risk gate that reads trader-memory-core state and returns TRADING_ALLOWED / COOLDOWN / HALTED from realized P&L, losing-streak, and weekly/monthly drawdown rules | <span class="badge badge-free">No API</span> |
+| **[India Drawdown Circuit Breaker]({{ '/en/skills/india-drawdown-circuit-breaker/' | relative_url }})** | NSE account-level risk gate on paper-ledger state: realized rupee P&L for the IST day, week and month plus a losing-streak cooldown, halts released on the next NSE session. Beta | <span class="badge badge-free">No API</span> |
 | **[Weekly Performance Digest]({{ '/en/skills/weekly-performance-digest/' | relative_url }})** | Aggregate the week's closed trades into win rate, expectancy, profit factor, R-multiple, and MAE/MFE, with win/loss pattern analysis by source skill, exit reason, thesis type, sector, and mechanism. Pure local calculation | <span class="badge badge-free">No API</span> |
 | **[Position Sizer]({{ '/en/skills/position-sizer/' | relative_url }})** | Risk-based position sizing using Fixed Fractional, ATR-based, and Kelly Criterion methods. Portfolio constraints (max position %, max sector %). Works offline | <span class="badge badge-free">No API</span> |
 | **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** | Rupee position sizing for NSE delivery trades: whole shares, SME lots, tick-rounded ATR stops, and STT / exchange / SEBI / stamp / GST / DP charges counted inside the risk budget. Works offline. Beta | <span class="badge badge-free">No API</span> |
@@ -333,6 +335,7 @@ A comprehensive catalog of all 88 Claude Trading Skills organized by category. B
 - **[India Stockbee Momentum Burst Screener]({{ '/en/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** -- 3-5 day momentum bursts with circuit and turnover checks
 - **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** -- How long NSE corrections last by industry and size tier
 - **[India Breakout Trade Planner]({{ '/en/skills/india-breakout-trade-planner/' | relative_url }})** -- Entry, stop, target and size for NSE VCP breakouts
+- **[India Drawdown Circuit Breaker]({{ '/en/skills/india-drawdown-circuit-breaker/' | relative_url }})** -- Should you take new NSE risk today after recent losses?
 - **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
 - **[India Paper Ledger]({{ '/en/skills/india-paper-ledger/' | relative_url }})** -- Paper-trade NSE stocks in rupees with end-of-day fills
 - **[India Market Breadth Analyzer]({{ '/en/skills/india-market-breadth-analyzer/' | relative_url }})** -- How broad the NSE move is, scored 0-100
@@ -381,6 +384,7 @@ A comprehensive catalog of all 88 Claude Trading Skills organized by category. B
 | India Breakout Trade Planner | -- | -- | -- |
 | India Dividend Screener | -- | -- | -- |
 | India Downtrend Duration Analyzer | -- | -- | -- |
+| India Drawdown Circuit Breaker | -- | -- | -- |
 | India Earnings Calendar | -- | -- | -- |
 | India Earnings Trade Analyzer | -- | -- | -- |
 | India Exposure Coach | -- | -- | -- |

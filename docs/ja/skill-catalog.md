@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全88個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全89個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -77,6 +77,7 @@ permalink: /ja/skill-catalog/
 | `india-breakout-trade-planner` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-dividend-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-drawdown-circuit-breaker` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-earnings-calendar` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-earnings-trade-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-exposure-coach` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -214,6 +215,7 @@ permalink: /ja/skill-catalog/
 | **[India Paper Ledger]({{ '/ja/skills/india-paper-ledger/' | relative_url }})** | ルピー建てのNSEペーパートレード。引け・指値・逆指値・逆指値付き指値のペーパー注文をNSE公式の日足で約定させ、インドのデリバリー手数料、損切り・利確、配当、サーキット張り付きを反映。各ポジションはtrader-memory-coreのテーゼとして記録。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Trade Performance Coach]({{ '/ja/skills/trade-performance-coach/' | relative_url }})** | クローズドトレード・部分クローズ・月次集計をプロセス／リスク／執行／行動パターン／レビュー品質の5軸でレビューし、OK/WARN/REVIEW_REQUIRED/RULE_VIOLATION/COOL_DOWN の verdict と次セッション運用ルール、人間判断ゲートを生成するポストトレードコーチ。Beta。 | <span class="badge badge-free">API不要</span> |
 | **[Drawdown Circuit Breaker]({{ '/ja/skills/drawdown-circuit-breaker/' | relative_url }})** | trader-memory-coreの状態を読み、実現損益・連敗・週次/月次ドローダウンから TRADING_ALLOWED / COOLDOWN / HALTED を返す口座レベルの新規リスクゲート | <span class="badge badge-free">API不要</span> |
+| **[India Drawdown Circuit Breaker]({{ '/ja/skills/india-drawdown-circuit-breaker/' | relative_url }})** | ペーパー台帳の状態に基づくNSE向け口座レベルのリスクゲート。IST基準の日次・週次・月次の確定損益と連敗クールダウンを判定し、停止はNSEの次の営業日に解除。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Weekly Performance Digest]({{ '/ja/skills/weekly-performance-digest/' | relative_url }})** | クローズドトレードから週次パフォーマンスサマリを生成。勝率・期待値・プロフィットファクター・Rマルチプル・MAE/MFE と、ソーススキル／エグジット理由／テシスタイプ／セクター／メカニズム別の勝敗パターン分析を出力。ローカル計算のみ | <span class="badge badge-free">API不要</span> |
 | **[Position Sizer]({{ '/ja/skills/position-sizer/' | relative_url }})** | Fixed Fractional、ATRベース、Kelly Criterionの3手法でリスクベースポジションサイズを計算 | <span class="badge badge-free">API不要</span> |
 | **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** | NSE現物（デリバリー）取引のルピー建てポジションサイズ計算。整数株、SMEロット、ティック丸めのATRストップに対応し、STT・取引所手数料・SEBI手数料・印紙税・GST・DP手数料をリスク予算に含める。オフライン動作。ベータ | <span class="badge badge-free">API不要</span> |
@@ -330,6 +332,7 @@ permalink: /ja/skill-catalog/
 - **[India Stockbee Momentum Burst Screener]({{ '/ja/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** - サーキット・売買代金チェック付きの3〜5日モメンタムバースト
 - **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** - NSE銘柄の調整期間を業種・規模区分別に分析
 - **[India Breakout Trade Planner]({{ '/ja/skills/india-breakout-trade-planner/' | relative_url }})** - NSEのVCPブレイクアウトのエントリー・損切り・目標・株数
+- **[India Drawdown Circuit Breaker]({{ '/ja/skills/india-drawdown-circuit-breaker/' | relative_url }})** - 直近の損失後に新規のNSEリスクを取ってよいか
 - **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
 - **[India Paper Ledger]({{ '/ja/skills/india-paper-ledger/' | relative_url }})** - 日足約定でNSE銘柄をルピー建てでペーパートレード
 - **[India Market Breadth Analyzer]({{ '/ja/skills/india-market-breadth-analyzer/' | relative_url }})** - NSE全体の上昇の広がりを0-100でスコア化
@@ -378,6 +381,7 @@ permalink: /ja/skill-catalog/
 | India Breakout Trade Planner | - | - | - |
 | India Dividend Screener | - | - | - |
 | India Downtrend Duration Analyzer | - | - | - |
+| India Drawdown Circuit Breaker | - | - | - |
 | India Earnings Calendar | - | - | - |
 | India Earnings Trade Analyzer | - | - | - |
 | India Exposure Coach | - | - | - |

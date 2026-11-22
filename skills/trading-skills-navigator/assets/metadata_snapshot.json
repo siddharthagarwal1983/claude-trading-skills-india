@@ -633,6 +633,26 @@
       "timeframe": "research"
     },
     {
+      "category": "trade-planning",
+      "difficulty": "beginner",
+      "display_name": "India Drawdown Circuit Breaker",
+      "id": "india-drawdown-circuit-breaker",
+      "integrations": [
+        {
+          "id": "local_calculation",
+          "requirement": "not_required",
+          "type": "calculation"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Decide whether new NSE trade risk is allowed today from realized rupee P&L in paper-ledger state, with IST day/week/month limits, a losing-streak cooldown and halts released on NSE sessions.",
+      "timeframe": "daily"
+    },
+    {
       "category": "meta",
       "difficulty": "beginner",
       "display_name": "India Earnings Calendar",

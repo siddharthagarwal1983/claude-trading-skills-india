@@ -3,7 +3,7 @@ layout: default
 title: "India Paper Ledger"
 grand_parent: English
 parent: Skill Guides
-nav_order: 45
+nav_order: 46
 lang_peer: /ja/skills/india-paper-ledger/
 permalink: /en/skills/india-paper-ledger/
 generated: true

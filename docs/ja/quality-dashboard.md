@@ -19,7 +19,7 @@ generated: true
 
 | 合計 | 本番 | ベータ | 知識のみ | 実行可能 | テストあり | テストなし |
 |---:|---:|---:|---:|---:|---:|---:|
-| 88 | 62 | 26 | 3 | 85 | 85 | 0 |
+| 89 | 62 | 27 | 3 | 86 | 86 | 0 |
 
 ## テストカバレッジ
 
@@ -39,7 +39,7 @@ generated: true
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | その他の外部プロバイダ | 13 |
-| オフライン（外部データなし） | 41 |
+| オフライン（外部データなし） | 42 |
 
 ## ベータパイプライン
 
@@ -50,6 +50,7 @@ generated: true
 | `india-breakout-trade-planner` | not yet measured |
 | `india-dividend-screener` | not yet measured |
 | `india-downtrend-duration-analyzer` | not yet measured |
+| `india-drawdown-circuit-breaker` | not yet measured |
 | `india-earnings-calendar` | not yet measured |
 | `india-earnings-trade-analyzer` | not yet measured |
 | `india-exposure-coach` | not yet measured |
@@ -107,6 +108,7 @@ generated: true
 | **India Breakout Trade Planner** (`india-breakout-trade-planner`) | ベータ | はい | はい | not yet measured |
 | **India Dividend Screener** (`india-dividend-screener`) | ベータ | はい | はい | not yet measured |
 | **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | ベータ | はい | はい | not yet measured |
+| **India Drawdown Circuit Breaker** (`india-drawdown-circuit-breaker`) | ベータ | はい | はい | not yet measured |
 | **India Earnings Calendar** (`india-earnings-calendar`) | ベータ | はい | はい | not yet measured |
 | **India Earnings Trade Analyzer** (`india-earnings-trade-analyzer`) | ベータ | はい | はい | not yet measured |
 | **India Exposure Coach** (`india-exposure-coach`) | ベータ | はい | はい | not yet measured |

@@ -289,6 +289,13 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--ledger-report"),
         )
     ],
+    "india-drawdown-circuit-breaker": [
+        SmokeContract(
+            "skills/india-drawdown-circuit-breaker/scripts/check_india_circuit_breaker.py",
+            ("--help",),
+            expect_out=("usage:", "--ledger-report"),
+        )
+    ],
     "india-paper-ledger": [
         SmokeContract(
             "skills/india-paper-ledger/scripts/india_paper_ledger.py",

@@ -2780,6 +2780,29 @@ skills:
   - breakout_trade_plans
   - paper_orders
   workflows: []
+- id: india-drawdown-circuit-breaker
+  display_name: India Drawdown Circuit Breaker
+  category: trade-planning
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Decide whether new NSE trade risk is allowed today from realized rupee P&L in paper-ledger
+    state, with IST day/week/month limits, a losing-streak cooldown and halts released on NSE sessions.
+  timeframe: daily
+  difficulty: beginner
+  integrations:
+  - id: local_calculation
+    type: calculation
+    requirement: not_required
+    note: Reads india-paper-ledger / trader-memory-core thesis YAML files; pure calculation, works
+      offline
+  inputs:
+  - thesis_record
+  - paper_portfolio_report
+  outputs:
+  - circuit_breaker_decision
+  workflows: []
 - id: india-dividend-screener
   display_name: India Dividend Screener
   category: dividend-income
