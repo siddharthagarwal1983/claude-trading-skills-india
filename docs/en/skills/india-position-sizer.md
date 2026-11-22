@@ -3,7 +3,7 @@ layout: default
 title: "India Position Sizer"
 grand_parent: English
 parent: Skill Guides
-nav_order: 46
+nav_order: 47
 lang_peer: /ja/skills/india-position-sizer/
 permalink: /en/skills/india-position-sizer/
 generated: true
@@ -38,7 +38,8 @@ planned share of the account *after* charges. Rupees throughout, Indian digit gr
 Methods:
 
 - **Fixed fractional** (`--stop`): risk a fixed percentage per trade (commonly 1%).
-- **ATR-based** (`--atr`): stop = entry - ATR x multiplier, rounded down to the tick.
+- **ATR-based** (`--atr`): stop = entry - ATR x multiplier, rounded down to the NSE
+  price-band tick (₹0.01 below ₹250 … ₹0.10 for ₹1,000-5,000; `--tick-size` overrides).
 - **Kelly budget** (`--win-rate`, `--avg-win`, `--avg-loss`): half-Kelly risk budget only.
 
 Constraints: max position % and max sector % (remaining room), plus `--lot-size` for SME

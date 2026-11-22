@@ -47,9 +47,12 @@ Account ₹10,00,000, risk 1% (₹10,000), entry ₹1,000, stop ₹950:
 - **Whole shares only.** NSE cash equities do not trade in fractions.
 - **SME platform lots.** NSE Emerge (SME) stocks trade in fixed lots (often ₹1-2 lakh
   per lot). Pass `--lot-size`; the sizer rounds down to whole lots and may return 0.
-- **Tick size.** Most stocks tick in ₹0.05; price-band based tick sizes apply to some
-  scrips. ATR-derived stops are rounded *down* to `--tick-size` so the stop is never
-  tighter than intended.
+- **Tick size.** NSE ticks depend on the share price (from 15 April 2025, circular
+  NSE/CMTR/67133): ₹0.01 below ₹250, ₹0.05 up to ₹1,000, ₹0.10 up to ₹5,000, ₹0.50 up
+  to ₹10,000, ₹1 up to ₹20,000, ₹5 above. ATR-derived stops are rounded *down* to the
+  band of the stop price (or to `--tick-size` when given), so the stop is a valid NSE
+  price and never tighter than intended. NSE reviews bands monthly from past closes, so
+  a price near a boundary can carry the neighbouring tick.
 - **Price bands (circuits).** A stock locked at its lower circuit cannot be sold at the
   stop. Gap risk through a 5%, 10% or 20% band is real: size smaller on stocks with
   narrow bands or a history of circuit hits.

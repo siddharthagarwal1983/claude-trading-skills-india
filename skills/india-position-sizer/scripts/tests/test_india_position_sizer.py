@@ -95,6 +95,102 @@ def test_atr_stop_rounds_down_to_tick():
     assert result["final_recommended_shares"] == 249  # floor(10000 / 40.10)
 
 
+def test_atr_stop_uses_nse_tick_band_above_1000():
+    result = ips.calculate_position(
+        params(
+            entry_price=1234.0, stop_price=None, atr=20.03, atr_multiplier=2.0, include_costs=False
+        )
+    )
+    # 1234 - 40.06 = 1193.94 -> ₹0.10 tick above ₹1,000 -> 1193.90
+    assert result["parameters"]["stop_price"] == pytest.approx(1193.9)
+    assert result["parameters"]["tick_size"] == 0.10
+    assert result["parameters"]["tick_source"] == "nse_band"
+
+
+def test_atr_stop_tick_band_changes_result():
+    # 2,000 - 2 x 12.37 = 1975.26: the old ₹0.05 tick gave 1975.25, which is not a valid
+    # NSE price above ₹1,000; the ₹0.10 band gives 1975.20
+    result = ips.calculate_position(
+        params(
+            entry_price=2000.0, stop_price=None, atr=12.37, atr_multiplier=2.0, include_costs=False
+        )
+    )
+    assert result["parameters"]["stop_price"] == pytest.approx(1975.2)
+
+
+def test_atr_stop_uses_paisa_tick_below_250():
+    result = ips.calculate_position(
+        params(
+            entry_price=200.0, stop_price=None, atr=3.333, atr_multiplier=2.0, include_costs=False
+        )
+    )
+    assert result["parameters"]["stop_price"] == pytest.approx(193.33)
+    assert result["parameters"]["tick_size"] == 0.01
+
+
+def test_explicit_tick_size_still_wins():
+    result = ips.calculate_position(
+        params(
+            entry_price=2000.0,
+            stop_price=None,
+            atr=12.37,
+            atr_multiplier=2.0,
+            include_costs=False,
+            tick_size=0.05,
+        )
+    )
+    assert result["parameters"]["stop_price"] == pytest.approx(1975.25)
+    assert result["parameters"]["tick_source"] == "user"
+
+
+@pytest.mark.parametrize(
+    "price,tick",
+    [
+        (249.99, 0.01),
+        (250, 0.05),
+        (1000, 0.05),
+        (1000.05, 0.10),
+        (5000.5, 0.5),
+        (10001, 1.0),
+        (20005, 5.0),
+    ],
+)
+def test_nse_tick_size_bands(price, tick):
+    assert ips.nse_tick_size(price) == tick
+
+
+def test_tick_bands_match_shared_india_data_module():
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[4] / "scripts" / "india_data" / "india_data.py"
+    if not path.exists():
+        pytest.skip("shared India data module not present (standalone install)")
+    spec = importlib.util.spec_from_file_location("india_data_for_sizer_parity", path)
+    shared = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(shared)
+    for price in (
+        0.5,
+        99.99,
+        249.99,
+        250,
+        999.95,
+        1000,
+        1000.1,
+        4999,
+        5000,
+        5001,
+        9999,
+        10000,
+        10001,
+        19999,
+        20000,
+        20001,
+        50000,
+    ):
+        assert ips.nse_tick_size(price) == shared.nse_tick_size(price), price
+
+
 def test_atr_stop_must_stay_positive():
     with pytest.raises(ValueError, match="ATR"):
         ips.calculate_position(params(stop_price=None, atr=600.0, atr_multiplier=2.0))

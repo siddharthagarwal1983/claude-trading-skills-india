@@ -36,7 +36,18 @@ CHARGES = {
     "gst_rate": Decimal("0.18"),  # on brokerage + exchange charge + SEBI fee
 }
 DEFAULT_DP_CHARGE = 15.93  # per scrip per sell day, incl. GST (typical discount broker)
-DEFAULT_TICK_SIZE = 0.05
+DEFAULT_TICK_SIZE = None  # None = NSE price-band tick (see nse_tick_size)
+# NSE cash-market tick bands from 15 April 2025 (circular NSE/CMTR/67133):
+# (upper bound, tick, bound inclusive). Same table as the shared India data
+# module; a parity test guards drift. Kept here so this skill stays stdlib-only.
+TICK_BANDS = (
+    (Decimal("250"), Decimal("0.01"), False),
+    (Decimal("1000"), Decimal("0.05"), True),
+    (Decimal("5000"), Decimal("0.10"), True),
+    (Decimal("10000"), Decimal("0.50"), True),
+    (Decimal("20000"), Decimal("1.00"), True),
+)
+TOP_TICK = Decimal("5.00")
 CHARGES_NOTE = (
     "Statutory delivery rates (STT 0.1% per leg, NSE 0.00297%, SEBI ₹10/crore, stamp 0.015% "
     "on buy, GST 18%) plus a broker-specific DP charge. Verify against your contract note."
@@ -79,7 +90,7 @@ class SizingParameters:
     include_costs: bool = True
     brokerage_per_order: float = 0.0
     dp_charge: float = DEFAULT_DP_CHARGE
-    tick_size: float = DEFAULT_TICK_SIZE
+    tick_size: float | None = DEFAULT_TICK_SIZE
     lot_size: int = 1
 
 
@@ -135,7 +146,7 @@ def validate_parameters(p: SizingParameters) -> None:
             raise ValueError(f"{name} must be positive")
     if p.brokerage_per_order < 0 or p.dp_charge < 0:
         raise ValueError("brokerage_per_order and dp_charge must not be negative")
-    if p.tick_size <= 0:
+    if p.tick_size is not None and p.tick_size <= 0:
         raise ValueError("tick_size must be positive")
     if not isinstance(p.lot_size, int) or isinstance(p.lot_size, bool) or p.lot_size < 1:
         raise ValueError("lot_size must be a positive whole number")
@@ -211,6 +222,17 @@ def _fixed_cost(p: SizingParameters) -> Decimal:
 
 def _to_lots(shares: int, lot_size: int) -> int:
     return max(0, (shares // lot_size) * lot_size)
+
+
+def nse_tick_size(price: float) -> float:
+    """NSE cash-market tick size in rupees for a share price."""
+    value = _d(price)
+    if not value > 0:
+        raise ValueError(f"price must be positive, got {price}")
+    for bound, tick, inclusive in TICK_BANDS:
+        if value < bound or (inclusive and value == bound):
+            return float(tick)
+    return float(TOP_TICK)
 
 
 def round_down_to_tick(price: Decimal, tick: float) -> Decimal:
@@ -327,11 +349,17 @@ def calculate_position(p: SizingParameters) -> dict:
     if p.entry_price is None or p.risk_pct is None:
         raise ValueError("Shares mode needs entry_price and risk_pct")
     entry = _d(p.entry_price)
+    tick_source = "user" if p.tick_size is not None else "nse_band"
     if p.stop_price is not None:
         stop = _d(p.stop_price)
         method = "fixed_fractional"
+        tick = p.tick_size if p.tick_size is not None else nse_tick_size(p.stop_price)
     elif p.atr is not None:
-        stop = round_down_to_tick(entry - _d(p.atr) * _d(p.atr_multiplier), p.tick_size)
+        raw_stop = entry - _d(p.atr) * _d(p.atr_multiplier)
+        if raw_stop <= 0:
+            raise ValueError("ATR-derived stop must be positive and below entry_price")
+        tick = p.tick_size if p.tick_size is not None else nse_tick_size(raw_stop)
+        stop = round_down_to_tick(raw_stop, tick)
         if not 0 < stop < entry:
             raise ValueError("ATR-derived stop must be positive and below entry_price")
         method = "atr_based"
@@ -365,7 +393,8 @@ def calculate_position(p: SizingParameters) -> dict:
                 "risk_pct": p.risk_pct,
                 "include_costs": p.include_costs,
                 "lot_size": p.lot_size,
-                "tick_size": p.tick_size,
+                "tick_size": tick,
+                "tick_source": tick_source,
                 **(
                     {"atr": p.atr, "atr_multiplier": p.atr_multiplier}
                     if method == "atr_based"
@@ -498,7 +527,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--tick-size",
         type=finite_float,
         default=DEFAULT_TICK_SIZE,
-        help="Tick for ATR stops (default 0.05)",
+        help="Tick for ATR stops (default: NSE price-band tick of the stop)",
     )
     parser.add_argument(
         "--lot-size", type=int, default=1, help="Trading lot (SME stocks trade in lots)"
