@@ -19,7 +19,7 @@ generated: true
 
 | 合計 | 本番 | ベータ | 知識のみ | 実行可能 | テストあり | テストなし |
 |---:|---:|---:|---:|---:|---:|---:|
-| 89 | 62 | 27 | 3 | 86 | 86 | 0 |
+| 90 | 62 | 28 | 3 | 87 | 87 | 0 |
 
 ## テストカバレッジ
 
@@ -39,7 +39,7 @@ generated: true
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | その他の外部プロバイダ | 13 |
-| オフライン（外部データなし） | 42 |
+| オフライン（外部データなし） | 43 |
 
 ## ベータパイプライン
 
@@ -59,6 +59,7 @@ generated: true
 | `india-market-breadth-analyzer` | not yet measured |
 | `india-paper-ledger` | not yet measured |
 | `india-position-sizer` | not yet measured |
+| `india-pre-trade-discipline-gate` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
 | `india-vcp-screener` | not yet measured |
@@ -117,6 +118,7 @@ generated: true
 | **India Market Breadth Analyzer** (`india-market-breadth-analyzer`) | ベータ | はい | はい | not yet measured |
 | **India Paper Ledger** (`india-paper-ledger`) | ベータ | はい | はい | not yet measured |
 | **India Position Sizer** (`india-position-sizer`) | ベータ | はい | はい | not yet measured |
+| **India Pre-Trade Discipline Gate** (`india-pre-trade-discipline-gate`) | ベータ | はい | はい | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | ベータ | はい | はい | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | ベータ | はい | はい | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | ベータ | はい | はい | not yet measured |

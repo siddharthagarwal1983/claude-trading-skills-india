@@ -2483,6 +2483,35 @@ skills:
   - paper_portfolio_report
   - thesis_state
   workflows: []
+- id: india-pre-trade-discipline-gate
+  display_name: India Pre-Trade Discipline Gate
+  category: trade-planning
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Gate NSE orders before placement from a breakout plan or checklist, blocking oversized,
+    stale-plan, duplicate, revenge and regime- or circuit-breaker-blocked entries and flagging
+    results-date risk.
+  timeframe: daily
+  difficulty: beginner
+  integrations:
+  - id: local_calculation
+    type: calculation
+    requirement: not_required
+    note: Reads plan, checklist, India regime and circuit-breaker reports and paper-ledger state;
+      works offline
+  - id: local_state
+    type: local_file
+    requirement: optional
+    note: india-earnings-calendar results archive for results-date risk
+  inputs:
+  - breakout_trade_plans
+  - circuit_breaker_decision
+  - thesis_record
+  outputs:
+  - pre_trade_discipline_decision
+  workflows: []
 - id: india-position-sizer
   display_name: India Position Sizer
   category: trade-planning

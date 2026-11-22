@@ -849,6 +849,31 @@
     },
     {
       "category": "trade-planning",
+      "difficulty": "beginner",
+      "display_name": "India Pre-Trade Discipline Gate",
+      "id": "india-pre-trade-discipline-gate",
+      "integrations": [
+        {
+          "id": "local_calculation",
+          "requirement": "not_required",
+          "type": "calculation"
+        },
+        {
+          "id": "local_state",
+          "requirement": "optional",
+          "type": "local_file"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Gate NSE orders before placement from a breakout plan or checklist, blocking oversized, stale-plan, duplicate, revenge and regime- or circuit-breaker-blocked entries and flagging results-date risk.",
+      "timeframe": "daily"
+    },
+    {
+      "category": "trade-planning",
       "difficulty": "intermediate",
       "display_name": "India Stock Analysis",
       "id": "india-stock-analysis",

@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 89 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 90 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -86,6 +86,7 @@ A comprehensive catalog of all 89 Claude Trading Skills organized by category. B
 | `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-paper-ledger` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-pre-trade-discipline-gate` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -231,6 +232,7 @@ A comprehensive catalog of all 89 Claude Trading Skills organized by category. B
 | **[India Earnings Calendar]({{ '/en/skills/india-earnings-calendar/' | relative_url }})** | Upcoming NSE results dates for a Nifty universe with tier, industry and ₹ turnover; flags holdings that report. Local archive fed by Drishti's free upcoming-earnings call. Beta | <span class="badge badge-free">No API</span> |
 | **Economic Calendar Fetcher** | Fetches economic events (FOMC, NFP, CPI, GDP) for 7-90 days via FMP API. Impact assessment (High/Medium/Low) with market implications analysis | <span class="badge badge-api">FMP Required</span> |
 | **[FXMacroData Calendar]({{ '/en/skills/fxmacrodata-calendar/' | relative_url }})** | Fetches official-source macro release-calendar events using FXMacroData for trade planning and event-risk filters. Public USD calendar rows work without a key. Beta | <span class="badge badge-free">No API</span> <span class="badge badge-optional">FXMacroData Key Optional</span> |
+| **[India Pre-Trade Discipline Gate]({{ '/en/skills/india-pre-trade-discipline-gate/' | relative_url }})** | Checklist gate before NSE orders, built from a breakout plan: blocks oversized, stale-plan, duplicate, revenge and regime/circuit-breaker-blocked entries and flags NSE results due within a few sessions. Reuses the US gate engine. Beta | <span class="badge badge-free">No API</span> |
 | **[Pre-Trade Discipline Gate]({{ '/en/skills/pre-trade-discipline-gate/' | relative_url }})** | Applies a deterministic pre-trade checklist and fail-closed decision gate before a planned order can proceed | <span class="badge badge-free">No API</span> |
 
 ---
@@ -336,6 +338,7 @@ A comprehensive catalog of all 89 Claude Trading Skills organized by category. B
 - **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** -- How long NSE corrections last by industry and size tier
 - **[India Breakout Trade Planner]({{ '/en/skills/india-breakout-trade-planner/' | relative_url }})** -- Entry, stop, target and size for NSE VCP breakouts
 - **[India Drawdown Circuit Breaker]({{ '/en/skills/india-drawdown-circuit-breaker/' | relative_url }})** -- Should you take new NSE risk today after recent losses?
+- **[India Pre-Trade Discipline Gate]({{ '/en/skills/india-pre-trade-discipline-gate/' | relative_url }})** -- Final check before placing an NSE order
 - **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
 - **[India Paper Ledger]({{ '/en/skills/india-paper-ledger/' | relative_url }})** -- Paper-trade NSE stocks in rupees with end-of-day fills
 - **[India Market Breadth Analyzer]({{ '/en/skills/india-market-breadth-analyzer/' | relative_url }})** -- How broad the NSE move is, scored 0-100
@@ -393,6 +396,7 @@ A comprehensive catalog of all 89 Claude Trading Skills organized by category. B
 | India Market Breadth Analyzer | -- | -- | -- |
 | India Paper Ledger | -- | -- | -- |
 | India Position Sizer | -- | -- | -- |
+| India Pre-Trade Discipline Gate | -- | -- | -- |
 | India Stock Analysis | -- | -- | -- |
 | India Stockbee Momentum Burst Screener | -- | -- | -- |
 | India VCP Screener | -- | -- | -- |

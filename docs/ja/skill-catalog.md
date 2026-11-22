@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全89個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全90個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -86,6 +86,7 @@ permalink: /ja/skill-catalog/
 | `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-paper-ledger` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-pre-trade-discipline-gate` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -231,6 +232,7 @@ permalink: /ja/skill-catalog/
 | **[India Earnings Calendar]({{ '/ja/skills/india-earnings-calendar/' | relative_url }})** | Niftyユニバースの今後のNSE決算発表日を規模区分・業種・売買代金付きで表示し、保有銘柄の決算を警告。Drishtiの無料API取得結果をローカルに蓄積。ベータ | <span class="badge badge-free">API不要</span> |
 | **Economic Calendar Fetcher** | FMP APIで7-90日間の経済イベントを取得。インパクト評価付き時系列レポート | <span class="badge badge-api">FMP必須</span> |
 | **[FXMacroData Calendar]({{ '/ja/skills/fxmacrodata-calendar/' | relative_url }})** | FXMacroDataを使い公式ソースのマクロ発表カレンダーイベントを取得。トレードプランニングとイベントリスクフィルタに利用。USDの公開カレンダー行はキーなしで動作。Beta | <span class="badge badge-free">API不要</span> <span class="badge badge-optional">FXMacroDataキー任意</span> |
+| **[India Pre-Trade Discipline Gate]({{ '/ja/skills/india-pre-trade-discipline-gate/' | relative_url }})** | ブレイクアウトプランから作るNSE発注前のチェックリストゲート。リスク超過・古いプラン・重複・リベンジトレード・相場環境/サーキットブレーカーによる停止をブロックし、数営業日以内の決算発表を警告。米国版ゲートのエンジンを再利用。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Pre-Trade Discipline Gate]({{ '/ja/skills/pre-trade-discipline-gate/' | relative_url }})** | 注文計画を進める前に決定論的な事前チェックリストとフェイルクローズド判断ゲートを適用 | <span class="badge badge-free">API不要</span> |
 
 ---
@@ -333,6 +335,7 @@ permalink: /ja/skill-catalog/
 - **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** - NSE銘柄の調整期間を業種・規模区分別に分析
 - **[India Breakout Trade Planner]({{ '/ja/skills/india-breakout-trade-planner/' | relative_url }})** - NSEのVCPブレイクアウトのエントリー・損切り・目標・株数
 - **[India Drawdown Circuit Breaker]({{ '/ja/skills/india-drawdown-circuit-breaker/' | relative_url }})** - 直近の損失後に新規のNSEリスクを取ってよいか
+- **[India Pre-Trade Discipline Gate]({{ '/ja/skills/india-pre-trade-discipline-gate/' | relative_url }})** - NSE発注前の最終チェック
 - **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
 - **[India Paper Ledger]({{ '/ja/skills/india-paper-ledger/' | relative_url }})** - 日足約定でNSE銘柄をルピー建てでペーパートレード
 - **[India Market Breadth Analyzer]({{ '/ja/skills/india-market-breadth-analyzer/' | relative_url }})** - NSE全体の上昇の広がりを0-100でスコア化
@@ -390,6 +393,7 @@ permalink: /ja/skill-catalog/
 | India Market Breadth Analyzer | - | - | - |
 | India Paper Ledger | - | - | - |
 | India Position Sizer | - | - | - |
+| India Pre-Trade Discipline Gate | - | - | - |
 | India Stock Analysis | - | - | - |
 | India Stockbee Momentum Burst Screener | - | - | - |
 | India VCP Screener | - | - | - |

@@ -19,7 +19,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 
 | Total | production | beta | Knowledge-only | Executable | With tests | Without tests |
 |---:|---:|---:|---:|---:|---:|---:|
-| 89 | 62 | 27 | 3 | 86 | 86 | 0 |
+| 90 | 62 | 28 | 3 | 87 | 87 | 0 |
 
 ## Test coverage
 
@@ -39,7 +39,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | other external provider | 13 |
-| offline (no external data source) | 42 |
+| offline (no external data source) | 43 |
 
 ## Beta pipeline
 
@@ -59,6 +59,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | `india-market-breadth-analyzer` | not yet measured |
 | `india-paper-ledger` | not yet measured |
 | `india-position-sizer` | not yet measured |
+| `india-pre-trade-discipline-gate` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
 | `india-vcp-screener` | not yet measured |
@@ -117,6 +118,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | **India Market Breadth Analyzer** (`india-market-breadth-analyzer`) | beta | yes | yes | not yet measured |
 | **India Paper Ledger** (`india-paper-ledger`) | beta | yes | yes | not yet measured |
 | **India Position Sizer** (`india-position-sizer`) | beta | yes | yes | not yet measured |
+| **India Pre-Trade Discipline Gate** (`india-pre-trade-discipline-gate`) | beta | yes | yes | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | beta | yes | yes | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | beta | yes | yes | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | beta | yes | yes | not yet measured |
