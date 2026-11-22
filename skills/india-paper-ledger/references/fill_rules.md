@@ -63,7 +63,7 @@ reliably trade, so no paper fill happens that session and a warning is raised.
 | DP charge | ₹15.93 per sell (configurable) | sell only |
 | Brokerage | per order (configurable, default ₹0) | both |
 
-The rates are identical to `india-position-sizer` (a test guards drift). Example: buying
+The rates come from the shared India data module (`delivery_leg_charges`), the same table `india-position-sizer` uses (a parity test guards drift). Example: buying
 40 RELIANCE at ₹1,307.90 (turnover ₹52,316) costs ₹52.32 STT + ₹7.85 stamp + ₹1.55
 transaction + ₹0.05 SEBI + ₹0.29 GST = ₹62.06.
 

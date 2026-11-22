@@ -282,6 +282,13 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--sector"),
         )
     ],
+    "india-breakout-trade-planner": [
+        SmokeContract(
+            "skills/india-breakout-trade-planner/scripts/plan_india_breakout_trades.py",
+            ("--help",),
+            expect_out=("usage:", "--ledger-report"),
+        )
+    ],
     "india-paper-ledger": [
         SmokeContract(
             "skills/india-paper-ledger/scripts/india_paper_ledger.py",

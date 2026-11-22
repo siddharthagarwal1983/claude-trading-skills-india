@@ -259,6 +259,7 @@ The table below is **auto-generated** from `skills-index.yaml` by `scripts/gener
 | **Finviz Screener** | ❌ Not used | 🟡 Optional | ❌ Not used | FINVIZ Elite API |
 | **Futures Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation; consumes contrarian-setup-gate's READY_FOR_PLAN report or explicit direction/entry/stop flags; works offline |
 | **IBD Distribution Day Monitor** | ✅ Required | ❌ Not used | ❌ Not used | Financial Modeling Prep API |
+| **India Breakout Trade Planner** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation on an india-vcp-screener JSON report; works offline; india-paper-ledger JSON report for equity, cash, open risk and held symbols |
 | **India Dividend Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free NSE prices and five years of corporate actions over HTTP; no API key; One DalalOS screen_stocks reply (~1 credit) for a fundamentals-filtered candidate list |
 | **India Downtrend Duration Analyzer** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for universe, industries, and size tiers |
 | **India Earnings Calendar** | ❌ Not used | ❌ Not used | ❌ Not used | Drishti get_upcoming_earnings (free call) fetched in a Claude session and saved to JSON; DalalOS results calendar as a credit-metered fallback; Free NSE prices for close and turnover enrichment |

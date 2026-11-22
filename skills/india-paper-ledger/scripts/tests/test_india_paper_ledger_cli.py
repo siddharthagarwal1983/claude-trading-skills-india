@@ -171,3 +171,39 @@ def test_placed_at_needs_timezone():
 def test_finite_float_rejects_nan():
     with pytest.raises(argparse.ArgumentTypeError):
         cli.finite_float("nan")
+
+
+def test_place_plan_cli(env, tmp_path, capsys):
+    run, _, _ = env
+    run("init", "--capital", "500000")
+    plan = tmp_path / "plan.json"
+    plan.write_text(
+        json.dumps(
+            {
+                "skill": "india-breakout-trade-planner",
+                "plan_valid_for_session": "2026-11-23",
+                "actionable_orders": [
+                    {
+                        "symbol": "RELIANCE",
+                        "plan_valid_for_session": "2026-11-23",
+                        "paper_order": {
+                            "symbol": "RELIANCE",
+                            "qty": 3,
+                            "order_type": "STOP_LIMIT",
+                            "trigger": 1028.0,
+                            "limit": 1040.0,
+                            "stop": 990.0,
+                            "target": None,
+                            "valid_sessions": 1,
+                            "thesis_type": "pivot_breakout",
+                            "thesis": "plan",
+                        },
+                    }
+                ],
+            }
+        )
+    )
+    capsys.readouterr()
+    assert run("place-plan", "--plan", str(plan), "--placed-at", "2026-11-20T20:00+05:30") == 0
+    out = json.loads(capsys.readouterr().out)
+    assert len(out["placed"]) == 1 and out["skipped"] == []

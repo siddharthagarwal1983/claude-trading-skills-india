@@ -13,6 +13,8 @@ import re
 from datetime import date, datetime, time, timedelta, timezone
 from decimal import ROUND_HALF_UP, Decimal
 
+from _india_data import DEFAULT_DP_CHARGE, DELIVERY_CHARGES, delivery_leg_charges
+
 IST = timezone(timedelta(hours=5, minutes=30), "IST")
 MARKET_OPEN = time(9, 15)
 CLOSE_ORDER_CUTOFF = time(15, 0)  # NSE closing price = VWAP of 15:00-15:30
@@ -21,17 +23,9 @@ ORDER_TYPES = ("CLOSE", "LIMIT", "STOP", "STOP_LIMIT")
 STOP_BASES = ("intraday", "close")
 SIDES = ("BUY", "SELL")
 
-# Statutory rates for equity delivery on NSE. Kept identical to
-# india-position-sizer (a parity test guards drift). Verify against your
-# broker's contract note; brokers differ on brokerage and the DP charge.
-CHARGES = {
-    "stt_rate": Decimal("0.001"),  # 0.1% on buy and on sell (delivery)
-    "exchange_txn_rate": Decimal("0.0000297"),  # NSE cash, 0.00297% per leg
-    "sebi_fee_rate": Decimal("0.000001"),  # ₹10 per crore per leg
-    "stamp_duty_buy_rate": Decimal("0.00015"),  # 0.015% on the buy leg only
-    "gst_rate": Decimal("0.18"),  # on brokerage + exchange charge + SEBI fee
-}
-DEFAULT_DP_CHARGE = 15.93  # per scrip per sell day, incl. GST (typical discount broker)
+# Statutory delivery charges come from the shared India data module (one
+# copy for every india-* skill; india-position-sizer has a parity test).
+CHARGES = DELIVERY_CHARGES
 
 PAISA = Decimal("0.01")
 AMOUNT = re.compile(r"(?:rs\.?|re\.?|inr|₹)\s*([0-9]+(?:\.[0-9]+)?)", re.IGNORECASE)
@@ -152,26 +146,7 @@ def leg_charges(
     turnover: float, *, buy: bool, brokerage: float = 0.0, dp_charge: float = DEFAULT_DP_CHARGE
 ) -> dict:
     """Delivery charges for one leg in rupees (DP charge on the sell leg only)."""
-    t = _d(turnover)
-    brk = _d(brokerage)
-    stt = t * CHARGES["stt_rate"]
-    txn = t * CHARGES["exchange_txn_rate"]
-    sebi = t * CHARGES["sebi_fee_rate"]
-    stamp = t * CHARGES["stamp_duty_buy_rate"] if buy else Decimal(0)
-    gst = CHARGES["gst_rate"] * (brk + txn + sebi)
-    dp = Decimal(0) if buy else _d(dp_charge)
-    total = brk + stt + txn + sebi + stamp + gst + dp
-    return {
-        "turnover": _money(t),
-        "brokerage": _money(brk),
-        "stt": _money(stt),
-        "exchange_txn": _money(txn),
-        "sebi_fee": _money(sebi),
-        "stamp_duty": _money(stamp),
-        "gst": _money(gst),
-        "dp_charge": _money(dp),
-        "total": _money(total),
-    }
+    return delivery_leg_charges(turnover, buy=buy, brokerage=brokerage, dp_charge=dp_charge)
 
 
 def effective_price(price: float, qty: int, charges_total: float, *, side: str) -> float:

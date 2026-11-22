@@ -3,7 +3,7 @@ layout: default
 title: "India Earnings Calendar"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 38
+nav_order: 39
 lang_peer: /en/skills/india-earnings-calendar/
 permalink: /ja/skills/india-earnings-calendar/
 generated: true

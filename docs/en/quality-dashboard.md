@@ -19,7 +19,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 
 | Total | production | beta | Knowledge-only | Executable | With tests | Without tests |
 |---:|---:|---:|---:|---:|---:|---:|
-| 87 | 62 | 25 | 3 | 84 | 84 | 0 |
+| 88 | 62 | 26 | 3 | 85 | 85 | 0 |
 
 ## Test coverage
 
@@ -39,7 +39,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | other external provider | 13 |
-| offline (no external data source) | 40 |
+| offline (no external data source) | 41 |
 
 ## Beta pipeline
 
@@ -47,6 +47,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 |---|---:|
 | `crypto-regime-analyzer` | not yet measured |
 | `fxmacrodata-calendar` | not yet measured |
+| `india-breakout-trade-planner` | not yet measured |
 | `india-dividend-screener` | not yet measured |
 | `india-downtrend-duration-analyzer` | not yet measured |
 | `india-earnings-calendar` | not yet measured |
@@ -103,6 +104,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | **Futures Position Sizer** (`futures-position-sizer`) | production | yes | yes | 93.5% |
 | **FXMacroData Calendar** (`fxmacrodata-calendar`) | beta | yes | yes | 96.0% |
 | **IBD Distribution Day Monitor** (`ibd-distribution-day-monitor`) | production | yes | yes | 97.1% |
+| **India Breakout Trade Planner** (`india-breakout-trade-planner`) | beta | yes | yes | not yet measured |
 | **India Dividend Screener** (`india-dividend-screener`) | beta | yes | yes | not yet measured |
 | **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | beta | yes | yes | not yet measured |
 | **India Earnings Calendar** (`india-earnings-calendar`) | beta | yes | yes | not yet measured |

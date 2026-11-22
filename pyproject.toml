@@ -107,6 +107,7 @@ testpaths = [
     "skills/futures-position-sizer/scripts/tests",
     "skills/fxmacrodata-calendar/scripts/tests",
     "skills/ibd-distribution-day-monitor/scripts/tests",
+    "skills/india-breakout-trade-planner/scripts/tests",
     "skills/india-dividend-screener/scripts/tests",
     "skills/india-downtrend-duration-analyzer/scripts/tests",
     "skills/india-earnings-calendar/scripts/tests",

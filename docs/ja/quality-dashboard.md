@@ -19,7 +19,7 @@ generated: true
 
 | 合計 | 本番 | ベータ | 知識のみ | 実行可能 | テストあり | テストなし |
 |---:|---:|---:|---:|---:|---:|---:|
-| 87 | 62 | 25 | 3 | 84 | 84 | 0 |
+| 88 | 62 | 26 | 3 | 85 | 85 | 0 |
 
 ## テストカバレッジ
 
@@ -39,7 +39,7 @@ generated: true
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | その他の外部プロバイダ | 13 |
-| オフライン（外部データなし） | 40 |
+| オフライン（外部データなし） | 41 |
 
 ## ベータパイプライン
 
@@ -47,6 +47,7 @@ generated: true
 |---|---:|
 | `crypto-regime-analyzer` | not yet measured |
 | `fxmacrodata-calendar` | not yet measured |
+| `india-breakout-trade-planner` | not yet measured |
 | `india-dividend-screener` | not yet measured |
 | `india-downtrend-duration-analyzer` | not yet measured |
 | `india-earnings-calendar` | not yet measured |
@@ -103,6 +104,7 @@ generated: true
 | **Futures Position Sizer** (`futures-position-sizer`) | 本番 | はい | はい | 93.5% |
 | **FXMacroData Calendar** (`fxmacrodata-calendar`) | ベータ | はい | はい | 96.0% |
 | **IBD Distribution Day Monitor** (`ibd-distribution-day-monitor`) | 本番 | はい | はい | 97.1% |
+| **India Breakout Trade Planner** (`india-breakout-trade-planner`) | ベータ | はい | はい | not yet measured |
 | **India Dividend Screener** (`india-dividend-screener`) | ベータ | はい | はい | not yet measured |
 | **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | ベータ | はい | はい | not yet measured |
 | **India Earnings Calendar** (`india-earnings-calendar`) | ベータ | はい | はい | not yet measured |

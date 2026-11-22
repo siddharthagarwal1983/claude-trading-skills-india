@@ -559,6 +559,31 @@
       "timeframe": "daily"
     },
     {
+      "category": "trade-planning",
+      "difficulty": "intermediate",
+      "display_name": "India Breakout Trade Planner",
+      "id": "india-breakout-trade-planner",
+      "integrations": [
+        {
+          "id": "local_calculation",
+          "requirement": "not_required",
+          "type": "calculation"
+        },
+        {
+          "id": "local_state",
+          "requirement": "optional",
+          "type": "local_file"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Turn India VCP screener output into Minervini breakout plans in rupees on NSE tick sizes, with delivery charges inside the risk budget, turnover, cash and heat caps, and ready paper-ledger orders.",
+      "timeframe": "daily"
+    },
+    {
       "category": "dividend-income",
       "difficulty": "beginner",
       "display_name": "India Dividend Screener",

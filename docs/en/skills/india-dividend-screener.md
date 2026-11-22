@@ -3,7 +3,7 @@ layout: default
 title: "India Dividend Screener"
 grand_parent: English
 parent: Skill Guides
-nav_order: 36
+nav_order: 37
 lang_peer: /ja/skills/india-dividend-screener/
 permalink: /en/skills/india-dividend-screener/
 generated: true

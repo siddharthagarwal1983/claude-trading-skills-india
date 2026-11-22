@@ -23,6 +23,8 @@ What it provides:
   history without refetching it. The tail refreshes once per completed
   session (after the 19:00 IST cutoff).
 * ``load_universe`` -- Nifty index constituents from NSE's public CSV files.
+* ``nse_tick_size`` / ``round_to_tick`` / ``delivery_leg_charges`` -- NSE cash
+  tick bands (effective 2025-04-15) and statutory equity-delivery charges.
 * ``CreditLedger`` / ``MeteredCache`` -- budget guardrails for the metered
   sources (DalalOS: 500 credits/month; Drishti: 1,000 lifetime credits).
 
@@ -48,6 +50,7 @@ import urllib.error
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from datetime import time as dtime
+from decimal import ROUND_CEILING, ROUND_FLOOR, ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any, Callable
 
@@ -652,6 +655,93 @@ def drop_muhurat_sessions(bars: list) -> tuple:
     kept = [b for b in bars if b.get("date") not in muhurat]
     removed = sorted(b["date"] for b in bars if b.get("date") in muhurat)
     return kept, removed
+
+
+# --------------------------------------------------------------------------- ticks and charges
+
+# NSE cash-market tick sizes from 15 April 2025 (circular NSE/CMTR/67133),
+# by price: below ₹250 → ₹0.01; ₹250-1,000 → ₹0.05; above ₹1,000-5,000 → ₹0.10;
+# above ₹5,000-10,000 → ₹0.50; above ₹10,000-20,000 → ₹1.00; above → ₹5.00.
+# NSE assigns each stock's tick monthly from a past close, so a price near a
+# boundary can carry the neighbouring band's tick; check the broker if it rejects.
+TICK_BANDS = (
+    (Decimal("250"), Decimal("0.01"), False),  # (upper bound, tick, bound inclusive)
+    (Decimal("1000"), Decimal("0.05"), True),
+    (Decimal("5000"), Decimal("0.10"), True),
+    (Decimal("10000"), Decimal("0.50"), True),
+    (Decimal("20000"), Decimal("1.00"), True),
+)
+TOP_TICK = Decimal("5.00")
+
+# Statutory rates for equity delivery (CNC) on NSE. Verify against your
+# broker's contract note; brokers differ on brokerage and the DP charge.
+DELIVERY_CHARGES = {
+    "stt_rate": Decimal("0.001"),  # 0.1% on buy and on sell
+    "exchange_txn_rate": Decimal("0.0000297"),  # NSE cash, 0.00297% per leg
+    "sebi_fee_rate": Decimal("0.000001"),  # ₹10 per crore per leg
+    "stamp_duty_buy_rate": Decimal("0.00015"),  # 0.015% on the buy leg only
+    "gst_rate": Decimal("0.18"),  # on brokerage + exchange charge + SEBI fee
+}
+DEFAULT_DP_CHARGE = 15.93  # per scrip per sell day, incl. GST (typical discount broker)
+_PAISA = Decimal("0.01")
+
+
+def _dec(value: Any) -> Decimal:
+    return Decimal(str(value))
+
+
+def nse_tick_size(price: float) -> float:
+    """NSE cash-market tick size in rupees for a share price."""
+    p = _dec(price)
+    if not p > 0:
+        raise ValueError(f"price must be positive, got {price}")
+    for bound, tick, inclusive in TICK_BANDS:
+        if p < bound or (inclusive and p == bound):
+            return float(tick)
+    return float(TOP_TICK)
+
+
+def round_to_tick(price: float, direction: str = "nearest", *, tick: float | None = None) -> float:
+    """Round a price onto the NSE tick grid ("up", "down" or "nearest")."""
+    modes = {"up": ROUND_CEILING, "down": ROUND_FLOOR, "nearest": ROUND_HALF_UP}
+    if direction not in modes:
+        raise ValueError(f"direction must be one of {sorted(modes)}")
+    step = _dec(tick if tick is not None else nse_tick_size(price))
+    units = (_dec(price) / step).quantize(Decimal(1), rounding=modes[direction])
+    return float((units * step).quantize(_PAISA))
+
+
+def delivery_leg_charges(
+    turnover: float,
+    *,
+    buy: bool,
+    brokerage: float = 0.0,
+    dp_charge: float = DEFAULT_DP_CHARGE,
+) -> dict:
+    """Charges in rupees for one delivery leg (DP charge on the sell leg only)."""
+    t = _dec(turnover)
+    brk = _dec(brokerage)
+    rates = DELIVERY_CHARGES
+    stt = t * rates["stt_rate"]
+    txn = t * rates["exchange_txn_rate"]
+    sebi = t * rates["sebi_fee_rate"]
+    stamp = t * rates["stamp_duty_buy_rate"] if buy else Decimal(0)
+    gst = rates["gst_rate"] * (brk + txn + sebi)
+    dp = Decimal(0) if buy else _dec(dp_charge)
+    parts = {
+        "turnover": t,
+        "brokerage": brk,
+        "stt": stt,
+        "exchange_txn": txn,
+        "sebi_fee": sebi,
+        "stamp_duty": stamp,
+        "gst": gst,
+        "dp_charge": dp,
+    }
+    out = {k: float(v.quantize(_PAISA, rounding=ROUND_HALF_UP)) for k, v in parts.items()}
+    total = brk + stt + txn + sebi + stamp + gst + dp
+    out["total"] = float(total.quantize(_PAISA, rounding=ROUND_HALF_UP))
+    return out
 
 
 def normalize_results_events(payload: Any) -> list:

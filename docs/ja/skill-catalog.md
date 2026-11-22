@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全87個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全88個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -74,6 +74,7 @@ permalink: /ja/skill-catalog/
 | `futures-position-sizer` | `workflow_step` | — |
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
+| `india-breakout-trade-planner` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-dividend-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
 | `india-earnings-calendar` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -218,6 +219,7 @@ permalink: /ja/skill-catalog/
 | **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** | NSE現物（デリバリー）取引のルピー建てポジションサイズ計算。整数株、SMEロット、ティック丸めのATRストップに対応し、STT・取引所手数料・SEBI手数料・印紙税・GST・DP手数料をリスク予算に含める。オフライン動作。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Futures Position Sizer]({{ '/ja/skills/futures-position-sizer/' | relative_url }})** | 方向・エントリー・ストップから先物のコントラクト数を計算。検証済みの23銘柄契約仕様テーブル（乗数・ティックサイズ・ティック価値）を使用し、明示フラグまたはcontrarian-setup-gateのREADY_FOR_PLAN引き継ぎに対応。Beta。オフラインで動作 | <span class="badge badge-free">API不要</span> |
 | **[Breakout Trade Planner]({{ '/ja/skills/breakout-trade-planner/' | relative_url }})** | VCPスクリーナー出力からミネルヴィニ式ブレイクアウトトレードプランを生成。worst-case entryベースのGate、stop-limit bracketテンプレート（pre_place / post_confirm）、ポートフォリオヒート管理 | <span class="badge badge-free">API不要</span> |
+| **[India Breakout Trade Planner]({{ '/ja/skills/india-breakout-trade-planner/' | relative_url }})** | India VCPスクリーナー出力からルピー建てのミネルヴィニ式ブレイクアウトプランを作成。NSEティックに丸めたトリガー・上限・損切り・目標、リスク予算に含めたデリバリー手数料、売買代金・現金・セクター・ポートフォリオヒートの上限、ペーパー台帳用の注文を出力。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Parabolic Short Trade Planner]({{ '/ja/skills/parabolic-short-trade-planner/' | relative_url }})** | Parabolic Short 候補の日次スクリーナー（5因子加重スコア）と寄り前プラン生成器。候補ごとに3種類のトリガー（5min ORL ブレイク / First Red 5-min / VWAP fail）を条件付きプランとして出力。Alpaca ETB-only ショート確認は `requests` 直叩き（SDK 非依存）、SEC Rule 201 SSR トラッカー、blocking / advisory 分離型 manual confirmation | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">Alpaca任意</span> |
 | **[Exposure Coach]({{ '/ja/skills/exposure-coach/' | relative_url }})** | ブレッド、レジーム、トップリスク、フローの各スキル出力を統合し、エクスポージャー上限（0-100%）、グロース/バリュー傾斜、NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY推奨を含むマーケットポスチャーサマリーを生成 | <span class="badge badge-free">API不要</span> |
 | **[India Exposure Coach]({{ '/ja/skills/india-exposure-coach/' | relative_url }})** | インド市場のポジション方針。India breadth・distribution・FTDレポートとNIFTYトレンド、INDIA VIX、PERパーセンタイル、任意のFII/DIIフローから、エクスポージャー上限とNEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITYを判定。ベータ | <span class="badge badge-free">API不要</span> |
@@ -327,6 +329,7 @@ permalink: /ja/skill-catalog/
 - **[India VCP Screener]({{ '/ja/skills/india-vcp-screener/' | relative_url }})** - 無料のNSEデータでNifty 500のミネルヴィニVCPを検出
 - **[India Stockbee Momentum Burst Screener]({{ '/ja/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** - サーキット・売買代金チェック付きの3〜5日モメンタムバースト
 - **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** - NSE銘柄の調整期間を業種・規模区分別に分析
+- **[India Breakout Trade Planner]({{ '/ja/skills/india-breakout-trade-planner/' | relative_url }})** - NSEのVCPブレイクアウトのエントリー・損切り・目標・株数
 - **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
 - **[India Paper Ledger]({{ '/ja/skills/india-paper-ledger/' | relative_url }})** - 日足約定でNSE銘柄をルピー建てでペーパートレード
 - **[India Market Breadth Analyzer]({{ '/ja/skills/india-market-breadth-analyzer/' | relative_url }})** - NSE全体の上昇の広がりを0-100でスコア化
@@ -372,6 +375,7 @@ permalink: /ja/skill-catalog/
 | FTD Detector | 必須 | - | - |
 | Futures Position Sizer | - | - | - |
 | IBD Distribution Day Monitor | 必須 | - | - |
+| India Breakout Trade Planner | - | - | - |
 | India Dividend Screener | - | - | - |
 | India Downtrend Duration Analyzer | - | - | - |
 | India Earnings Calendar | - | - | - |

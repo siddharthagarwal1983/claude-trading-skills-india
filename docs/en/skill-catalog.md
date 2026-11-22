@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 87 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 88 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -74,6 +74,7 @@ A comprehensive catalog of all 87 Claude Trading Skills organized by category. B
 | `futures-position-sizer` | `workflow_step` | — |
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
+| `india-breakout-trade-planner` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-dividend-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
 | `india-earnings-calendar` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -218,6 +219,7 @@ A comprehensive catalog of all 87 Claude Trading Skills organized by category. B
 | **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** | Rupee position sizing for NSE delivery trades: whole shares, SME lots, tick-rounded ATR stops, and STT / exchange / SEBI / stamp / GST / DP charges counted inside the risk budget. Works offline. Beta | <span class="badge badge-free">No API</span> |
 | **[Futures Position Sizer]({{ '/en/skills/futures-position-sizer/' | relative_url }})** | Contract-based futures position sizing from direction/entry/stop using a verified 23-market contract-spec table (multiplier, tick size, tick value). Explicit flags or contrarian-setup-gate READY_FOR_PLAN handoff. Beta. Works offline | <span class="badge badge-free">No API</span> |
 | **[Breakout Trade Planner]({{ '/en/skills/breakout-trade-planner/' | relative_url }})** | Generates Minervini-style breakout trade plans from VCP screener output. Worst-case entry Gate, stop-limit bracket templates (pre_place / post_confirm), portfolio heat management | <span class="badge badge-free">No API</span> |
+| **[India Breakout Trade Planner]({{ '/en/skills/india-breakout-trade-planner/' | relative_url }})** | Minervini breakout plans from India VCP screener output in rupees: tick-rounded trigger/cap/stop/target, delivery charges inside the risk budget, turnover, cash, sector and heat caps, and ready paper-ledger orders. Beta | <span class="badge badge-free">No API</span> |
 | **[Parabolic Short Trade Planner]({{ '/en/skills/parabolic-short-trade-planner/' | relative_url }})** | Daily Parabolic Short screener (5-factor weighted score) plus pre-market plan generator that emits three conditional triggers per candidate (5-min ORL break, first red 5-min, VWAP fail). Alpaca ETB-only short check via `requests` (no SDK), SEC Rule 201 SSR tracker, blocking vs advisory manual confirmation reasons | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">Alpaca Optional</span> |
 | **[Exposure Coach]({{ '/en/skills/exposure-coach/' | relative_url }})** | Synthesizes outputs from breadth, regime, top-risk, and flow skills into a one-page Market Posture summary with net exposure ceiling (0-100%), growth-vs-value bias, and NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY recommendation | <span class="badge badge-free">No API</span> |
 | **[India Exposure Coach]({{ '/en/skills/india-exposure-coach/' | relative_url }})** | Indian market posture: exposure ceiling and NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY from India breadth, distribution and FTD reports plus NIFTY trend, INDIA VIX, P/E percentile and optional FII/DII flows. Beta | <span class="badge badge-free">No API</span> |
@@ -330,6 +332,7 @@ A comprehensive catalog of all 87 Claude Trading Skills organized by category. B
 - **[India VCP Screener]({{ '/en/skills/india-vcp-screener/' | relative_url }})** -- Minervini VCP setups in the Nifty 500 on free NSE data
 - **[India Stockbee Momentum Burst Screener]({{ '/en/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** -- 3-5 day momentum bursts with circuit and turnover checks
 - **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** -- How long NSE corrections last by industry and size tier
+- **[India Breakout Trade Planner]({{ '/en/skills/india-breakout-trade-planner/' | relative_url }})** -- Entry, stop, target and size for NSE VCP breakouts
 - **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
 - **[India Paper Ledger]({{ '/en/skills/india-paper-ledger/' | relative_url }})** -- Paper-trade NSE stocks in rupees with end-of-day fills
 - **[India Market Breadth Analyzer]({{ '/en/skills/india-market-breadth-analyzer/' | relative_url }})** -- How broad the NSE move is, scored 0-100
@@ -375,6 +378,7 @@ A comprehensive catalog of all 87 Claude Trading Skills organized by category. B
 | FTD Detector | Required | -- | -- |
 | Futures Position Sizer | -- | -- | -- |
 | IBD Distribution Day Monitor | Required | -- | -- |
+| India Breakout Trade Planner | -- | -- | -- |
 | India Dividend Screener | -- | -- | -- |
 | India Downtrend Duration Analyzer | -- | -- | -- |
 | India Earnings Calendar | -- | -- | -- |

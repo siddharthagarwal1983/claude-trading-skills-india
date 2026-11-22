@@ -3,7 +3,7 @@ layout: default
 title: "India Paper Ledger"
 grand_parent: English
 parent: Skill Guides
-nav_order: 44
+nav_order: 45
 lang_peer: /ja/skills/india-paper-ledger/
 permalink: /en/skills/india-paper-ledger/
 generated: true
@@ -105,6 +105,15 @@ uv run python skills/india-paper-ledger/scripts/india_paper_ledger.py buy \
 # From an india-position-sizer report (qty, entry and stop taken from the report)
 uv run python skills/india-paper-ledger/scripts/india_paper_ledger.py buy \
   --symbol TCS --type limit --sizer-report reports/india_position_sizer_2026-11-22_201500.json
+```
+
+From an `india-breakout-trade-planner` plan, place every actionable order at once
+(or `--symbols` to choose). Orders whose planned session has already opened are
+refused, and symbols with an open paper order or position are skipped:
+
+```bash
+uv run python skills/india-paper-ledger/scripts/india_paper_ledger.py place-plan \
+  --plan reports/india_breakout_trade_plan_2026-11-20_200000.json
 ```
 
 - `--type`: `close`, `limit`, `stop`, `stop-limit` (`--limit` is the cap). Default

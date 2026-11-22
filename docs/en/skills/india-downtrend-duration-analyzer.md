@@ -3,7 +3,7 @@ layout: default
 title: "India Downtrend Duration Analyzer"
 grand_parent: English
 parent: Skill Guides
-nav_order: 37
+nav_order: 38
 lang_peer: /ja/skills/india-downtrend-duration-analyzer/
 permalink: /en/skills/india-downtrend-duration-analyzer/
 generated: true

@@ -549,6 +549,67 @@ class PaperLedger:
             self._save_orders(orders)
         return order
 
+    def place_plan(
+        self,
+        plan: dict,
+        *,
+        symbols: list | None = None,
+        placed_at: datetime | None = None,
+        source: str | None = None,
+    ) -> dict:
+        """Place the actionable paper orders of an india-breakout-trade-planner plan.
+
+        Skips symbols that already have an open paper order or position, and
+        any order whose planned session has already opened (re-run the planner).
+        """
+        if not isinstance(plan, dict) or plan.get("skill") != "india-breakout-trade-planner":
+            raise ValueError("not an india-breakout-trade-planner plan (skill field mismatch)")
+        placed_at = placed_at or self._now_fn()
+        wanted = {safe_symbol(s) for s in symbols} if symbols else None
+        busy = {o["symbol"] for o in self.orders() if o["status"] == "OPEN"}
+        busy |= {p["symbol"] for p in self.positions().values()}
+        placed, skipped = [], []
+        for item in plan.get("actionable_orders", []):
+            po = item["paper_order"]
+            sym = safe_symbol(po["symbol"])
+            if wanted is not None and sym not in wanted:
+                continue
+            if sym in busy:
+                skipped.append(
+                    {"symbol": sym, "reason": "already has an open paper order or position"}
+                )
+                continue
+            session = item.get("plan_valid_for_session") or plan.get("plan_valid_for_session")
+            first = eng.first_eligible_date(po["order_type"], placed_at).isoformat()
+            if session and first > session:
+                skipped.append(
+                    {
+                        "symbol": sym,
+                        "reason": (
+                            f"plan was for the {session} session, which has already opened; "
+                            "re-run the planner on fresh screener data"
+                        ),
+                    }
+                )
+                continue
+            order = self.place_entry(
+                sym,
+                po["qty"],
+                stop=po["stop"],
+                order_type=po["order_type"],
+                limit=po.get("limit"),
+                trigger=po.get("trigger"),
+                target=po.get("target"),
+                valid_sessions=po.get("valid_sessions"),
+                thesis_type=po.get("thesis_type", "pivot_breakout"),
+                thesis=po.get("thesis"),
+                placed_at=placed_at,
+                source_report=source,
+            )
+            busy.add(sym)
+            placed.append(order)
+        return {"placed": placed, "skipped": skipped}
+
     # ------------------------------------------------------------------ thesis bridge
 
     def _load_thesis(self, thesis_id: str) -> dict:

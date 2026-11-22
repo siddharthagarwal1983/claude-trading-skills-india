@@ -68,6 +68,15 @@ uv run python skills/india-paper-ledger/scripts/india_paper_ledger.py buy \
   --symbol TCS --type limit --sizer-report reports/india_position_sizer_2026-11-22_201500.json
 ```
 
+From an `india-breakout-trade-planner` plan, place every actionable order at once
+(or `--symbols` to choose). Orders whose planned session has already opened are
+refused, and symbols with an open paper order or position are skipped:
+
+```bash
+uv run python skills/india-paper-ledger/scripts/india_paper_ledger.py place-plan \
+  --plan reports/india_breakout_trade_plan_2026-11-20_200000.json
+```
+
 - `--type`: `close`, `limit`, `stop`, `stop-limit` (`--limit` is the cap). Default
   validity is 1 session for `close` and 10 for the others (`--valid-sessions`).
 - `--stop-basis close` exits only on a close below the stop (intraday wicks ignored).
@@ -149,6 +158,8 @@ Read `references/fill_rules.md` before explaining a specific fill.
 
 ## Combining with Other Skills
 
+- `india-breakout-trade-planner` → `place-plan --plan` (VCP breakout plans); give the
+  planner this skill's JSON report (`--ledger-report`) so heat, cash and held names count.
 - `india-position-sizer` → `buy --sizer-report` (shares, entry, stop).
 - `india-exposure-coach` → check the posture before adding new paper risk.
 - `trader-memory-core` review/postmortem commands work on `--state-dir state/india-paper/theses`
@@ -166,8 +177,8 @@ Read `references/fill_rules.md` before explaining a specific fill.
 
 ## Resources
 
-- `scripts/india_paper_ledger.py` — CLI (init, buy, sell, set-exit, cancel, process, status, orders).
+- `scripts/india_paper_ledger.py` — CLI (init, buy, place-plan, sell, set-exit, cancel, process, status, orders).
 - `scripts/paper_ledger.py` — ledger state, session processing, trader-memory-core bridge, reports.
-- `scripts/paper_engine.py` — pure fill rules, charges, eligibility timing, corporate-action parsing.
-- `scripts/_india_data.py` — vendored NSE data module (bars, cache, sessions).
+- `scripts/paper_engine.py` — pure fill rules, eligibility timing, corporate-action parsing (charges from `_india_data.py`).
+- `scripts/_india_data.py` — vendored NSE data module (bars, cache, sessions, delivery charges, tick sizes).
 - `references/fill_rules.md` — complete fill, timing and charge rules with examples.

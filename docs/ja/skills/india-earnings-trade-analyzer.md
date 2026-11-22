@@ -3,7 +3,7 @@ layout: default
 title: "India Earnings Trade Analyzer"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 39
+nav_order: 40
 lang_peer: /en/skills/india-earnings-trade-analyzer/
 permalink: /ja/skills/india-earnings-trade-analyzer/
 generated: true

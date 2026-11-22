@@ -567,3 +567,70 @@ def test_format_inr():
     assert pl.format_inr(1234567.5) == "₹12,34,567.50"
     assert pl.format_inr(-950) == "-₹950.00"
     assert pl.format_inr(None) == "—"
+
+
+# --------------------------------------------------------------------------- breakout plans
+
+
+def breakout_plan(*symbols, session="2026-11-23"):
+    orders = []
+    for sym in symbols:
+        orders.append(
+            {
+                "symbol": sym,
+                "plan_valid_for_session": session,
+                "paper_order": {
+                    "symbol": sym,
+                    "qty": 10,
+                    "order_type": "STOP_LIMIT",
+                    "trigger": 1028.0,
+                    "limit": 1040.0,
+                    "stop": 990.0,
+                    "target": 1100.0,
+                    "valid_sessions": 1,
+                    "thesis_type": "pivot_breakout",
+                    "thesis": f"VCP breakout in {sym}",
+                },
+            }
+        )
+    return {
+        "schema_version": "1.0",
+        "skill": "india-breakout-trade-planner",
+        "plan_valid_for_session": session,
+        "actionable_orders": orders,
+    }
+
+
+def test_place_plan_places_actionable_orders(ledger):
+    result = ledger.place_plan(
+        breakout_plan("RELIANCE", "M&M"), placed_at=placed(), source="plan.json"
+    )
+    assert [o["symbol"] for o in result["placed"]] == ["RELIANCE", "M&M"]
+    order = result["placed"][0]
+    assert order["order_type"] == "STOP_LIMIT"
+    assert order["trigger"] == 1028.0 and order["limit"] == 1040.0
+    assert order["source_report"] == "plan.json"
+    assert thesis(ledger, order["thesis_id"])["thesis_statement"] == "VCP breakout in RELIANCE"
+
+
+def test_place_plan_symbol_filter_and_duplicates(ledger):
+    ledger.place_entry("RELIANCE", 5, stop=900, placed_at=placed())
+    result = ledger.place_plan(
+        breakout_plan("RELIANCE", "M&M", "TCS"), symbols=["RELIANCE", "M&M"], placed_at=placed()
+    )
+    assert [o["symbol"] for o in result["placed"]] == ["M&M"]
+    assert result["skipped"] == [
+        {"symbol": "RELIANCE", "reason": "already has an open paper order or position"}
+    ]
+
+
+def test_place_plan_refuses_stale_plan(ledger):
+    late = placed("2026-11-23", 10, 0)  # after the open of the plan's session
+    result = ledger.place_plan(breakout_plan("RELIANCE"), placed_at=late)
+    assert result["placed"] == []
+    assert "re-run" in result["skipped"][0]["reason"]
+
+
+def test_place_plan_rejects_other_files(ledger):
+    with pytest.raises(ValueError, match="india-breakout-trade-planner"):
+        ledger.place_plan({"skill": "vcp"})

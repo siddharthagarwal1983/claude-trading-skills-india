@@ -830,3 +830,74 @@ def test_normalize_results_events_accepts_dalalos_and_drishti():
     ]
     assert events[1]["quarter"] == "q2_27" and events[1]["company"] == "Carver Roboweld Ltd"
     assert ind.normalize_results_events(None) == []
+
+
+# --------------------------------------------------------------------------- ticks and charges
+
+
+@pytest.mark.parametrize(
+    "price,tick",
+    [
+        (49.99, 0.01),
+        (249.99, 0.01),
+        (250.0, 0.05),
+        (1000.0, 0.05),
+        (1000.05, 0.10),
+        (5000.0, 0.10),
+        (5000.5, 0.50),
+        (10000.0, 0.50),
+        (10001.0, 1.00),
+        (20000.0, 1.00),
+        (20005.0, 5.00),
+    ],
+)
+def test_nse_tick_size_bands(price, tick):
+    assert ind.nse_tick_size(price) == tick
+
+
+def test_nse_tick_size_rejects_non_positive():
+    with pytest.raises(ValueError):
+        ind.nse_tick_size(0)
+
+
+def test_round_to_tick_directions():
+    assert ind.round_to_tick(435.97, "up") == 436.0
+    assert ind.round_to_tick(435.97, "down") == 435.95
+    assert ind.round_to_tick(435.97, "nearest") == 435.95
+    assert ind.round_to_tick(1234.56, "up") == 1234.6
+    assert ind.round_to_tick(1234.56, "down") == 1234.5
+    assert ind.round_to_tick(123.456, "up") == 123.46
+    assert ind.round_to_tick(435.95, "up") == 435.95  # already on the grid
+    assert ind.round_to_tick(7777.0, "down", tick=0.5) == 7777.0
+
+
+def test_round_to_tick_rejects_bad_direction():
+    with pytest.raises(ValueError):
+        ind.round_to_tick(100.0, "sideways")
+
+
+def test_delivery_leg_charges_buy_and_sell():
+    buy = ind.delivery_leg_charges(100_000, buy=True)
+    assert buy["stt"] == 100.0
+    assert buy["stamp_duty"] == 15.0
+    assert buy["exchange_txn"] == 2.97
+    assert buy["gst"] == 0.55
+    assert buy["dp_charge"] == 0.0
+    assert buy["total"] == 118.62
+    sell = ind.delivery_leg_charges(100_000, buy=False, brokerage=20, dp_charge=15.93)
+    assert sell["stamp_duty"] == 0.0
+    assert sell["brokerage"] == 20.0
+    assert sell["gst"] == 4.15
+    assert sell["total"] == 143.15
+
+
+def test_delivery_rates_are_statutory():
+    rates = {k: str(v) for k, v in ind.DELIVERY_CHARGES.items()}
+    assert rates == {
+        "stt_rate": "0.001",
+        "exchange_txn_rate": "0.0000297",
+        "sebi_fee_rate": "0.000001",
+        "stamp_duty_buy_rate": "0.00015",
+        "gst_rate": "0.18",
+    }
+    assert ind.DEFAULT_DP_CHARGE == 15.93

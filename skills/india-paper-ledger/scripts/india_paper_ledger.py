@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Paper-trade NSE delivery swing trades in rupees with end-of-day fills.
 
-Subcommands: init, buy, sell, set-exit, cancel, process, status, orders.
+Subcommands: init, buy, place-plan, sell, set-exit, cancel, process, status, orders.
 Fills come from official NSE end-of-day bars (free NSE bhavcopy MCP over HTTP,
 cached in .cache/india-data/). Positions are journaled as trader-memory-core
 theses under <state-dir>/theses/.
@@ -122,6 +122,13 @@ def build_parser() -> argparse.ArgumentParser:
     set_exit.add_argument("--target", type=finite_float)
     set_exit.add_argument("--stop-basis", choices=["intraday", "close"])
 
+    place_plan = sub.add_parser(
+        "place-plan", help="Place actionable orders from an india-breakout-trade-planner plan"
+    )
+    place_plan.add_argument("--plan", required=True, help="india_breakout_trade_plan_*.json")
+    place_plan.add_argument("--symbols", nargs="+", help="Only these symbols (default: all)")
+    place_plan.add_argument("--placed-at", type=iso_datetime)
+
     cancel = sub.add_parser("cancel", help="Cancel an open order")
     cancel.add_argument("--order-id", required=True)
     cancel.add_argument("--reason", default="cancelled by user")
@@ -214,6 +221,15 @@ def run(args, ledger_factory) -> int:
         _print(
             ledger.set_exit(
                 args.thesis_id, stop=args.stop, target=args.target, stop_basis=args.stop_basis
+            )
+        )
+        return 0
+    if args.command == "place-plan":
+        with open(args.plan, encoding="utf-8") as handle:
+            plan = json.load(handle)
+        _print(
+            ledger.place_plan(
+                plan, symbols=args.symbols, placed_at=args.placed_at, source=args.plan
             )
         )
         return 0
