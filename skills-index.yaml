@@ -2665,3 +2665,115 @@ skills:
   - exposure_ceiling
   - market_posture
   workflows: []
+- id: india-earnings-calendar
+  display_name: India Earnings Calendar
+  category: meta
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: List NSE results dates for a Nifty universe with tier, industry and liquidity, flag holdings
+    that report, and keep a free local results-date archive.
+  timeframe: event-driven
+  difficulty: beginner
+  integrations:
+  - id: drishti
+    type: mcp
+    requirement: recommended
+    note: Drishti get_upcoming_earnings (free call) fetched in a Claude session and saved to JSON
+  - id: dalalos
+    type: mcp
+    requirement: optional
+    note: DalalOS results calendar as a credit-metered fallback
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: optional
+    note: Free NSE prices for close and turnover enrichment
+  inputs:
+  - results_calendar_json
+  outputs:
+  - upcoming_results_report
+  - results_date_archive
+  workflows: []
+- id: india-earnings-trade-analyzer
+  display_name: India Earnings Trade Analyzer
+  category: advanced-satellite
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Score recent NSE results reactions with the 5-factor model (two-day reaction, pre-results
+    trend, volume, MA200, MA50) and grade A-D using free NSE prices.
+  timeframe: event-driven
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day history over HTTP; no API key
+  - id: results_calendar_archive
+    type: local_file
+    requirement: required
+    note: Results dates from the india-earnings-calendar archive or a saved DalalOS/Drishti file
+  inputs:
+  - results_calendar_json
+  - nse_daily_ohlcv
+  outputs:
+  - earnings_reaction_grades
+  workflows: []
+- id: india-dividend-screener
+  display_name: India Dividend Screener
+  category: dividend-income
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Screen NSE dividend payers on yield, fiscal-year consistency, growth, cuts, P/E and RSI
+    pullback, with dividends restated for later bonuses and splits.
+  timeframe: weekly
+  difficulty: beginner
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free NSE prices and five years of corporate actions over HTTP; no API key
+  - id: dalalos
+    type: mcp
+    requirement: optional
+    note: One DalalOS screen_stocks reply (~1 credit) for a fundamentals-filtered candidate list
+  inputs:
+  - nse_corporate_actions
+  - dalalos_screen_json
+  outputs:
+  - dividend_candidates
+  workflows: []
+- id: india-stock-analysis
+  display_name: India Stock Analysis
+  category: trade-planning
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Research one NSE stock from a free NSE fact sheet plus about one DalalOS company report and
+    web news, producing a sourced note with bull and bear cases.
+  timeframe: event-driven
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free NSE prices, corporate actions and index history for the fact sheet
+  - id: dalalos
+    type: mcp
+    requirement: recommended
+    note: DalalOS get_company_report (~1 credit, cached 7 days) for results, valuation and ownership
+  - id: websearch
+    type: web
+    requirement: recommended
+    note: Recent news and management commentary
+  inputs:
+  - nse_symbol
+  outputs:
+  - stock_fact_sheet
+  - research_note
+  workflows: []

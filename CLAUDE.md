@@ -259,12 +259,16 @@ The table below is **auto-generated** from `skills-index.yaml` by `scripts/gener
 | **Finviz Screener** | ❌ Not used | 🟡 Optional | ❌ Not used | FINVIZ Elite API |
 | **Futures Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation; consumes contrarian-setup-gate's READY_FOR_PLAN report or explicit direction/entry/stop flags; works offline |
 | **IBD Distribution Day Monitor** | ✅ Required | ❌ Not used | ❌ Not used | Financial Modeling Prep API |
+| **India Dividend Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free NSE prices and five years of corporate actions over HTTP; no API key; One DalalOS screen_stocks reply (~1 credit) for a fundamentals-filtered candidate list |
 | **India Downtrend Duration Analyzer** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for universe, industries, and size tiers |
+| **India Earnings Calendar** | ❌ Not used | ❌ Not used | ❌ Not used | Drishti get_upcoming_earnings (free call) fetched in a Claude session and saved to JSON; DalalOS results calendar as a credit-metered fallback; Free NSE prices for close and turnover enrichment |
+| **India Earnings Trade Analyzer** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history over HTTP; no API key; Results dates from the india-earnings-calendar archive or a saved DalalOS/Drishti file |
 | **India Exposure Coach** | ❌ Not used | ❌ Not used | ❌ Not used | NIFTY 50 trend, INDIA VIX and P/E context from free NSE data; --no-fetch skips it; JSON reports from the India breadth, distribution-day and FTD skills; FII/DII daily net flow JSON, e.g. saved from DalalOS inside a Claude session |
 | **India FTD Detector** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE index history with real traded volume over HTTP; no API key |
 | **India IBD Distribution Day Monitor** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE index history with real traded volume over HTTP; no API key |
 | **India Market Breadth Analyzer** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history, corporate actions and market A/D over HTTP; no API key; NSE index constituent CSV files for the breadth universe |
 | **India Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation with statutory NSE delivery charge rates; works offline |
+| **India Stock Analysis** | ❌ Not used | ❌ Not used | ❌ Not used | Free NSE prices, corporate actions and index history for the fact sheet; DalalOS get_company_report (~1 credit, cached 7 days) for results, valuation and ownership; Recent news and management commentary |
 | **India Stockbee Momentum Burst Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files when scanning a Nifty universe; Offline OHLCV JSON for no-network screening and tests |
 | **India VCP Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for the screening universe |
 | **Institutional Flow Tracker** | ✅ Required | ❌ Not used | ❌ Not used | Financial Modeling Prep API |

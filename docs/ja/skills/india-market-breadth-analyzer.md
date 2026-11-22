@@ -3,7 +3,7 @@ layout: default
 title: "India Market Breadth Analyzer"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 40
+nav_order: 43
 lang_peer: /en/skills/india-market-breadth-analyzer/
 permalink: /ja/skills/india-market-breadth-analyzer/
 generated: true

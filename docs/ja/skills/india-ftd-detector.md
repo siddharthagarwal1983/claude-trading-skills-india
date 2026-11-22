@@ -3,7 +3,7 @@ layout: default
 title: "India FTD Detector"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 38
+nav_order: 41
 lang_peer: /en/skills/india-ftd-detector/
 permalink: /ja/skills/india-ftd-detector/
 generated: true

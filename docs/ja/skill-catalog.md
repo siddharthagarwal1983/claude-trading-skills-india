@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全82個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全86個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -74,12 +74,16 @@ permalink: /ja/skill-catalog/
 | `futures-position-sizer` | `workflow_step` | — |
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
+| `india-dividend-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-earnings-calendar` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-earnings-trade-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-exposure-coach` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-ftd-detector` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-ibd-distribution-day-monitor` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
@@ -144,9 +148,11 @@ permalink: /ja/skill-catalog/
 | **[Stockbee Exhaustion Hammer Screener]({{ '/ja/skills/stockbee-exhaustion-hammer-screener/' | relative_url }})** | Stockbee型の売り枯れハンマー候補をスクリーニング。流動性、直前モメンタム、押し目の深さ、undercut/reclaim、長い下ヒゲ、終値位置、ストップまでのリスクを評価する候補生成専用スキル | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">ローカルJSON任意</span> |
 | **Finviz Screener** | 自然言語（日本語/英語）でFinVizスクリーニング条件を構築。500以上のフィルターコードに対応し、Chromeで結果を表示。**テーマクロス検索**（30以上のテーマ × 268サブテーマ）で「AI × 物流」「データセンター × 電力」等のナラティブベース検索が可能 | <span class="badge badge-optional">FINVIZ任意</span> |
 | **Value Dividend Screener** | 高配当バリュー株をスクリーニング。P/E、P/B、配当利回り、3年成長トレンドで多段階フィルタリング | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">FINVIZ推奨</span> |
+| **[India Dividend Screener]({{ '/ja/skills/india-dividend-screener/' | relative_url }})** | NSE配当株の質を評価（利回り、会計年度ごとの継続性、増配率、減配、PER〔任意のDalalOSスクリーン〕、RSI押し目）。配当額はその後の株式分割・ボーナスで調整。ベータ | <span class="badge badge-free">API不要</span> |
 | **[US Undervalued Growth Screener]({{ '/ja/skills/us-undervalued-growth-screener/' | relative_url }})** | Claude Code向け米国中小型GARPスクリーナー。FMP直接取得パイプラインとローカルキャッシュ、FY1予想正規化、流動性検証、フォワード同一基準バリュエーション、SBC調整FCF、公開前監査、自己完結型エビデンスバンドル | <span class="badge badge-optional">FMP推奨</span> |
 | **Dividend Growth Pullback Screener** | 年間配当成長12%以上の高品質配当成長株で、RSI 40以下のプルバック中の銘柄を検出 | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">FINVIZ推奨</span> |
 | **Earnings Trade Analyzer** | 直近決算銘柄を5要素加重スコアリング（ギャップ、トレンド、出来高、MA200、MA50）でA-Dグレード評価 | <span class="badge badge-api">FMP必須</span> |
+| **[India Earnings Trade Analyzer]({{ '/ja/skills/india-earnings-trade-analyzer/' | relative_url }})** | 無料のNSE価格でNSE銘柄の決算後反応を5要素で採点。発表時刻が非公開のため2日間の反応を使用し、既定では上昇反応のみ評価。ルピー建て流動性フィルター付き。ベータ | <span class="badge badge-free">API不要</span> |
 | **PEAD Screener** | 決算ギャップアップ銘柄のPost-Earnings Announcement Drift パターンを週足分析。MONITORING→SIGNAL_READY→BREAKOUTのステージ管理 | <span class="badge badge-api">FMP必須</span> |
 | **FTD Detector** | William O'Neilの手法でFollow-Through Day シグナルを検出。市場底打ち確認のためのデュアルインデックス追跡 | <span class="badge badge-api">FMP必須</span> |
 | **[India FTD Detector]({{ '/ja/skills/india-ftd-detector/' | relative_url }})** | NIFTY 50と第2のNSE指数（既定NIFTY 500）でO'Neil式フォロースルーデーを検出。NSE指数の実出来高を使用し、ムフラット取引を除外、FTD後の健全性と品質スコアを算出。無料のNSEデータ。ベータ | <span class="badge badge-free">API不要</span> |
@@ -214,7 +220,9 @@ permalink: /ja/skill-catalog/
 | **[Exposure Coach]({{ '/ja/skills/exposure-coach/' | relative_url }})** | ブレッド、レジーム、トップリスク、フローの各スキル出力を統合し、エクスポージャー上限（0-100%）、グロース/バリュー傾斜、NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY推奨を含むマーケットポスチャーサマリーを生成 | <span class="badge badge-free">API不要</span> |
 | **[India Exposure Coach]({{ '/ja/skills/india-exposure-coach/' | relative_url }})** | インド市場のポジション方針。India breadth・distribution・FTDレポートとNIFTYトレンド、INDIA VIX、PERパーセンタイル、任意のFII/DIIフローから、エクスポージャー上限とNEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITYを判定。ベータ | <span class="badge badge-free">API不要</span> |
 | **[US Stock Analysis]({{ '/ja/skills/us-stock-analysis/' | relative_url }})** | ファンダメンタル、テクニカル、同業比較を網羅した包括的米国株リサーチアシスタント | <span class="badge badge-free">API不要</span> |
+| **[India Stock Analysis]({{ '/ja/skills/india-stock-analysis/' | relative_url }})** | NSE個別銘柄リサーチ。無料のNSEファクトシート（トレンド、NIFTY 500比の相対強度、配当、決算日）に約1クレジットのDalalOS企業レポートとWebニュースを加え、出典付きの強気・弱気シナリオを作成。ベータ | <span class="badge badge-free">API不要</span> |
 | **Earnings Calendar** | FMP APIで今後の決算発表を取得。時価総額$2B以上の中大型株に焦点 | <span class="badge badge-api">FMP必須</span> |
+| **[India Earnings Calendar]({{ '/ja/skills/india-earnings-calendar/' | relative_url }})** | Niftyユニバースの今後のNSE決算発表日を規模区分・業種・売買代金付きで表示し、保有銘柄の決算を警告。Drishtiの無料API取得結果をローカルに蓄積。ベータ | <span class="badge badge-free">API不要</span> |
 | **Economic Calendar Fetcher** | FMP APIで7-90日間の経済イベントを取得。インパクト評価付き時系列レポート | <span class="badge badge-api">FMP必須</span> |
 | **[FXMacroData Calendar]({{ '/ja/skills/fxmacrodata-calendar/' | relative_url }})** | FXMacroDataを使い公式ソースのマクロ発表カレンダーイベントを取得。トレードプランニングとイベントリスクフィルタに利用。USDの公開カレンダー行はキーなしで動作。Beta | <span class="badge badge-free">API不要</span> <span class="badge badge-optional">FXMacroDataキー任意</span> |
 | **[Pre-Trade Discipline Gate]({{ '/ja/skills/pre-trade-discipline-gate/' | relative_url }})** | 注文計画を進める前に決定論的な事前チェックリストとフェイルクローズド判断ゲートを適用 | <span class="badge badge-free">API不要</span> |
@@ -322,6 +330,10 @@ permalink: /ja/skill-catalog/
 - **[India IBD Distribution Day Monitor]({{ '/ja/skills/india-ibd-distribution-day-monitor/' | relative_url }})** - NIFTY 50 / NIFTY 500の機関の売り抜けを検出
 - **[India FTD Detector]({{ '/ja/skills/india-ftd-detector/' | relative_url }})** - NSEの調整後の底打ち確認
 - **[India Exposure Coach]({{ '/ja/skills/india-exposure-coach/' | relative_url }})** - インド株の毎日のエクスポージャー上限と新規エントリー判定
+- **[India Earnings Calendar]({{ '/ja/skills/india-earnings-calendar/' | relative_url }})** - 近く決算を迎えるNifty銘柄と保有銘柄の確認
+- **[India Earnings Trade Analyzer]({{ '/ja/skills/india-earnings-trade-analyzer/' | relative_url }})** - NSEの決算後の好反応銘柄
+- **[India Dividend Screener]({{ '/ja/skills/india-dividend-screener/' | relative_url }})** - 分割・ボーナス調整済み利回りで配当株を選別
+- **[India Stock Analysis]({{ '/ja/skills/india-stock-analysis/' | relative_url }})** - NSE個別銘柄のリサーチノート
 
 ---
 
@@ -357,12 +369,16 @@ permalink: /ja/skill-catalog/
 | FTD Detector | 必須 | - | - |
 | Futures Position Sizer | - | - | - |
 | IBD Distribution Day Monitor | 必須 | - | - |
+| India Dividend Screener | - | - | - |
 | India Downtrend Duration Analyzer | - | - | - |
+| India Earnings Calendar | - | - | - |
+| India Earnings Trade Analyzer | - | - | - |
 | India Exposure Coach | - | - | - |
 | India FTD Detector | - | - | - |
 | India IBD Distribution Day Monitor | - | - | - |
 | India Market Breadth Analyzer | - | - | - |
 | India Position Sizer | - | - | - |
+| India Stock Analysis | - | - | - |
 | India Stockbee Momentum Burst Screener | - | - | - |
 | India VCP Screener | - | - | - |
 | Institutional Flow Tracker | 必須 | - | - |

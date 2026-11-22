@@ -559,6 +559,31 @@
       "timeframe": "daily"
     },
     {
+      "category": "dividend-income",
+      "difficulty": "beginner",
+      "display_name": "India Dividend Screener",
+      "id": "india-dividend-screener",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "dalalos",
+          "requirement": "optional",
+          "type": "mcp"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Screen NSE dividend payers on yield, fiscal-year consistency, growth, cuts, P/E and RSI pullback, with dividends restated for later bonuses and splits.",
+      "timeframe": "weekly"
+    },
+    {
       "category": "market-regime",
       "difficulty": "intermediate",
       "display_name": "India Downtrend Duration Analyzer",
@@ -581,6 +606,61 @@
       "status": "beta",
       "summary": "Analyze historical downtrend durations of NSE stocks by industry and Nifty size tier and generate interactive HTML histograms.",
       "timeframe": "research"
+    },
+    {
+      "category": "meta",
+      "difficulty": "beginner",
+      "display_name": "India Earnings Calendar",
+      "id": "india-earnings-calendar",
+      "integrations": [
+        {
+          "id": "drishti",
+          "requirement": "recommended",
+          "type": "mcp"
+        },
+        {
+          "id": "dalalos",
+          "requirement": "optional",
+          "type": "mcp"
+        },
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "optional",
+          "type": "mcp"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "List NSE results dates for a Nifty universe with tier, industry and liquidity, flag holdings that report, and keep a free local results-date archive.",
+      "timeframe": "event-driven"
+    },
+    {
+      "category": "advanced-satellite",
+      "difficulty": "intermediate",
+      "display_name": "India Earnings Trade Analyzer",
+      "id": "india-earnings-trade-analyzer",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "results_calendar_archive",
+          "requirement": "required",
+          "type": "local_file"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Score recent NSE results reactions with the 5-factor model (two-day reaction, pre-results trend, volume, MA200, MA50) and grade A-D using free NSE prices.",
+      "timeframe": "event-driven"
     },
     {
       "category": "market-regime",
@@ -695,6 +775,36 @@
       },
       "status": "beta",
       "summary": "Calculate risk-based position sizes for long NSE delivery trades in rupees, with whole shares, SME lots, tick-rounded ATR stops, and Indian delivery charges inside the risk budget.",
+      "timeframe": "event-driven"
+    },
+    {
+      "category": "trade-planning",
+      "difficulty": "intermediate",
+      "display_name": "India Stock Analysis",
+      "id": "india-stock-analysis",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "dalalos",
+          "requirement": "recommended",
+          "type": "mcp"
+        },
+        {
+          "id": "websearch",
+          "requirement": "recommended",
+          "type": "web"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Research one NSE stock from a free NSE fact sheet plus about one DalalOS company report and web news, producing a sourced note with bull and bear cases.",
       "timeframe": "event-driven"
     },
     {

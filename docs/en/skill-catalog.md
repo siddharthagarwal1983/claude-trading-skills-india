@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 82 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 86 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -74,12 +74,16 @@ A comprehensive catalog of all 82 Claude Trading Skills organized by category. B
 | `futures-position-sizer` | `workflow_step` | — |
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
+| `india-dividend-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-earnings-calendar` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-earnings-trade-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-exposure-coach` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-ftd-detector` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-ibd-distribution-day-monitor` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
@@ -144,9 +148,11 @@ A comprehensive catalog of all 82 Claude Trading Skills organized by category. B
 | **[Stockbee Exhaustion Hammer Screener]({{ '/en/skills/stockbee-exhaustion-hammer-screener/' | relative_url }})** | Stockbee-style selling-exhaustion hammer screening for liquid stocks with prior momentum, pullback depth, undercut/reclaim behavior, long lower-wick reversal geometry, and risk-distance filters. Candidate generation only | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">Local JSON Optional</span> |
 | **[Finviz Screener]({{ '/en/skills/finviz-screener/' | relative_url }})** | Translates natural language (Japanese/English) into FinViz filter URLs. 500+ filter codes across fundamentals, technicals, and descriptives. **Theme cross-screening** (30+ themes × 268 sub-themes) for narrative-based searches like "AI × Logistics" or "Data Centers × Power". Opens results in Chrome | <span class="badge badge-optional">FINVIZ Optional</span> |
 | **Value Dividend Screener** | Multi-phase dividend stock screening: value characteristics (P/E, P/B), income (yield), growth (3-year trends), sustainability, and quality scoring | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">FINVIZ Recommended</span> |
+| **[India Dividend Screener]({{ '/en/skills/india-dividend-screener/' | relative_url }})** | NSE dividend quality: yield, fiscal-year consistency, growth, cuts, P/E (optional DalalOS screen) and RSI pullback, with dividends restated for later bonuses and splits. Beta | <span class="badge badge-free">No API</span> |
 | **[US Undervalued Growth Screener]({{ '/en/skills/us-undervalued-growth-screener/' | relative_url }})** | Claude Code-native GARP screen for US small/mid caps: direct-FMP discovery pipeline with local cache, FY1 estimate normalization, verified liquidity, forward same-basis valuation, SBC-adjusted FCF, prepublication audit, and a self-contained evidence bundle | <span class="badge badge-optional">FMP Recommended</span> |
 | **Dividend Growth Pullback Screener** | Finds dividend growth stocks (12%+ annual growth, 1.5%+ yield) at oversold technical levels (RSI <= 40). Two-stage FINVIZ + FMP pipeline | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">FINVIZ Recommended</span> |
 | **Earnings Trade Analyzer** | Scores post-earnings stocks using 5 weighted factors: Gap Size (25%), Pre-Earnings Trend (30%), Volume Trend (20%), MA200 Position (15%), MA50 Position (10%). A/B/C/D grades | <span class="badge badge-api">FMP Required</span> |
+| **[India Earnings Trade Analyzer]({{ '/en/skills/india-earnings-trade-analyzer/' | relative_url }})** | 5-factor post-results scoring for NSE stocks on free NSE prices; two-day reaction (NSE timing unpublished), positive reactions graded by default, ₹ liquidity gates. Beta | <span class="badge badge-free">No API</span> |
 | **PEAD Screener** | Screens for Post-Earnings Announcement Drift patterns using weekly candle analysis. Stage-based monitoring: MONITORING, SIGNAL_READY, BREAKOUT, EXPIRED | <span class="badge badge-api">FMP Required</span> |
 | **FTD Detector** | Detects Follow-Through Day signals for market bottom confirmation using William O'Neil's methodology. Dual-index tracking with quality scoring (0-100) | <span class="badge badge-api">FMP Required</span> |
 | **[India FTD Detector]({{ '/en/skills/india-ftd-detector/' | relative_url }})** | O'Neil follow-through day detection on NIFTY 50 plus a second NSE index (default NIFTY 500) with real NSE index volume, Muhurat sessions removed, post-FTD health and quality score. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
@@ -214,7 +220,9 @@ A comprehensive catalog of all 82 Claude Trading Skills organized by category. B
 | **[Exposure Coach]({{ '/en/skills/exposure-coach/' | relative_url }})** | Synthesizes outputs from breadth, regime, top-risk, and flow skills into a one-page Market Posture summary with net exposure ceiling (0-100%), growth-vs-value bias, and NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY recommendation | <span class="badge badge-free">No API</span> |
 | **[India Exposure Coach]({{ '/en/skills/india-exposure-coach/' | relative_url }})** | Indian market posture: exposure ceiling and NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY from India breadth, distribution and FTD reports plus NIFTY trend, INDIA VIX, P/E percentile and optional FII/DII flows. Beta | <span class="badge badge-free">No API</span> |
 | **[US Stock Analysis]({{ '/en/skills/us-stock-analysis/' | relative_url }})** | Comprehensive US equity research: fundamentals, technicals, peer comparisons, and structured investment memos with bull/bear cases | <span class="badge badge-free">No API</span> |
+| **[India Stock Analysis]({{ '/en/skills/india-stock-analysis/' | relative_url }})** | Single-stock research for NSE: free NSE fact sheet (trend, RS vs NIFTY 500, dividends, results date) plus ~1 DalalOS company report and web news; sourced note with bull/bear cases. Beta | <span class="badge badge-free">No API</span> |
 | **Earnings Calendar** | Fetches upcoming earnings announcements via FMP API. Focuses on mid-cap+ companies (>$2B market cap), organized by date and timing (BMO/AMC) | <span class="badge badge-api">FMP Required</span> |
+| **[India Earnings Calendar]({{ '/en/skills/india-earnings-calendar/' | relative_url }})** | Upcoming NSE results dates for a Nifty universe with tier, industry and ₹ turnover; flags holdings that report. Local archive fed by Drishti's free upcoming-earnings call. Beta | <span class="badge badge-free">No API</span> |
 | **Economic Calendar Fetcher** | Fetches economic events (FOMC, NFP, CPI, GDP) for 7-90 days via FMP API. Impact assessment (High/Medium/Low) with market implications analysis | <span class="badge badge-api">FMP Required</span> |
 | **[FXMacroData Calendar]({{ '/en/skills/fxmacrodata-calendar/' | relative_url }})** | Fetches official-source macro release-calendar events using FXMacroData for trade planning and event-risk filters. Public USD calendar rows work without a key. Beta | <span class="badge badge-free">No API</span> <span class="badge badge-optional">FXMacroData Key Optional</span> |
 | **[Pre-Trade Discipline Gate]({{ '/en/skills/pre-trade-discipline-gate/' | relative_url }})** | Applies a deterministic pre-trade checklist and fail-closed decision gate before a planned order can proceed | <span class="badge badge-free">No API</span> |
@@ -325,6 +333,10 @@ A comprehensive catalog of all 82 Claude Trading Skills organized by category. B
 - **[India IBD Distribution Day Monitor]({{ '/en/skills/india-ibd-distribution-day-monitor/' | relative_url }})** -- Institutional selling on NIFTY 50 / NIFTY 500
 - **[India FTD Detector]({{ '/en/skills/india-ftd-detector/' | relative_url }})** -- Bottom confirmation after an NSE correction
 - **[India Exposure Coach]({{ '/en/skills/india-exposure-coach/' | relative_url }})** -- Daily exposure ceiling and new-entry decision for Indian stocks
+- **[India Earnings Calendar]({{ '/en/skills/india-earnings-calendar/' | relative_url }})** -- Which Nifty stocks report results soon, and which of your holdings
+- **[India Earnings Trade Analyzer]({{ '/en/skills/india-earnings-trade-analyzer/' | relative_url }})** -- Best post-results reactions on NSE
+- **[India Dividend Screener]({{ '/en/skills/india-dividend-screener/' | relative_url }})** -- Dividend income stocks with bonus/split-correct yields
+- **[India Stock Analysis]({{ '/en/skills/india-stock-analysis/' | relative_url }})** -- Research note on one NSE stock
 
 ---
 
@@ -360,12 +372,16 @@ A comprehensive catalog of all 82 Claude Trading Skills organized by category. B
 | FTD Detector | Required | -- | -- |
 | Futures Position Sizer | -- | -- | -- |
 | IBD Distribution Day Monitor | Required | -- | -- |
+| India Dividend Screener | -- | -- | -- |
 | India Downtrend Duration Analyzer | -- | -- | -- |
+| India Earnings Calendar | -- | -- | -- |
+| India Earnings Trade Analyzer | -- | -- | -- |
 | India Exposure Coach | -- | -- | -- |
 | India FTD Detector | -- | -- | -- |
 | India IBD Distribution Day Monitor | -- | -- | -- |
 | India Market Breadth Analyzer | -- | -- | -- |
 | India Position Sizer | -- | -- | -- |
+| India Stock Analysis | -- | -- | -- |
 | India Stockbee Momentum Burst Screener | -- | -- | -- |
 | India VCP Screener | -- | -- | -- |
 | Institutional Flow Tracker | Required | -- | -- |

@@ -652,6 +652,60 @@ def drop_muhurat_sessions(bars: list) -> tuple:
     return kept, removed
 
 
+def normalize_results_events(payload: Any) -> list:
+    """Results board-meeting dates from DalalOS or Drishti JSON, deduplicated.
+
+    Accepts a DalalOS ``get_market_calendar`` / ``get_upcoming_results`` reply
+    (``{"data": {"events" | "results": [...]}}``, ``nse_symbol`` + ``date`` or
+    ``meeting_date``) or a Drishti ``get_upcoming_earnings`` reply
+    (``{"data": [{"symbol", "date", "quarter", ...}]}``), or a list of either,
+    or several such replies in a list. Rows without an NSE symbol (BSE-only
+    scrips) are skipped. Returns ``[{symbol, date, quarter, company, source}]``
+    sorted by date then symbol.
+    """
+    rows: list = []
+
+    def collect(obj: Any) -> None:
+        if isinstance(obj, list):
+            for item in obj:
+                collect(item)
+            return
+        if not isinstance(obj, dict):
+            return
+        for key in ("data", "events", "results"):
+            if isinstance(obj.get(key), (list, dict)):
+                collect(obj[key])
+                return
+        rows.append(obj)
+
+    collect(payload)
+    seen: dict = {}
+    for row in rows:
+        if row.get("type") not in (None, "results"):
+            continue
+        raw_symbol = row.get("nse_symbol") or row.get("symbol")
+        day = _parse_date(row.get("meeting_date") or row.get("date"))
+        if not raw_symbol or day is None:
+            continue
+        try:
+            symbol = safe_symbol(str(raw_symbol))
+        except ValueError:
+            continue
+        source = "drishti" if "event_id" in row or "bm_desc" in row else "dalalos"
+        key = (symbol, day.isoformat())
+        seen.setdefault(
+            key,
+            {
+                "symbol": symbol,
+                "date": day.isoformat(),
+                "quarter": row.get("quarter"),
+                "company": row.get("company") or row.get("name") or "",
+                "source": source,
+            },
+        )
+    return [seen[k] for k in sorted(seen, key=lambda k: (k[1], k[0]))]
+
+
 # --------------------------------------------------------------------------- cache
 
 

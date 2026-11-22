@@ -3,7 +3,7 @@ layout: default
 title: "India Ibd Distribution Day Monitor"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 39
+nav_order: 42
 lang_peer: /en/skills/india-ibd-distribution-day-monitor/
 permalink: /ja/skills/india-ibd-distribution-day-monitor/
 generated: true

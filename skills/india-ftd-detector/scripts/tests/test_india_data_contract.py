@@ -789,3 +789,44 @@ def test_drop_muhurat_sessions():
     kept, removed = ind.drop_muhurat_sessions(bars)
     assert [b["date"] for b in kept] == ["2024-10-31", "2024-11-04"]
     assert removed == ["2024-11-01"]
+
+
+def test_normalize_results_events_accepts_dalalos_and_drishti():
+    dalalos = {
+        "status": "success",
+        "data": {
+            "events": [
+                {
+                    "date": "2026-11-10",
+                    "type": "results",
+                    "nse_symbol": "ARSSINFRA",
+                    "name": "ARSS",
+                },
+                {"date": "2026-11-10", "type": "results", "bse_code": "517518"},
+                {"date": "2026-11-11", "type": "dividend", "nse_symbol": "TCS"},
+            ]
+        },
+    }
+    upcoming = {"data": {"results": [{"meeting_date": "2026-11-24", "nse_symbol": "elitecon"}]}}
+    drishti = {
+        "data": [
+            {
+                "symbol": "CRL",
+                "date": "2026-11-23T00:00:00+00:00",
+                "quarter": "q2_27",
+                "company": "Carver Roboweld Ltd",
+                "event_id": "x",
+            },
+            {"symbol": "CRL", "date": "2026-11-23T00:00:00+00:00", "event_id": "dup"},
+            {"symbol": "../bad", "date": "2026-11-23"},
+        ],
+        "has_next": False,
+    }
+    events = ind.normalize_results_events([dalalos, upcoming, drishti])
+    assert [(e["symbol"], e["date"], e["source"]) for e in events] == [
+        ("ARSSINFRA", "2026-11-10", "dalalos"),
+        ("CRL", "2026-11-23", "drishti"),
+        ("ELITECON", "2026-11-24", "dalalos"),
+    ]
+    assert events[1]["quarter"] == "q2_27" and events[1]["company"] == "Carver Roboweld Ltd"
+    assert ind.normalize_results_events(None) == []

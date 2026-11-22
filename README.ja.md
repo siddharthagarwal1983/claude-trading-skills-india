@@ -163,7 +163,7 @@ FMP / FINVIZ / Alpaca の有料サブスクをまだ持っていない場合は�
 | Trade Memory | `trader-memory-core`, `signal-postmortem` |
 | Strategy Research | `backtest-expert`, `edge-pipeline-orchestrator` |
 | Advanced Satellite | `parabolic-short-trade-planner`, `earnings-trade-analyzer`, `options-strategy-advisor` |
-| India (NSE) | `india-exposure-coach`, `india-market-breadth-analyzer`, `india-ibd-distribution-day-monitor`, `india-ftd-detector`, `india-vcp-screener`, `india-stockbee-momentum-burst-screener`, `india-position-sizer`, `india-downtrend-duration-analyzer` |
+| India (NSE) | `india-exposure-coach`, `india-market-breadth-analyzer`, `india-ibd-distribution-day-monitor`, `india-ftd-detector`, `india-vcp-screener`, `india-stockbee-momentum-burst-screener`, `india-earnings-calendar`, `india-earnings-trade-analyzer`, `india-dividend-screener`, `india-stock-analysis`, `india-position-sizer`, `india-downtrend-duration-analyzer` |
 
 以下の詳細カタログは `skills-index.yaml` から `scripts/generate_catalog_from_index.py` で**自動生成**されます。スキル説明を更新する場合は `skills-index.yaml` を編集してから generator を再実行（`python3 scripts/generate_catalog_from_index.py`）してください。より見やすい一覧はドキュメントサイトを参照してください。スキルのライフサイクル・テストカバレッジ・実行時ヘルスの自動生成一覧は[品質ダッシュボード](https://tradermonty.github.io/claude-trading-skills/ja/quality-dashboard/)を参照してください。
 
@@ -212,6 +212,7 @@ FMP / FINVIZ / Alpaca の有料サブスクをまだ持っていない場合は�
 | スキル | サマリ | 依存 | 運用ロール | ステータス |
 |---|---|---|---|---|
 | **Dividend Growth Pullback Screener** (`dividend-growth-pullback-screener`) | Use this skill to find high-quality dividend growth stocks (12%+ annual dividend growth, 1.5%+ yield) that are experiencing temporary pullbacks, identified by RSI oversold conditions (RSI ≤40). | `fmp` **required**, `finviz` _recommended_ | workflow_step | production |
+| **India Dividend Screener** (`india-dividend-screener`) | Screen NSE dividend payers on yield, fiscal-year consistency, growth, cuts, P/E and RSI pullback, with dividends restated for later bonuses and splits. | `nse_bhavcopy` **required**, `dalalos` optional | standalone | beta |
 | **Kanchi Dividend Review Monitor** (`kanchi-dividend-review-monitor`) | Monitor dividend portfolios with Kanchi-style forced-review triggers (T1-T5) and convert anomalies into OK/WARN/REVIEW states without auto-selling. | `fmp` _recommended_ | workflow_step | production |
 | **Kanchi Dividend SOP** (`kanchi-dividend-sop`) | Convert Kanchi-style dividend investing into a repeatable US-stock operating procedure. | `fmp` _recommended_ | workflow_step | production |
 | **Kanchi Dividend US Tax Accounting** (`kanchi-dividend-us-tax-accounting`) | Provide US dividend tax and account-location workflow for Kanchi-style income portfolios. | `local_calculation` — | workflow_step | production |
@@ -239,6 +240,7 @@ FMP / FINVIZ / Alpaca の有料サブスクをまだ持っていない場合は�
 | **Drawdown Circuit Breaker** (`drawdown-circuit-breaker`) | Account-level circuit breaker that reads trader-memory-core state and decides whether new trade risk is allowed today using daily loss limits, losing-streak cooldowns, and weekly/monthly drawdown halts. | `local_calculation` — | workflow_step | production |
 | **Futures Position Sizer** (`futures-position-sizer`) | Calculate contract-based futures position sizes from a direction, entry, and stop-loss, using a verified 23-market contract-spec table (multiplier, tick size, tick value), implementing step 4 of Jason Shapiro's contrarian pipeline. | `local_calculation` — | workflow_step | production |
 | **India Position Sizer** (`india-position-sizer`) | Calculate risk-based position sizes for long NSE delivery trades in rupees, with whole shares, SME lots, tick-rounded ATR stops, and Indian delivery charges inside the risk budget. | `local_calculation` — | standalone | beta |
+| **India Stock Analysis** (`india-stock-analysis`) | Research one NSE stock from a free NSE fact sheet plus about one DalalOS company report and web news, producing a sourced note with bull and bear cases. | `nse_bhavcopy` **required**, `dalalos` _recommended_, `websearch` _recommended_ | standalone | beta |
 | **Position Sizer** (`position-sizer`) | Calculate risk-based position sizes for long stock trades. | `local_calculation` — | workflow_step | production |
 | **Pre-Trade Discipline Gate** (`pre-trade-discipline-gate`) | Offline manual-execution checklist gate that blocks planless, oversized, revenge-risk, market-regime-blocked, or circuit-breaker-blocked entries and journals the result. | `local_calculation` — | workflow_step | production |
 | **Technical Analyst** (`technical-analyst`) | This skill should be used when analyzing weekly price charts for stocks, stock indices, cryptocurrencies, or forex pairs. | `chart_image` **required**, `fmp` optional | workflow_step | production |
@@ -280,6 +282,7 @@ FMP / FINVIZ / Alpaca の有料サブスクをまだ持っていない場合は�
 | スキル | サマリ | 依存 | 運用ロール | ステータス |
 |---|---|---|---|---|
 | **Earnings Trade Analyzer** (`earnings-trade-analyzer`) | Analyze recent post-earnings stocks using a 5-factor scoring system (Gap Size, Pre-Earnings Trend, Volume Trend, MA200 Position, MA50 Position). | `fmp` **required** | workflow_step | production |
+| **India Earnings Trade Analyzer** (`india-earnings-trade-analyzer`) | Score recent NSE results reactions with the 5-factor model (two-day reaction, pre-results trend, volume, MA200, MA50) and grade A-D using free NSE prices. | `nse_bhavcopy` **required**, `results_calendar_archive` **required** | standalone | beta |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | Use this skill to track institutional investor ownership changes and portfolio flows using 13F filings data. | `fmp` **required** | standalone | production |
 | **Options Strategy Advisor** (`options-strategy-advisor`) | Options trading strategy analysis and simulation tool. | `fmp` optional | standalone | production |
 | **Pair Trade Screener** (`pair-trade-screener`) | Statistical arbitrage tool for identifying and analyzing pair trading opportunities. | `fmp` **required** | standalone | production |
@@ -296,6 +299,7 @@ FMP / FINVIZ / Alpaca の有料サブスクをまだ持っていない場合は�
 | **Earnings Calendar** (`earnings-calendar`) | This skill retrieves upcoming earnings announcements for US stocks using the Financial Modeling Prep (FMP) API. | `fmp` **required** | standalone | production |
 | **Economic Calendar Fetcher** (`economic-calendar-fetcher`) | Fetch upcoming economic events and data releases using FMP API. | `fmp` **required** | standalone | production |
 | **FXMacroData Calendar** (`fxmacrodata-calendar`) | Fetch official-source macro release-calendar events using FXMacroData for trade planning and event-risk filters. | `fxmacrodata` optional | standalone | beta |
+| **India Earnings Calendar** (`india-earnings-calendar`) | List NSE results dates for a Nifty universe with tier, industry and liquidity, flag holdings that report, and keep a free local results-date archive. | `drishti` _recommended_, `dalalos` optional, `nse_bhavcopy` optional | standalone | beta |
 | **Skill Designer** (`skill-designer`) | Design new Claude skills from structured idea specifications. | `local_calculation` — | internal_component | production |
 | **Skill Idea Miner** (`skill-idea-miner`) | Mine Claude Code session logs for skill idea candidates. | `local_calculation` — | internal_component | production |
 | **Skill Integration Tester** (`skill-integration-tester`) | Validate multi-skill workflows defined in CLAUDE.md by checking skill existence, inter-skill data contracts (JSON schema compatibility), file naming conventions, and handoff integrity. | `local_calculation` — | standalone | production |

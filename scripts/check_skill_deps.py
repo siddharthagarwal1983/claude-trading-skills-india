@@ -268,11 +268,32 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--lookback-days"),
         )
     ],
+    "india-dividend-screener": [
+        SmokeContract(
+            "skills/india-dividend-screener/scripts/screen_india_dividends.py",
+            ("--help",),
+            expect_out=("usage:", "--screen-json"),
+        )
+    ],
     "india-downtrend-duration-analyzer": [
         SmokeContract(
             "skills/india-downtrend-duration-analyzer/scripts/analyze_india_downtrends.py",
             ("--help",),
             expect_out=("usage:", "--sector"),
+        )
+    ],
+    "india-earnings-calendar": [
+        SmokeContract(
+            "skills/india-earnings-calendar/scripts/india_results_calendar.py",
+            ("--help",),
+            expect_out=("usage:", "upcoming"),
+        )
+    ],
+    "india-earnings-trade-analyzer": [
+        SmokeContract(
+            "skills/india-earnings-trade-analyzer/scripts/analyze_india_earnings_trades.py",
+            ("--help",),
+            expect_out=("usage:", "--reaction"),
         )
     ],
     "india-exposure-coach": [
@@ -301,6 +322,13 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             "skills/india-market-breadth-analyzer/scripts/india_breadth_analyzer.py",
             ("--help",),
             expect_out=("usage:", "--calendar-index"),
+        )
+    ],
+    "india-stock-analysis": [
+        SmokeContract(
+            "skills/india-stock-analysis/scripts/india_stock_snapshot.py",
+            ("--help",),
+            expect_out=("usage:", "--benchmark"),
         )
     ],
     "india-stockbee-momentum-burst-screener": [

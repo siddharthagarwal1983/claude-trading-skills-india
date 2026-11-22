@@ -19,7 +19,7 @@ generated: true
 
 | 合計 | 本番 | ベータ | 知識のみ | 実行可能 | テストあり | テストなし |
 |---:|---:|---:|---:|---:|---:|---:|
-| 82 | 62 | 20 | 3 | 79 | 79 | 0 |
+| 86 | 62 | 24 | 3 | 83 | 83 | 0 |
 
 ## テストカバレッジ
 
@@ -38,8 +38,8 @@ generated: true
 | FMP | 32 |
 | FINVIZ | 4 |
 | ALPACA | 2 |
-| その他の外部プロバイダ | 12 |
-| オフライン（外部データなし） | 36 |
+| その他の外部プロバイダ | 13 |
+| オフライン（外部データなし） | 39 |
 
 ## ベータパイプライン
 
@@ -47,12 +47,16 @@ generated: true
 |---|---:|
 | `crypto-regime-analyzer` | not yet measured |
 | `fxmacrodata-calendar` | not yet measured |
+| `india-dividend-screener` | not yet measured |
 | `india-downtrend-duration-analyzer` | not yet measured |
+| `india-earnings-calendar` | not yet measured |
+| `india-earnings-trade-analyzer` | not yet measured |
 | `india-exposure-coach` | not yet measured |
 | `india-ftd-detector` | not yet measured |
 | `india-ibd-distribution-day-monitor` | not yet measured |
 | `india-market-breadth-analyzer` | not yet measured |
 | `india-position-sizer` | not yet measured |
+| `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
 | `india-vcp-screener` | not yet measured |
 | `manifoldbt-backtester` | not yet measured |
@@ -98,12 +102,16 @@ generated: true
 | **Futures Position Sizer** (`futures-position-sizer`) | 本番 | はい | はい | 93.5% |
 | **FXMacroData Calendar** (`fxmacrodata-calendar`) | ベータ | はい | はい | 96.0% |
 | **IBD Distribution Day Monitor** (`ibd-distribution-day-monitor`) | 本番 | はい | はい | 97.1% |
+| **India Dividend Screener** (`india-dividend-screener`) | ベータ | はい | はい | not yet measured |
 | **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | ベータ | はい | はい | not yet measured |
+| **India Earnings Calendar** (`india-earnings-calendar`) | ベータ | はい | はい | not yet measured |
+| **India Earnings Trade Analyzer** (`india-earnings-trade-analyzer`) | ベータ | はい | はい | not yet measured |
 | **India Exposure Coach** (`india-exposure-coach`) | ベータ | はい | はい | not yet measured |
 | **India FTD Detector** (`india-ftd-detector`) | ベータ | はい | はい | not yet measured |
 | **India IBD Distribution Day Monitor** (`india-ibd-distribution-day-monitor`) | ベータ | はい | はい | not yet measured |
 | **India Market Breadth Analyzer** (`india-market-breadth-analyzer`) | ベータ | はい | はい | not yet measured |
 | **India Position Sizer** (`india-position-sizer`) | ベータ | はい | はい | not yet measured |
+| **India Stock Analysis** (`india-stock-analysis`) | ベータ | はい | はい | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | ベータ | はい | はい | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | ベータ | はい | はい | not yet measured |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | 本番 | はい | はい | 78.5% |
