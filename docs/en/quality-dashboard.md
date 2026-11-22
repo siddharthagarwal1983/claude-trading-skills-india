@@ -19,7 +19,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 
 | Total | production | beta | Knowledge-only | Executable | With tests | Without tests |
 |---:|---:|---:|---:|---:|---:|---:|
-| 78 | 62 | 16 | 3 | 75 | 75 | 0 |
+| 82 | 62 | 20 | 3 | 79 | 79 | 0 |
 
 ## Test coverage
 
@@ -38,8 +38,8 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | FMP | 32 |
 | FINVIZ | 4 |
 | ALPACA | 2 |
-| other external provider | 11 |
-| offline (no external data source) | 33 |
+| other external provider | 12 |
+| offline (no external data source) | 36 |
 
 ## Beta pipeline
 
@@ -48,6 +48,10 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | `crypto-regime-analyzer` | not yet measured |
 | `fxmacrodata-calendar` | not yet measured |
 | `india-downtrend-duration-analyzer` | not yet measured |
+| `india-exposure-coach` | not yet measured |
+| `india-ftd-detector` | not yet measured |
+| `india-ibd-distribution-day-monitor` | not yet measured |
+| `india-market-breadth-analyzer` | not yet measured |
 | `india-position-sizer` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
 | `india-vcp-screener` | not yet measured |
@@ -95,6 +99,10 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | **FXMacroData Calendar** (`fxmacrodata-calendar`) | beta | yes | yes | 96.0% |
 | **IBD Distribution Day Monitor** (`ibd-distribution-day-monitor`) | production | yes | yes | 97.1% |
 | **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | beta | yes | yes | not yet measured |
+| **India Exposure Coach** (`india-exposure-coach`) | beta | yes | yes | not yet measured |
+| **India FTD Detector** (`india-ftd-detector`) | beta | yes | yes | not yet measured |
+| **India IBD Distribution Day Monitor** (`india-ibd-distribution-day-monitor`) | beta | yes | yes | not yet measured |
+| **India Market Breadth Analyzer** (`india-market-breadth-analyzer`) | beta | yes | yes | not yet measured |
 | **India Position Sizer** (`india-position-sizer`) | beta | yes | yes | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | beta | yes | yes | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | beta | yes | yes | not yet measured |

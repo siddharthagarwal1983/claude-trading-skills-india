@@ -1,0 +1,43 @@
+skill_name: india-ibd-distribution-day-monitor
+rule_version: ibd_dd_india_v1.0
+
+# NSE indexes carry real traded volume (sum of constituent volumes), so the
+# IBD volume rule applies directly; no ETF proxy is needed.
+indexes:
+  - symbol: NIFTY 50
+    benchmark_name: NIFTY 50 index (NSE large caps)
+  - symbol: NIFTY 500
+    benchmark_name: NIFTY 500 index (NSE broad market)
+
+lookback_days: 80
+
+distribution_day_rule:
+  min_decline_pct: -0.002
+  expiration_sessions: 25
+  invalidation_gain_pct: 0.05
+  invalidation_price_source: high                          # "high" | "close"
+  invalidation_session_scope: after_distribution_day_only  # exclude DD's own intraday high
+
+risk_thresholds:
+  caution:
+    d25_count: 3
+  high:
+    d25_count: 5
+    d15_count: 3
+    d5_count: 2
+  severe:
+    d25_count: 6
+    d15_count: 4
+    severe_ma_d25: 5
+
+moving_average_filters:
+  enabled: true
+  ema_periods:
+    - 21
+  sma_periods:
+    - 50
+
+strategy_context:
+  instrument: SWING_BOOK      # SWING_BOOK (NSE stock swing portfolio) | NIFTY_ETF (1x index ETF)
+  current_exposure_pct: 100
+  base_trailing_stop_pct: 10

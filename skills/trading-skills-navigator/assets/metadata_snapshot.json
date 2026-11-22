@@ -583,6 +583,101 @@
       "timeframe": "research"
     },
     {
+      "category": "market-regime",
+      "difficulty": "beginner",
+      "display_name": "India Exposure Coach",
+      "id": "india-exposure-coach",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "recommended",
+          "type": "mcp"
+        },
+        {
+          "id": "india_regime_reports",
+          "requirement": "recommended",
+          "type": "local_file"
+        },
+        {
+          "id": "fii_dii_flows",
+          "requirement": "optional",
+          "type": "local_file"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Combine India breadth, distribution and FTD reports with NIFTY trend, INDIA VIX, P/E and optional FII/DII flows into an exposure ceiling and a new-entry / reduce / cash decision.",
+      "timeframe": "daily"
+    },
+    {
+      "category": "market-regime",
+      "difficulty": "intermediate",
+      "display_name": "India FTD Detector",
+      "id": "india-ftd-detector",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Detect Follow-Through Day bottom confirmations on NIFTY 50 and a second NSE index using O'Neil's rally-attempt state machine, with post-FTD health and a quality score.",
+      "timeframe": "daily"
+    },
+    {
+      "category": "market-regime",
+      "difficulty": "intermediate",
+      "display_name": "India IBD Distribution Day Monitor",
+      "id": "india-ibd-distribution-day-monitor",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Detect IBD-style distribution days on NIFTY 50 and NIFTY 500 with real NSE index volume, classify market risk and recommend exposure for an NSE swing book or index ETF.",
+      "timeframe": "daily"
+    },
+    {
+      "category": "market-regime",
+      "difficulty": "intermediate",
+      "display_name": "India Market Breadth Analyzer",
+      "id": "india-market-breadth-analyzer",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "nse_index_csv",
+          "requirement": "required",
+          "type": "web"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Score Indian market breadth 0-100 from NIFTY 500 constituents (% above 20/50/200-day averages, net new highs, McClellan oscillator) on free official NSE data.",
+      "timeframe": "daily"
+    },
+    {
       "category": "trade-planning",
       "difficulty": "beginner",
       "display_name": "India Position Sizer",

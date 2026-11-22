@@ -782,3 +782,10 @@ def test_cli_ledger_record_and_status(tmp_path, capsys):
 
 def test_profile_is_nse_inr_ist():
     assert (ind.EXCHANGE, ind.CURRENCY, ind.TIMEZONE_NAME) == ("NSE", "INR", "Asia/Kolkata")
+
+
+def test_drop_muhurat_sessions():
+    bars = [{"date": "2024-10-31"}, {"date": "2024-11-01"}, {"date": "2024-11-04"}]
+    kept, removed = ind.drop_muhurat_sessions(bars)
+    assert [b["date"] for b in kept] == ["2024-10-31", "2024-11-04"]
+    assert removed == ["2024-11-01"]

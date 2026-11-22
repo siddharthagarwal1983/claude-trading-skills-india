@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 78 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 82 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -75,6 +75,10 @@ A comprehensive catalog of all 78 Claude Trading Skills organized by category. B
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-exposure-coach` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-ftd-detector` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-ibd-distribution-day-monitor` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -145,6 +149,7 @@ A comprehensive catalog of all 78 Claude Trading Skills organized by category. B
 | **Earnings Trade Analyzer** | Scores post-earnings stocks using 5 weighted factors: Gap Size (25%), Pre-Earnings Trend (30%), Volume Trend (20%), MA200 Position (15%), MA50 Position (10%). A/B/C/D grades | <span class="badge badge-api">FMP Required</span> |
 | **PEAD Screener** | Screens for Post-Earnings Announcement Drift patterns using weekly candle analysis. Stage-based monitoring: MONITORING, SIGNAL_READY, BREAKOUT, EXPIRED | <span class="badge badge-api">FMP Required</span> |
 | **FTD Detector** | Detects Follow-Through Day signals for market bottom confirmation using William O'Neil's methodology. Dual-index tracking with quality scoring (0-100) | <span class="badge badge-api">FMP Required</span> |
+| **[India FTD Detector]({{ '/en/skills/india-ftd-detector/' | relative_url }})** | O'Neil follow-through day detection on NIFTY 50 plus a second NSE index (default NIFTY 500) with real NSE index volume, Muhurat sessions removed, post-FTD health and quality score. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
 | **Institutional Flow Tracker** | Tracks institutional ownership changes using 13F SEC filings. Tier-based quality framework weights superinvestors (Berkshire, Baupost) higher than index funds | <span class="badge badge-api">FMP Required</span> |
 
 ---
@@ -159,11 +164,13 @@ A comprehensive catalog of all 78 Claude Trading Skills organized by category. B
 | **[Market News Analyst]({{ '/en/skills/market-news-analyst/' | relative_url }})** | Collects and analyzes market-moving news from the past 10 days via WebSearch. Impact scoring: (Price Impact x Breadth) x Forward Significance | <span class="badge badge-free">No API</span> |
 | **Market Environment Analysis** | Comprehensive global macro briefing covering equity indices, FX, commodities, yields, and sentiment with structured reporting templates | <span class="badge badge-free">No API</span> |
 | **[Market Breadth Analyzer]({{ '/en/skills/market-breadth-analyzer/' | relative_url }})** | Quantifies market breadth health using a data-driven 6-component scoring system (0-100) from publicly available CSV data | <span class="badge badge-free">No API</span> |
+| **[India Market Breadth Analyzer]({{ '/en/skills/india-market-breadth-analyzer/' | relative_url }})** | Breadth from NIFTY 500 constituents: % above 20/50/200-day averages, net new 52-week highs, McClellan oscillator, scored 0-100 (Strong to Critical) with deterioration and washout flags. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
 | **Uptrend Analyzer** | Diagnoses breadth health using Uptrend Ratio Dashboard tracking ~2,800 US stocks across 11 sectors. 5-component composite scoring with warning overlays | <span class="badge badge-free">No API</span> |
 | **Macro Regime Detector** | Detects structural macro regime transitions (1-2 year horizon) using 6-component cross-asset ratio analysis (RSP/SPY, yield curve, credit, size factor, sector rotation) | <span class="badge badge-optional">FMP Optional</span> |
 | **[US Market Bubble Detector]({{ '/en/skills/us-market-bubble-detector/' | relative_url }})** | Data-driven bubble risk assessment using Minsky/Kindleberger framework. Two-phase evaluation: quantitative scoring (0-12) + strict qualitative adjustment (0-3). Five risk phases | <span class="badge badge-free">No API</span> |
 | **Market Top Detector** | Detects market top probability using O'Neil Distribution Days, Minervini Leading Stock Deterioration, and Defensive Rotation. 6-component tactical timing system | <span class="badge badge-api">FMP Required</span> |
 | **[IBD Distribution Day Monitor]({{ '/en/skills/ibd-distribution-day-monitor/' | relative_url }})** | Daily IBD Distribution Day detection for QQQ/SPY with 25-session expiration and 5% invalidation. Risk classification (NORMAL/CAUTION/HIGH/SEVERE) and TQQQ/QQQ exposure recommendation | <span class="badge badge-api">FMP Required</span> |
+| **[India IBD Distribution Day Monitor]({{ '/en/skills/india-ibd-distribution-day-monitor/' | relative_url }})** | IBD distribution days on NIFTY 50 and NIFTY 500 with real index volume, d5/d15/d25 clusters, NORMAL-SEVERE risk and exposure policy for an NSE swing book or index ETF. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
 | **[Downtrend Duration Analyzer]({{ '/en/skills/downtrend-duration-analyzer/' | relative_url }})** | Analyzes historical downtrend durations (peak-to-trough) and generates interactive HTML histograms segmented by sector and market cap | <span class="badge badge-api">FMP Required</span> |
 | **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** | Peak-to-trough decline durations for NSE stocks by NSE industry and Nifty size tier (100 / Midcap 150 / Smallcap 250 / Microcap 250), with interactive HTML histogram. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
 | **[COT Contrarian Detector]({{ '/en/skills/cot-contrarian-detector/' | relative_url }})** | Detects crowded large-speculator positioning across 65 CFTC futures markets via COT Index (3-year/26-week), implementing step 1 of Jason Shapiro's contrarian methodology | <span class="badge badge-api">FMP Required</span> |
@@ -205,6 +212,7 @@ A comprehensive catalog of all 78 Claude Trading Skills organized by category. B
 | **[Breakout Trade Planner]({{ '/en/skills/breakout-trade-planner/' | relative_url }})** | Generates Minervini-style breakout trade plans from VCP screener output. Worst-case entry Gate, stop-limit bracket templates (pre_place / post_confirm), portfolio heat management | <span class="badge badge-free">No API</span> |
 | **[Parabolic Short Trade Planner]({{ '/en/skills/parabolic-short-trade-planner/' | relative_url }})** | Daily Parabolic Short screener (5-factor weighted score) plus pre-market plan generator that emits three conditional triggers per candidate (5-min ORL break, first red 5-min, VWAP fail). Alpaca ETB-only short check via `requests` (no SDK), SEC Rule 201 SSR tracker, blocking vs advisory manual confirmation reasons | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">Alpaca Optional</span> |
 | **[Exposure Coach]({{ '/en/skills/exposure-coach/' | relative_url }})** | Synthesizes outputs from breadth, regime, top-risk, and flow skills into a one-page Market Posture summary with net exposure ceiling (0-100%), growth-vs-value bias, and NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY recommendation | <span class="badge badge-free">No API</span> |
+| **[India Exposure Coach]({{ '/en/skills/india-exposure-coach/' | relative_url }})** | Indian market posture: exposure ceiling and NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY from India breadth, distribution and FTD reports plus NIFTY trend, INDIA VIX, P/E percentile and optional FII/DII flows. Beta | <span class="badge badge-free">No API</span> |
 | **[US Stock Analysis]({{ '/en/skills/us-stock-analysis/' | relative_url }})** | Comprehensive US equity research: fundamentals, technicals, peer comparisons, and structured investment memos with bull/bear cases | <span class="badge badge-free">No API</span> |
 | **Earnings Calendar** | Fetches upcoming earnings announcements via FMP API. Focuses on mid-cap+ companies (>$2B market cap), organized by date and timing (BMO/AMC) | <span class="badge badge-api">FMP Required</span> |
 | **Economic Calendar Fetcher** | Fetches economic events (FOMC, NFP, CPI, GDP) for 7-90 days via FMP API. Impact assessment (High/Medium/Low) with market implications analysis | <span class="badge badge-api">FMP Required</span> |
@@ -313,6 +321,10 @@ A comprehensive catalog of all 78 Claude Trading Skills organized by category. B
 - **[India Stockbee Momentum Burst Screener]({{ '/en/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** -- 3-5 day momentum bursts with circuit and turnover checks
 - **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** -- How long NSE corrections last by industry and size tier
 - **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
+- **[India Market Breadth Analyzer]({{ '/en/skills/india-market-breadth-analyzer/' | relative_url }})** -- How broad the NSE move is, scored 0-100
+- **[India IBD Distribution Day Monitor]({{ '/en/skills/india-ibd-distribution-day-monitor/' | relative_url }})** -- Institutional selling on NIFTY 50 / NIFTY 500
+- **[India FTD Detector]({{ '/en/skills/india-ftd-detector/' | relative_url }})** -- Bottom confirmation after an NSE correction
+- **[India Exposure Coach]({{ '/en/skills/india-exposure-coach/' | relative_url }})** -- Daily exposure ceiling and new-entry decision for Indian stocks
 
 ---
 
@@ -349,6 +361,10 @@ A comprehensive catalog of all 78 Claude Trading Skills organized by category. B
 | Futures Position Sizer | -- | -- | -- |
 | IBD Distribution Day Monitor | Required | -- | -- |
 | India Downtrend Duration Analyzer | -- | -- | -- |
+| India Exposure Coach | -- | -- | -- |
+| India FTD Detector | -- | -- | -- |
+| India IBD Distribution Day Monitor | -- | -- | -- |
+| India Market Breadth Analyzer | -- | -- | -- |
 | India Position Sizer | -- | -- | -- |
 | India Stockbee Momentum Burst Screener | -- | -- | -- |
 | India VCP Screener | -- | -- | -- |

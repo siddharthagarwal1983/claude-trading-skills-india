@@ -163,7 +163,7 @@ FMP / FINVIZ / Alpaca の有料サブスクをまだ持っていない場合は�
 | Trade Memory | `trader-memory-core`, `signal-postmortem` |
 | Strategy Research | `backtest-expert`, `edge-pipeline-orchestrator` |
 | Advanced Satellite | `parabolic-short-trade-planner`, `earnings-trade-analyzer`, `options-strategy-advisor` |
-| India (NSE) | `india-vcp-screener`, `india-stockbee-momentum-burst-screener`, `india-position-sizer`, `india-downtrend-duration-analyzer` |
+| India (NSE) | `india-exposure-coach`, `india-market-breadth-analyzer`, `india-ibd-distribution-day-monitor`, `india-ftd-detector`, `india-vcp-screener`, `india-stockbee-momentum-burst-screener`, `india-position-sizer`, `india-downtrend-duration-analyzer` |
 
 以下の詳細カタログは `skills-index.yaml` から `scripts/generate_catalog_from_index.py` で**自動生成**されます。スキル説明を更新する場合は `skills-index.yaml` を編集してから generator を再実行（`python3 scripts/generate_catalog_from_index.py`）してください。より見やすい一覧はドキュメントサイトを参照してください。スキルのライフサイクル・テストカバレッジ・実行時ヘルスの自動生成一覧は[品質ダッシュボード](https://tradermonty.github.io/claude-trading-skills/ja/quality-dashboard/)を参照してください。
 
@@ -186,6 +186,10 @@ FMP / FINVIZ / Alpaca の有料サブスクをまだ持っていない場合は�
 | **FTD Detector** (`ftd-detector`) | Detects Follow-Through Day (FTD) signals for market bottom confirmation using William O'Neil's methodology. | `fmp` **required** | standalone | production |
 | **IBD Distribution Day Monitor** (`ibd-distribution-day-monitor`) | Detect IBD-style Distribution Days for QQQ/SPY (close down at least 0.2% on higher volume), track 25-session expiration and 5% invalidation, count d5/d15/d25 clusters, classify market risk (NORMAL/CAUTION/HIGH/SEVERE), and emit TQQQ/QQQ... | `fmp` **required** | standalone | production |
 | **India Downtrend Duration Analyzer** (`india-downtrend-duration-analyzer`) | Analyze historical downtrend durations of NSE stocks by industry and Nifty size tier and generate interactive HTML histograms. | `nse_bhavcopy` **required**, `nse_index_csv` **required** | research_only | beta |
+| **India Exposure Coach** (`india-exposure-coach`) | Combine India breadth, distribution and FTD reports with NIFTY trend, INDIA VIX, P/E and optional FII/DII flows into an exposure ceiling and a new-entry / reduce / cash decision. | `nse_bhavcopy` _recommended_, `india_regime_reports` _recommended_, `fii_dii_flows` optional | standalone | beta |
+| **India FTD Detector** (`india-ftd-detector`) | Detect Follow-Through Day bottom confirmations on NIFTY 50 and a second NSE index using O'Neil's rally-attempt state machine, with post-FTD health and a quality score. | `nse_bhavcopy` **required** | standalone | beta |
+| **India IBD Distribution Day Monitor** (`india-ibd-distribution-day-monitor`) | Detect IBD-style distribution days on NIFTY 50 and NIFTY 500 with real NSE index volume, classify market risk and recommend exposure for an NSE swing book or index ETF. | `nse_bhavcopy` **required** | standalone | beta |
+| **India Market Breadth Analyzer** (`india-market-breadth-analyzer`) | Score Indian market breadth 0-100 from NIFTY 500 constituents (% above 20/50/200-day averages, net new highs, McClellan oscillator) on free official NSE data. | `nse_bhavcopy` **required**, `nse_index_csv` **required** | standalone | beta |
 | **Macro Regime Detector** (`macro-regime-detector`) | Detect structural macro regime transitions (1-2 year horizon) using cross-asset ratio analysis. | `yfinance` **required**, `fmp` optional | workflow_step | production |
 | **Market Breadth Analyzer** (`market-breadth-analyzer`) | Quantifies market breadth health using TraderMonty's public CSV data. | `public_csv` **required** | workflow_step | production |
 | **Market Environment Analysis** (`market-environment-analysis`) | Comprehensive market environment analysis and reporting tool. | `websearch` **required**, `chart_image` optional | workflow_step | production |

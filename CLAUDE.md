@@ -260,6 +260,10 @@ The table below is **auto-generated** from `skills-index.yaml` by `scripts/gener
 | **Futures Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation; consumes contrarian-setup-gate's READY_FOR_PLAN report or explicit direction/entry/stop flags; works offline |
 | **IBD Distribution Day Monitor** | ✅ Required | ❌ Not used | ❌ Not used | Financial Modeling Prep API |
 | **India Downtrend Duration Analyzer** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for universe, industries, and size tiers |
+| **India Exposure Coach** | ❌ Not used | ❌ Not used | ❌ Not used | NIFTY 50 trend, INDIA VIX and P/E context from free NSE data; --no-fetch skips it; JSON reports from the India breadth, distribution-day and FTD skills; FII/DII daily net flow JSON, e.g. saved from DalalOS inside a Claude session |
+| **India FTD Detector** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE index history with real traded volume over HTTP; no API key |
+| **India IBD Distribution Day Monitor** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE index history with real traded volume over HTTP; no API key |
+| **India Market Breadth Analyzer** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history, corporate actions and market A/D over HTTP; no API key; NSE index constituent CSV files for the breadth universe |
 | **India Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation with statutory NSE delivery charge rates; works offline |
 | **India Stockbee Momentum Burst Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files when scanning a Nifty universe; Offline OHLCV JSON for no-network screening and tests |
 | **India VCP Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for the screening universe |

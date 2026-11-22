@@ -639,6 +639,19 @@ def latest_completed_session(
     return earlier[-1]
 
 
+def drop_muhurat_sessions(bars: list) -> tuple:
+    """Remove Diwali Muhurat sessions (one-hour, very low volume) from bars.
+
+    Volume-relative signals (distribution days, follow-through days, volume
+    ratios) would otherwise treat the next ordinary session as "higher volume".
+    Returns (kept_bars, removed_dates).
+    """
+    muhurat = {d.isoformat() for d in MUHURAT_SESSIONS}
+    kept = [b for b in bars if b.get("date") not in muhurat]
+    removed = sorted(b["date"] for b in bars if b.get("date") in muhurat)
+    return kept, removed
+
+
 # --------------------------------------------------------------------------- cache
 
 

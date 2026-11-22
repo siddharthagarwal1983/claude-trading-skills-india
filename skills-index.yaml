@@ -2562,3 +2562,106 @@ skills:
   - duration_histogram_html
   - sector_breakdown
   workflows: []
+- id: india-market-breadth-analyzer
+  display_name: India Market Breadth Analyzer
+  category: market-regime
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Score Indian market breadth 0-100 from NIFTY 500 constituents (% above 20/50/200-day
+    averages, net new highs, McClellan oscillator) on free official NSE data.
+  timeframe: daily
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day history, corporate actions and market A/D over HTTP; no API key
+  - id: nse_index_csv
+    type: web
+    requirement: required
+    note: NSE index constituent CSV files for the breadth universe
+  inputs:
+  - nse_daily_ohlcv
+  - nifty_constituents
+  outputs:
+  - breadth_score
+  - breadth_history
+  workflows: []
+- id: india-ibd-distribution-day-monitor
+  display_name: India IBD Distribution Day Monitor
+  category: market-regime
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Detect IBD-style distribution days on NIFTY 50 and NIFTY 500 with real NSE index volume,
+    classify market risk and recommend exposure for an NSE swing book or index ETF.
+  timeframe: daily
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE index history with real traded volume over HTTP; no API key
+  inputs:
+  - nse_index_ohlcv
+  outputs:
+  - distribution_day_report
+  - exposure_recommendation
+  workflows: []
+- id: india-ftd-detector
+  display_name: India FTD Detector
+  category: market-regime
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Detect Follow-Through Day bottom confirmations on NIFTY 50 and a second NSE index using
+    O'Neil's rally-attempt state machine, with post-FTD health and a quality score.
+  timeframe: daily
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE index history with real traded volume over HTTP; no API key
+  inputs:
+  - nse_index_ohlcv
+  outputs:
+  - ftd_signal
+  - ftd_quality_score
+  workflows: []
+- id: india-exposure-coach
+  display_name: India Exposure Coach
+  category: market-regime
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Combine India breadth, distribution and FTD reports with NIFTY trend, INDIA VIX, P/E and
+    optional FII/DII flows into an exposure ceiling and a new-entry / reduce / cash decision.
+  timeframe: daily
+  difficulty: beginner
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: recommended
+    note: NIFTY 50 trend, INDIA VIX and P/E context from free NSE data; --no-fetch skips it
+  - id: india_regime_reports
+    type: local_file
+    requirement: recommended
+    note: JSON reports from the India breadth, distribution-day and FTD skills
+  - id: fii_dii_flows
+    type: local_file
+    requirement: optional
+    note: FII/DII daily net flow JSON, e.g. saved from DalalOS inside a Claude session
+  inputs:
+  - breadth_score
+  - distribution_day_report
+  - ftd_signal
+  outputs:
+  - exposure_ceiling
+  - market_posture
+  workflows: []

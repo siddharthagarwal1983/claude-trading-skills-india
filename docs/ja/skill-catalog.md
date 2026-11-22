@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全78個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全82個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -75,6 +75,10 @@ permalink: /ja/skill-catalog/
 | `fxmacrodata-calendar` | `standalone` | Fetches official macro calendar data directly for event-risk planning. |
 | `ibd-distribution-day-monitor` | `standalone` | Runs an independent distribution-day risk assessment for QQQ or SPY. |
 | `india-downtrend-duration-analyzer` | `research_only` | — |
+| `india-exposure-coach` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-ftd-detector` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-ibd-distribution-day-monitor` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-market-breadth-analyzer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
@@ -145,6 +149,7 @@ permalink: /ja/skill-catalog/
 | **Earnings Trade Analyzer** | 直近決算銘柄を5要素加重スコアリング（ギャップ、トレンド、出来高、MA200、MA50）でA-Dグレード評価 | <span class="badge badge-api">FMP必須</span> |
 | **PEAD Screener** | 決算ギャップアップ銘柄のPost-Earnings Announcement Drift パターンを週足分析。MONITORING→SIGNAL_READY→BREAKOUTのステージ管理 | <span class="badge badge-api">FMP必須</span> |
 | **FTD Detector** | William O'Neilの手法でFollow-Through Day シグナルを検出。市場底打ち確認のためのデュアルインデックス追跡 | <span class="badge badge-api">FMP必須</span> |
+| **[India FTD Detector]({{ '/ja/skills/india-ftd-detector/' | relative_url }})** | NIFTY 50と第2のNSE指数（既定NIFTY 500）でO'Neil式フォロースルーデーを検出。NSE指数の実出来高を使用し、ムフラット取引を除外、FTD後の健全性と品質スコアを算出。無料のNSEデータ。ベータ | <span class="badge badge-free">API不要</span> |
 | **Institutional Flow Tracker** | 13F SEC提出書類で機関投資家の蓄積・分配パターンを追跡。スーパーインベスター重み付き品質フレームワーク | <span class="badge badge-api">FMP必須</span> |
 
 ---
@@ -159,11 +164,13 @@ permalink: /ja/skill-catalog/
 | **[Market News Analyst]({{ '/ja/skills/market-news-analyst/' | relative_url }})** | WebSearch/WebFetchで過去10日間のニュースを収集。定量的インパクトスコアリングでランキング | <span class="badge badge-free">API不要</span> |
 | **Market Environment Analysis** | グローバルマクロブリーフィング。株式指数、為替、コモディティ、金利、センチメントを網羅 | <span class="badge badge-free">API不要</span> |
 | **[Market Breadth Analyzer]({{ '/ja/skills/market-breadth-analyzer/' | relative_url }})** | TraderMontyの公開CSVデータで6コンポーネントスコアリング（0-100）の市場幅評価 | <span class="badge badge-free">API不要</span> |
+| **[India Market Breadth Analyzer]({{ '/ja/skills/india-market-breadth-analyzer/' | relative_url }})** | NIFTY 500構成銘柄から市場の広がりを算出（20/50/200日平均線より上の比率、52週新高値−新安値、マクレラン・オシレーター）。0-100でスコア化し悪化・ウォッシュアウトを判定。無料のNSEデータ。ベータ | <span class="badge badge-free">API不要</span> |
 | **Uptrend Analyzer** | 約2,800銘柄・11セクターの上昇トレンド比率を5コンポーネント複合スコアで診断 | <span class="badge badge-free">API不要</span> |
 | **Macro Regime Detector** | クロスアセット比率分析で構造的マクロレジーム転換（1-2年ホライズン）を検出 | <span class="badge badge-optional">FMP任意</span> |
 | **[US Market Bubble Detector]({{ '/ja/skills/us-market-bubble-detector/' | relative_url }})** | ミンスキー/キンドルバーガーフレームワークの8指標バブルメーター。ステージ別プレイブック付き | <span class="badge badge-free">API不要</span> |
 | **Market Top Detector** | O'NeilのDistribution Days、MinerviniのLeading Stock劣化、Defensive Rotationで天井確率を検出 | <span class="badge badge-api">FMP必須</span> |
 | **[IBD Distribution Day Monitor]({{ '/ja/skills/ibd-distribution-day-monitor/' | relative_url }})** | QQQ/SPYのIBD式Distribution Dayを日次検出。25セッション失効・5%上昇無効化を追跡し、d5/d15/d25クラスタからNORMAL/CAUTION/HIGH/SEVERE判定とTQQQ/QQQエクスポージャ推奨を生成 | <span class="badge badge-api">FMP必須</span> |
+| **[India IBD Distribution Day Monitor]({{ '/ja/skills/india-ibd-distribution-day-monitor/' | relative_url }})** | NIFTY 50とNIFTY 500の実出来高でIBD式ディストリビューション・デーを検出。d5/d15/d25クラスタからNORMAL〜SEVEREのリスクを判定し、NSEスイング口座または指数ETF向けのエクスポージャー方針を提示。無料のNSEデータ。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Downtrend Duration Analyzer]({{ '/ja/skills/downtrend-duration-analyzer/' | relative_url }})** | 過去の下落トレンド期間（ピーク→トラフ）を分析し、セクター・時価総額別のインタラクティブヒストグラムを生成 | <span class="badge badge-api">FMP必須</span> |
 | **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** | NSE銘柄の下落期間（ピーク→トラフ）をNSE業種とNifty規模区分（100 / Midcap 150 / Smallcap 250 / Microcap 250）別に分析し、インタラクティブなHTMLヒストグラムを生成。無料のNSEデータ。ベータ | <span class="badge badge-free">API不要</span> |
 | **[COT Contrarian Detector]({{ '/ja/skills/cot-contrarian-detector/' | relative_url }})** | COT Indexにより65のCFTC先物市場における大口投機筋の偏ったポジションを検出。ジェイソン・シャピロ式逆張り手法のステップ1 | <span class="badge badge-api">FMP必須</span> |
@@ -205,6 +212,7 @@ permalink: /ja/skill-catalog/
 | **[Breakout Trade Planner]({{ '/ja/skills/breakout-trade-planner/' | relative_url }})** | VCPスクリーナー出力からミネルヴィニ式ブレイクアウトトレードプランを生成。worst-case entryベースのGate、stop-limit bracketテンプレート（pre_place / post_confirm）、ポートフォリオヒート管理 | <span class="badge badge-free">API不要</span> |
 | **[Parabolic Short Trade Planner]({{ '/ja/skills/parabolic-short-trade-planner/' | relative_url }})** | Parabolic Short 候補の日次スクリーナー（5因子加重スコア）と寄り前プラン生成器。候補ごとに3種類のトリガー（5min ORL ブレイク / First Red 5-min / VWAP fail）を条件付きプランとして出力。Alpaca ETB-only ショート確認は `requests` 直叩き（SDK 非依存）、SEC Rule 201 SSR トラッカー、blocking / advisory 分離型 manual confirmation | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">Alpaca任意</span> |
 | **[Exposure Coach]({{ '/ja/skills/exposure-coach/' | relative_url }})** | ブレッド、レジーム、トップリスク、フローの各スキル出力を統合し、エクスポージャー上限（0-100%）、グロース/バリュー傾斜、NEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITY推奨を含むマーケットポスチャーサマリーを生成 | <span class="badge badge-free">API不要</span> |
+| **[India Exposure Coach]({{ '/ja/skills/india-exposure-coach/' | relative_url }})** | インド市場のポジション方針。India breadth・distribution・FTDレポートとNIFTYトレンド、INDIA VIX、PERパーセンタイル、任意のFII/DIIフローから、エクスポージャー上限とNEW_ENTRY_ALLOWED / REDUCE_ONLY / CASH_PRIORITYを判定。ベータ | <span class="badge badge-free">API不要</span> |
 | **[US Stock Analysis]({{ '/ja/skills/us-stock-analysis/' | relative_url }})** | ファンダメンタル、テクニカル、同業比較を網羅した包括的米国株リサーチアシスタント | <span class="badge badge-free">API不要</span> |
 | **Earnings Calendar** | FMP APIで今後の決算発表を取得。時価総額$2B以上の中大型株に焦点 | <span class="badge badge-api">FMP必須</span> |
 | **Economic Calendar Fetcher** | FMP APIで7-90日間の経済イベントを取得。インパクト評価付き時系列レポート | <span class="badge badge-api">FMP必須</span> |
@@ -310,6 +318,10 @@ permalink: /ja/skill-catalog/
 - **[India Stockbee Momentum Burst Screener]({{ '/ja/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** - サーキット・売買代金チェック付きの3〜5日モメンタムバースト
 - **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** - NSE銘柄の調整期間を業種・規模区分別に分析
 - **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
+- **[India Market Breadth Analyzer]({{ '/ja/skills/india-market-breadth-analyzer/' | relative_url }})** - NSE全体の上昇の広がりを0-100でスコア化
+- **[India IBD Distribution Day Monitor]({{ '/ja/skills/india-ibd-distribution-day-monitor/' | relative_url }})** - NIFTY 50 / NIFTY 500の機関の売り抜けを検出
+- **[India FTD Detector]({{ '/ja/skills/india-ftd-detector/' | relative_url }})** - NSEの調整後の底打ち確認
+- **[India Exposure Coach]({{ '/ja/skills/india-exposure-coach/' | relative_url }})** - インド株の毎日のエクスポージャー上限と新規エントリー判定
 
 ---
 
@@ -346,6 +358,10 @@ permalink: /ja/skill-catalog/
 | Futures Position Sizer | - | - | - |
 | IBD Distribution Day Monitor | 必須 | - | - |
 | India Downtrend Duration Analyzer | - | - | - |
+| India Exposure Coach | - | - | - |
+| India FTD Detector | - | - | - |
+| India IBD Distribution Day Monitor | - | - | - |
+| India Market Breadth Analyzer | - | - | - |
 | India Position Sizer | - | - | - |
 | India Stockbee Momentum Burst Screener | - | - | - |
 | India VCP Screener | - | - | - |

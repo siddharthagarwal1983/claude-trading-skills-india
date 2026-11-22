@@ -275,6 +275,34 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--sector"),
         )
     ],
+    "india-exposure-coach": [
+        SmokeContract(
+            "skills/india-exposure-coach/scripts/calculate_india_exposure.py",
+            ("--help",),
+            expect_out=("usage:", "--distribution"),
+        )
+    ],
+    "india-ftd-detector": [
+        SmokeContract(
+            "skills/india-ftd-detector/scripts/india_ftd_detector.py",
+            ("--help",),
+            expect_out=("usage:", "--secondary-index"),
+        )
+    ],
+    "india-ibd-distribution-day-monitor": [
+        SmokeContract(
+            "skills/india-ibd-distribution-day-monitor/scripts/india_ibd_monitor.py",
+            ("--help",),
+            expect_out=("usage:", "--instrument"),
+        )
+    ],
+    "india-market-breadth-analyzer": [
+        SmokeContract(
+            "skills/india-market-breadth-analyzer/scripts/india_breadth_analyzer.py",
+            ("--help",),
+            expect_out=("usage:", "--calendar-index"),
+        )
+    ],
     "india-stockbee-momentum-burst-screener": [
         SmokeContract(
             "skills/india-stockbee-momentum-burst-screener/scripts/screen_india_momentum_burst.py",
