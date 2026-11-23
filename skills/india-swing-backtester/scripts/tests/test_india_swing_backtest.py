@@ -8,10 +8,10 @@ import sys
 from datetime import date, datetime, timedelta, timezone
 
 import _india_data as india
-import india_vcp_backtest as cli
+import india_swing_backtest as cli
 import pytest
-import vcp_backtest_engine as engine
-from vcp_backtest_siblings import load_all
+import swing_backtest_engine as engine
+from swing_backtest_siblings import load_all
 
 SCREENER, PLANNER, PAPER = load_all()
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -164,17 +164,17 @@ def run_cli(tmp_path, *extra, data_start="2025-01-01"):
 def test_cli_end_to_end(tmp_path, capsys):
     code, out, root = run_cli(tmp_path, "--sweep", "target_r_multiple=2,3", "max_risk_pct=8,12")
     assert code == 0
-    report = json.loads(next(out.glob("india_vcp_backtest_*.json")).read_text())
-    assert report["skill"] == "india-vcp-backtester"
+    report = json.loads(next(out.glob("india_swing_backtest_*.json")).read_text())
+    assert report["skill"] == "india-swing-backtester"
     assert report["window"]["sessions"] > 10
     assert len(report["sweep"]) == 4
     assert report["base"]["summary"]["benchmark"]["name"] == "NIFTY 500"
-    md = next(out.glob("india_vcp_backtest_*.md")).read_text()
+    md = next(out.glob("india_swing_backtest_*.md")).read_text()
     assert md.startswith("# India VCP Breakout Backtest") and "Parameter sweep" in md
     assert "(live planner rules)" in md
     assert next(out.glob("*_equity.csv")).read_text().startswith("date,equity")
     assert len(list((root / "backtest").glob("vcp_screens_*.jsonl"))) == 1
-    assert "India VCP backtest" in capsys.readouterr().out
+    assert "India VCP Breakout Backtest" in capsys.readouterr().out
     # second run reuses the screen cache
     assert run_cli(tmp_path)[0] == 0
 
@@ -182,14 +182,14 @@ def test_cli_end_to_end(tmp_path, capsys):
 def test_cli_notes_missing_index_backfill(tmp_path):
     code, out, _ = run_cli(tmp_path, data_start="2024-12-01")
     assert code == 0
-    report = json.loads(next(out.glob("india_vcp_backtest_*.json")).read_text())
+    report = json.loads(next(out.glob("india_swing_backtest_*.json")).read_text())
     assert any("NIFTY 500 history starts" in n for n in report["data_notes"])
 
 
 def test_cli_research_variant_is_labelled(tmp_path):
     code, out, _ = run_cli(tmp_path, "--max-risk-pct", "12", "--min-score", "65")
     assert code == 0
-    assert "research variant" in next(out.glob("india_vcp_backtest_*.md")).read_text()
+    assert "research variant" in next(out.glob("india_swing_backtest_*.md")).read_text()
 
 
 @pytest.mark.parametrize(

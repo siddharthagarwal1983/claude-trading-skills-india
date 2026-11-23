@@ -1,4 +1,4 @@
-# India VCP Backtest Method
+# India Swing Backtest Method
 
 ## Timeline of one session D
 
@@ -7,12 +7,22 @@
 | Exits | Positions entered before D: dividend credit if D is an ex-date; exit if D's bar hits the stop or target (stop first when both); stop fills less slippage; optional time stop at D's close | `paper_engine.exit_fill`, `apply_slippage`, `dividend_per_share` |
 | Entries | Orders planned on an earlier evening: buy-stop at the trigger, capped at the limit; open above the limit = no fill; one-price session = no fill; slippage on the fill capped at the limit; cash checked | `paper_engine.entry_fill`, `leg_charges`, `effective_price` |
 | Mark | Equity = cash + shares × D's close | — |
-| Screen | Funnel on bars dated in [D − 430 days, D] | `screen_india_vcp.prepare_history`, `run_funnel` |
-| Plan | Top 20 results → plans sized on equity, with open risk, cash, sector exposure and held symbols from the simulated account | `plan_india_breakout_trades.generate_plans` |
+| Screen (vcp) | Funnel on bars dated in [D − 430 days, D] | `screen_india_vcp.prepare_history`, `run_funnel` |
+| Plan (vcp) | Top 20 results → plans sized on equity, with open risk, cash, sector exposure and held symbols from the simulated account | `plan_india_breakout_trades.generate_plans` |
+| Screen (momentum) | `analyze_symbol` on the last 80 bars dated on or before D, results in the screener's order | `screen_india_momentum_burst.normalize_bars`, `analyze_symbol`, `sort_results` |
+| Plan (momentum) | Signals of D (ACTIONABLE_DAY1 / MANUAL_REVIEW with setup score ≥ `min_score`, no possible upper circuit) → buy limit at close + `max_chase_pct`, stop at the trigger-day low, skipped above `max_risk_pct` limit-to-stop; heat, position, sector, turnover and cash caps | `india_breakout_risk.size_position` |
 
 An order lives `valid_sessions` sessions (default 1, as the planner emits); a
-session with no bar for the stock (suspension) uses one up. Late-breakout
-"revalidation" plans need a human check and are not traded.
+session with no bar for the stock (suspension) uses one up. Stop-limit fills get
+the stop slippage capped at the limit; limit fills do not (as in the paper
+ledger). Late-breakout VCP "revalidation" plans and momentum MANUAL_REVIEW names
+below the score threshold need a human chart check and are not traded.
+
+The momentum-burst order rules are this skill's reading of the screener's
+`references/entry_exit_rules.md` (stop at the trigger-day low, review after 3-5
+sessions): an end-of-day trader buys the next morning, so entry is a next-session
+limit order a little above the signal close, and the exit is the close of the
+`max_hold_sessions`-th session unless the stop (or an optional target) is hit first.
 
 ## Data
 
@@ -34,6 +44,7 @@ session with no bar for the stock (suspension) uses one up. Late-breakout
 | Daily bars | Pessimistic | Stop counted first when one bar touches both levels |
 | No taxes | Flatters | STCG on gains is not deducted |
 | Short history | Unknown | About two years of mostly rising market |
+| No chart review | Unknown | Live use filters signals by eye; the backtest takes every qualifying one |
 
 ## Judging a result
 

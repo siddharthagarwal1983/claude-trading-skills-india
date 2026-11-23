@@ -63,7 +63,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | `india-signal-postmortem` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
-| `india-vcp-backtester` | not yet measured |
+| `india-swing-backtester` | not yet measured |
 | `india-vcp-screener` | not yet measured |
 | `india-weekly-performance-digest` | not yet measured |
 | `manifoldbt-backtester` | not yet measured |
@@ -125,7 +125,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | **India Signal Postmortem** (`india-signal-postmortem`) | beta | yes | yes | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | beta | yes | yes | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | beta | yes | yes | not yet measured |
-| **India VCP Backtester** (`india-vcp-backtester`) | beta | yes | yes | not yet measured |
+| **India Swing Backtester** (`india-swing-backtester`) | beta | yes | yes | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | beta | yes | yes | not yet measured |
 | **India Weekly Performance Digest** (`india-weekly-performance-digest`) | beta | yes | yes | not yet measured |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | production | yes | yes | 78.5% |

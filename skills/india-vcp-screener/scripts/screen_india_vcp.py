@@ -484,7 +484,7 @@ def run_funnel(
 ) -> tuple[list[dict], list, list]:
     """Pre-filter, trend template, VCP analysis, universe RS rank and entry readiness.
 
-    Shared by ``main`` and india-vcp-backtester so a backtest screens each past
+    Shared by ``main`` and india-swing-backtester so a backtest screens each past
     session exactly as the live screener does. ``outcomes`` is updated in place.
     Returns (results sorted by composite score, pre_filtered, trend_passed).
     """

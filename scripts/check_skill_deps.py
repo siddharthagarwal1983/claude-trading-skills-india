@@ -303,9 +303,9 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--accept-results-risk"),
         )
     ],
-    "india-vcp-backtester": [
+    "india-swing-backtester": [
         SmokeContract(
-            "skills/india-vcp-backtester/scripts/india_vcp_backtest.py",
+            "skills/india-swing-backtester/scripts/india_swing_backtest.py",
             ("--help",),
             expect_out=("usage:", "--max-risk-pct"),
         )

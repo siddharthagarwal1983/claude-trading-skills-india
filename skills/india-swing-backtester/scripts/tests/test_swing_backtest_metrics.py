@@ -1,7 +1,7 @@
 """Metric calculations."""
 
 import pytest
-import vcp_backtest_metrics as m
+import swing_backtest_metrics as m
 
 
 def test_curve_metrics_return_and_drawdown():

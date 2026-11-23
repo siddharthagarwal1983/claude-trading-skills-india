@@ -960,8 +960,8 @@
     {
       "category": "strategy-research",
       "difficulty": "intermediate",
-      "display_name": "India VCP Backtester",
-      "id": "india-vcp-backtester",
+      "display_name": "India Swing Backtester",
+      "id": "india-swing-backtester",
       "integrations": [
         {
           "id": "nse_bhavcopy",
@@ -978,7 +978,7 @@
         "type": "research_only"
       },
       "status": "beta",
-      "summary": "Backtest the India VCP breakout workflow on past NSE sessions by replaying the screener, breakout planner and paper-ledger fill rules with delivery charges, with sweeps of planner, exit and research-only rule settings.",
+      "summary": "Backtest India VCP breakouts or Stockbee momentum bursts on past NSE sessions by replaying the live screener, planner and paper-ledger fill rules with delivery charges, with parameter sweeps and results against NIFTY 500.",
       "timeframe": "research"
     },
     {

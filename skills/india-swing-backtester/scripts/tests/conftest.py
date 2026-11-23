@@ -1,4 +1,4 @@
-"""Shared fixtures for India VCP Backtester tests."""
+"""Shared fixtures for India Swing Backtester tests."""
 
 import os
 import sys

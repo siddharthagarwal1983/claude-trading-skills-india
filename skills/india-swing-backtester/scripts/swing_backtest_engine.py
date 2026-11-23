@@ -1,17 +1,27 @@
-"""Walk-forward replay of the India VCP breakout workflow on NSE end-of-day bars.
+"""Walk-forward replay of India swing workflows on NSE end-of-day bars.
+
+Two strategies share one simulator:
+
+* ``vcp`` — india-vcp-screener's funnel, then india-breakout-trade-planner's
+  ``generate_plans``: buy-stop-limit orders above the pivot, stop under the last
+  contraction low, 2R target.
+* ``momentum-burst`` — india-stockbee-momentum-burst-screener's
+  ``analyze_symbol``, then the rules in its references: a next-session buy
+  limit a little above the trigger close, stop at the trigger-day low, time exit
+  after a few sessions; sized like the breakout planner.
 
 Every NSE session D of the test window:
 
 1. **Exits** — positions entered before D are checked against D's bar with the
    paper ledger's exit rule (stop before target when one bar touches both;
-   stop fills get the stop slippage). Dividends with ex-date D are credited.
-2. **Entries** — stop-limit orders planned the evening before are filled with
-   the paper ledger's entry rule (gap past the limit = no fill, one-price
-   circuit sessions do not fill, slippage capped at the limit), if cash allows.
+   stop fills get the stop slippage), then the time stop. Dividends with
+   ex-date D are credited.
+2. **Entries** — orders planned the evening before are filled with the paper
+   ledger's entry rule for their type (stop-limit or limit; one-price circuit
+   sessions do not fill), if cash allows.
 3. **Mark to market** at D's close.
-4. **Plan** — D's screen (india-vcp-screener's own funnel on bars up to D) goes
-   to india-breakout-trade-planner's ``generate_plans`` with the simulated
-   account as the ledger; its actionable orders are queued for the next session.
+4. **Plan** — D's screen (the screener's own code on bars up to D) is turned into
+   orders for the next session.
 
 Nothing after D is visible when D is screened or planned. Bars are adjusted for
 splits and bonuses as of the data download, so share counts are in today's
@@ -30,12 +40,15 @@ from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any, Callable
 
-from _india_data import IST
+from _india_data import IST, round_to_tick
 
 SCREEN_SCHEMA = 1
 HISTORY_CALENDAR_DAYS = 430  # same window as the live screener
 PLAN_TIME = time(20, 0)  # plans are made after the bhavcopy, as in live use
 REGIME_SMA = 200
+STRATEGIES = ("vcp", "momentum-burst")
+MB_SIGNAL_STATES = ("ACTIONABLE_DAY1", "MANUAL_REVIEW")
+MB_SKIP_TAGS = ("possible_upper_circuit",)  # the screener sends these to manual review
 
 
 # --------------------------------------------------------------------------- market data
@@ -152,12 +165,55 @@ def screen_day(day: str, data: MarketData, screener, args: argparse.Namespace, t
     }
 
 
-def screen_key(universe: str, benchmark: str, args: argparse.Namespace, top: int, data) -> str:
-    """Cache key: screener settings plus every split/bonus factor in the data."""
+MB_FIELDS = (
+    "symbol",
+    "date",
+    "state",
+    "rating",
+    "setup_score",
+    "entry_reference",
+    "stop_reference",
+    "risk_pct_to_stop",
+    "primary_trigger",
+    "soft_failure_tags",
+    "day_gain_pct",
+    "turnover_cr",
+)
+
+
+def screen_day_momentum(day: str, data: MarketData, mb, args: argparse.Namespace) -> dict:
+    """india-stockbee-momentum-burst-screener's analysis as of ``day`` (bars up to it)."""
+    args._expected_session = date.fromisoformat(day)
+    start = (
+        date.fromisoformat(day) - timedelta(days=int(args.history_days * 1.6) + 30)
+    ).isoformat()
+    results = []
+    for row in data.rows:
+        series = data.stocks.get(row["symbol"])
+        if series is None:
+            continue
+        bars = mb.normalize_bars(series.window(start, day))
+        if bars:
+            results.append(mb.analyze_symbol(row["symbol"], bars, args))
+    states: dict = {}
+    for r in results:
+        states[r["state"]] = states.get(r["state"], 0) + 1
+    kept = [r for r in mb.sort_results(results) if r["state"] != "REJECTED"]
+    return {
+        "date": day,
+        "results": [{k: r.get(k) for k in MB_FIELDS} for r in kept],
+        "funnel": {"universe": len(data.rows), "analyzed": len(results), "states": states},
+    }
+
+
+def screen_key(
+    universe: str, benchmark: str, args: argparse.Namespace, top: int, data, strategy: str = "vcp"
+) -> str:
+    """Cache key: strategy, screener settings plus every split/bonus factor in the data."""
     settings = {
         k: v
         for k, v in sorted(vars(args).items())
-        if k not in ("output_dir", "cache_dir", "symbols")
+        if k not in ("output_dir", "cache_dir", "symbols") and not k.startswith("_")
     }
     factors = sorted(
         (sym, a.get("ex_date"), a.get("factor"))
@@ -168,6 +224,7 @@ def screen_key(universe: str, benchmark: str, args: argparse.Namespace, top: int
     blob = json.dumps(
         {
             "schema": SCREEN_SCHEMA,
+            "strategy": strategy,
             "universe": universe,
             "symbols": sorted(data.stocks),
             "benchmark": benchmark,
@@ -212,10 +269,14 @@ def screen_range(
     top: int,
     cache: ScreenCache,
     progress: Callable[[str], None] = lambda _m: None,
+    strategy: str = "vcp",
 ) -> dict:
     todo = [d for d in sessions if d not in cache.days]
     for n, day in enumerate(todo, 1):
-        cache.add(screen_day(day, data, screener, args, top))
+        if strategy == "vcp":
+            cache.add(screen_day(day, data, screener, args, top))
+        else:
+            cache.add(screen_day_momentum(day, data, screener, args))
         if n % 20 == 0 or n == len(todo):
             progress(f"  screened {n}/{len(todo)} sessions (last {day})")
     return {d: cache.days[d] for d in sessions}
@@ -226,6 +287,7 @@ def screen_range(
 
 @dataclass
 class SimParams:
+    strategy: str = "vcp"
     capital: float = 1_000_000.0
     risk_pct: float = 0.5
     max_position_pct: float = 10.0
@@ -241,10 +303,24 @@ class SimParams:
     dp_charge: float = 15.93
     slippage_bps: float = 10.0
     max_hold_sessions: int | None = None
-    # Research-only planner rules (live defaults: 8% cap, score 70+, nothing below 70 sized).
+    # vcp: research-only planner rules (live: 8% cap, score 70+, nothing below 70 sized).
+    # momentum-burst: risk cap at the limit price and minimum setup score (80 = ACTIONABLE_DAY1).
     max_risk_pct: float = 8.0
     min_score: float = 70.0
     developing_multiplier: float = 0.5
+
+    @classmethod
+    def for_strategy(cls, strategy: str, **values) -> SimParams:
+        """Defaults for a strategy; momentum bursts exit on time, not at a target."""
+        if strategy not in STRATEGIES:
+            raise ValueError(f"strategy must be one of {STRATEGIES}")
+        base = {"strategy": strategy}
+        if strategy == "momentum-burst":
+            base.update(
+                target_r_multiple=0.0, max_hold_sessions=5, max_risk_pct=10.0, min_score=80.0
+            )
+        base.update({k: v for k, v in values.items() if v is not None})
+        return cls(**base)
 
     PLAN_FIELDS = (
         "risk_pct",
@@ -267,10 +343,17 @@ LIVE_MIN_SCORE = 70.0
 
 
 def validate_params(p: SimParams) -> None:
+    if p.strategy not in STRATEGIES:
+        raise ValueError(f"strategy must be one of {STRATEGIES}")
     if not 0 < p.max_risk_pct <= 30:
         raise ValueError("max_risk_pct must be above 0 and at most 30")
-    if not 60 <= p.min_score <= 100:
-        raise ValueError("min_score must be between 60 and 100")
+    low = 60 if p.strategy == "vcp" else 55
+    if not low <= p.min_score <= 100:
+        raise ValueError(f"min_score must be between {low} and 100")
+    if p.target_r_multiple < 0 or (p.strategy == "vcp" and p.target_r_multiple <= 0):
+        raise ValueError("target_r_multiple must be positive (0 = no target, momentum-burst only)")
+    if p.strategy == "momentum-burst" and not p.max_hold_sessions:
+        raise ValueError("momentum-burst needs max_hold_sessions (the 3-5 session exit)")
     if not 0 <= p.developing_multiplier <= 1.75:
         raise ValueError("developing_multiplier must be between 0 and 1.75")
     if p.max_hold_sessions is not None and p.max_hold_sessions < 1:
@@ -330,6 +413,7 @@ class Simulator:
             "orders_filled": 0,
             "orders_expired": 0,
             "orders_gapped_past_limit": 0,
+            "rejected_risk": 0,
             "orders_rejected_cash": 0,
             "orders_locked": 0,
             "orders_suspended": 0,
@@ -469,7 +553,7 @@ class Simulator:
                 self.events["orders_locked"] += 1
             else:
                 fill = self.eng.entry_fill(
-                    "STOP_LIMIT", bar, limit=order["limit"], trigger=order["trigger"]
+                    order["order_type"], bar, limit=order["limit"], trigger=order["trigger"]
                 )
                 if fill is None and float(bar["open"]) > order["limit"]:
                     self.events["orders_gapped_past_limit"] += 1
@@ -480,9 +564,11 @@ class Simulator:
                 else:
                     self.events["orders_expired"] += 1
                 continue
-            price = min(
-                self.eng.apply_slippage(fill["price"], self.p.slippage_bps, "BUY"), order["limit"]
-            )
+            price = fill["price"]
+            if order["order_type"] in ("STOP", "STOP_LIMIT"):  # as india-paper-ledger
+                price = min(
+                    self.eng.apply_slippage(price, self.p.slippage_bps, "BUY"), order["limit"]
+                )
             qty = order["qty"]
             charges = self._charges(price * qty, buy=True)
             cost = charges["turnover"] + charges["total"]
@@ -517,6 +603,9 @@ class Simulator:
         if not screen or screen.get("skipped"):
             return
         self.events["screened_sessions"] += 1
+        if self.p.strategy == "momentum-burst":
+            self._plan_momentum(day, screen, equity)
+            return
         held = set(self.positions)
         pending = {o["symbol"] for o in self.pending}
         ledger = {
@@ -553,6 +642,7 @@ class Simulator:
                 {
                     "symbol": order["symbol"],
                     "qty": order["qty"],
+                    "order_type": order["order_type"],
                     "trigger": order["trigger"],
                     "limit": order["limit"],
                     "stop": order["stop"],
@@ -563,6 +653,97 @@ class Simulator:
                     "sector": plan.get("sector"),
                     "rating_band": plan.get("rating_band"),
                     "composite_score": plan.get("composite_score"),
+                }
+            )
+
+    def _avg_turnover_cr(self, sym: str, day: str, sessions: int = 20) -> float | None:
+        series = self.data.stocks[sym]
+        i = bisect.bisect_right(series.dates, day)
+        bars = series.bars[max(0, i - sessions) : i]
+        values = [
+            b["close"] * b["volume"] for b in bars if isinstance(b.get("volume"), (int, float))
+        ]
+        return sum(values) / len(values) / 1e7 if values else None
+
+    def _plan_momentum(self, day: str, screen: dict, equity: float) -> None:
+        """Next-session buy limits for the day's bursts, sized like the breakout planner."""
+        p = self.p
+        busy = set(self.positions) | {o["symbol"] for o in self.pending}
+        heat = self._open_risk() / equity * 100 if equity > 0 else 0.0
+        cash = self.cash
+        sector_pct: dict = {}
+        sectors = {r["symbol"]: r.get("industry") or "Unknown" for r in self.data.rows}
+        for sym, pos in self.positions.items():
+            value = pos["qty"] * (self._close(sym, day) or pos["entry_price"])
+            sector_pct[sectors.get(sym)] = (
+                sector_pct.get(sectors.get(sym), 0.0) + value / equity * 100
+            )
+        for r in screen["results"]:
+            sym = r["symbol"]
+            if (
+                r["state"] not in MB_SIGNAL_STATES
+                or (r.get("setup_score") or 0) < p.min_score
+                or any(t in (r.get("soft_failure_tags") or []) for t in MB_SKIP_TAGS)
+                or r.get("date") != day
+                or sym in busy
+            ):
+                continue
+            ref, stop = r.get("entry_reference"), r.get("stop_reference")
+            if not ref or not stop or stop <= 0 or stop >= ref:
+                continue
+            limit = round_to_tick(ref * (1 + p.max_chase_pct / 100), "down")
+            stop = round_to_tick(stop, "down")
+            if (limit - stop) / limit * 100 > p.max_risk_pct:
+                self.events["rejected_risk"] += 1
+                continue
+            self.events["actionable_plans"] += 1
+            sector = sectors.get(sym, "Unknown")
+            sizing = self.planner.size_position(
+                worst_entry=limit,
+                stop_loss=stop,
+                account_size=equity,
+                risk_pct=p.risk_pct,
+                sizing_multiplier=1.0,
+                max_position_pct=p.max_position_pct,
+                max_sector_pct=p.max_sector_pct,
+                current_sector_exposure_pct=sector_pct.get(sector, 0.0),
+                avg_turnover_cr=self._avg_turnover_cr(sym, day),
+                max_adv_pct=p.max_adv_pct,
+                cash_available=cash,
+                brokerage=p.brokerage_per_order,
+                dp_charge=p.dp_charge,
+            )
+            if sizing["shares"] == 0:
+                self.events["constrained"] += 1
+                continue
+            risk_pct = sizing["risk_inr"] / equity * 100
+            if heat + risk_pct > p.max_portfolio_heat_pct:
+                self.events["deferred_heat"] += 1
+                continue
+            heat += risk_pct
+            cash -= sizing["position_value"] + sizing["buy_charges"]
+            sector_pct[sector] = (
+                sector_pct.get(sector, 0.0) + sizing["position_value"] / equity * 100
+            )
+            target = None
+            if p.target_r_multiple > 0:
+                target = round_to_tick(limit + p.target_r_multiple * (limit - stop), "nearest")
+            busy.add(sym)
+            self.pending.append(
+                {
+                    "symbol": sym,
+                    "qty": sizing["shares"],
+                    "order_type": "LIMIT",
+                    "trigger": None,
+                    "limit": limit,
+                    "stop": stop,
+                    "target": target,
+                    "sessions_left": p.valid_sessions,
+                    "signal_session": day,
+                    "risk_inr": sizing["risk_inr"],
+                    "sector": sector,
+                    "rating_band": r.get("rating"),
+                    "composite_score": r.get("setup_score"),
                 }
             )
 
@@ -624,6 +805,7 @@ def parse_sweep(specs: list) -> list:
     """['target_r_multiple=1.5,2,3', 'stop_buffer_pct=0.5,1'] -> list of override dicts."""
     axes = []
     known = asdict(SimParams())
+    known.pop("strategy")
     for spec in specs or []:
         if "=" not in spec:
             raise ValueError(f"--sweep needs name=v1,v2,..., got {spec!r}")

@@ -63,7 +63,7 @@ generated: true
 | `india-signal-postmortem` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
-| `india-vcp-backtester` | not yet measured |
+| `india-swing-backtester` | not yet measured |
 | `india-vcp-screener` | not yet measured |
 | `india-weekly-performance-digest` | not yet measured |
 | `manifoldbt-backtester` | not yet measured |
@@ -125,7 +125,7 @@ generated: true
 | **India Signal Postmortem** (`india-signal-postmortem`) | ベータ | はい | はい | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | ベータ | はい | はい | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | ベータ | はい | はい | not yet measured |
-| **India VCP Backtester** (`india-vcp-backtester`) | ベータ | はい | はい | not yet measured |
+| **India Swing Backtester** (`india-swing-backtester`) | ベータ | はい | はい | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | ベータ | はい | はい | not yet measured |
 | **India Weekly Performance Digest** (`india-weekly-performance-digest`) | ベータ | はい | はい | not yet measured |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | 本番 | はい | はい | 78.5% |

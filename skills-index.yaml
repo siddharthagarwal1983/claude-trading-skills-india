@@ -2572,15 +2572,15 @@ skills:
   - postmortem_findings
   - screener_quality_scores
   workflows: []
-- id: india-vcp-backtester
-  display_name: India VCP Backtester
+- id: india-swing-backtester
+  display_name: India Swing Backtester
   category: strategy-research
   status: beta
   operational_role:
     type: research_only
-  summary: Backtest the India VCP breakout workflow on past NSE sessions by replaying the screener,
-    breakout planner and paper-ledger fill rules with delivery charges, with sweeps of planner, exit
-    and research-only rule settings.
+  summary: Backtest India VCP breakouts or Stockbee momentum bursts on past NSE sessions by replaying
+    the live screener, planner and paper-ledger fill rules with delivery charges, with parameter
+    sweeps and results against NIFTY 500.
   timeframe: research
   difficulty: intermediate
   integrations:

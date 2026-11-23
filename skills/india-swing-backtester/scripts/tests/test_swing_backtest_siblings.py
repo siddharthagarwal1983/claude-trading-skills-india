@@ -1,7 +1,7 @@
 """Sibling skill loading."""
 
 import pytest
-import vcp_backtest_siblings as sib
+import swing_backtest_siblings as sib
 
 
 def test_siblings_load():

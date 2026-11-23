@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""India VCP Backtester: replay the VCP breakout workflow over past NSE sessions.
+"""India Swing Backtester: replay an India swing workflow over past NSE sessions.
 
-For each session in the test window the india-vcp-screener funnel runs on bars
-up to that day, india-breakout-trade-planner turns the result into stop-limit
-orders for the simulated account, and the india-paper-ledger fill rules fill
-them and their stop/target exits on the following sessions, with Indian
-delivery charges. Screens are cached (they are the slow part), so parameter
-sweeps over the planner and exit settings are quick.
+``--strategy vcp``: for each session the india-vcp-screener funnel runs on bars
+up to that day and india-breakout-trade-planner turns the result into stop-limit
+orders. ``--strategy momentum-burst``: india-stockbee-momentum-burst-screener's
+analysis runs on bars up to that day and its bursts become next-session buy
+limits with the trigger-day low as stop and a time exit. Either way the
+india-paper-ledger fill rules fill entries and exits on later sessions, with
+Indian delivery charges. Screens are cached (they are the slow part), so
+parameter sweeps are quick.
 
-Outputs india_vcp_backtest_<start>_<end>.json / .md plus trade and equity CSVs.
+Outputs india_swing_backtest_<strategy>_<universe>_<start>_<end>.json / .md plus
+trade and equity CSVs.
 Exit codes: 0 success, 1 invalid input or data, 2 missing dependency.
 """
 
@@ -29,13 +32,14 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 import _india_data as india  # noqa: E402
-import vcp_backtest_engine as engine  # noqa: E402
-import vcp_backtest_metrics as metrics  # noqa: E402
-from vcp_backtest_siblings import SiblingMissingError, load_all  # noqa: E402
+import swing_backtest_engine as engine  # noqa: E402
+import swing_backtest_metrics as metrics  # noqa: E402
+from swing_backtest_siblings import SiblingMissingError, load, load_all  # noqa: E402
 
-SKILL_ID = "india-vcp-backtester"
+SKILL_ID = "india-swing-backtester"
 DEFAULT_DATA_START = "2024-01-01"
-WARMUP_SESSIONS = 252  # a full 52-week window before the first screened session
+WARMUP_SESSIONS = {"vcp": 252, "momentum-burst": 100}  # history before the first screen
+TITLES = {"vcp": "India VCP Breakout Backtest", "momentum-burst": "India Momentum Burst Backtest"}
 NSE_INDEX_FIRST = "2025-01-01"  # NSE bhavcopy index history starts here
 YF_TICKERS = {"NIFTY 500": "^CRSLDX", "NIFTY 50": "^NSEI"}
 BACKFILL_TOLERANCE = 0.0005  # 0.05% on closes
@@ -237,13 +241,19 @@ def render_markdown(report: dict) -> str:
     ev = s["events"]
     w = report["window"]
     lines = [
-        "# India VCP Breakout Backtest",
+        f"# {TITLES[report['strategy']]}",
         "",
         f"**Window:** {w['start']} to {w['end']} ({w['sessions']} NSE sessions) · "
         f"universe {report['universe']} · generated {report['generated_at']}",
         "",
-        "Replays india-vcp-screener → india-breakout-trade-planner → india-paper-ledger fill rules "
-        "on official NSE end-of-day bars, with delivery charges. Historical research only.",
+        (
+            "Replays india-vcp-screener → india-breakout-trade-planner → india-paper-ledger fill "
+            "rules"
+            if report["strategy"] == "vcp"
+            else "Replays india-stockbee-momentum-burst-screener → next-session buy limits → "
+            "india-paper-ledger fill rules"
+        )
+        + " on official NSE end-of-day bars, with delivery charges. Historical research only.",
         "",
         "## Result",
         "",
@@ -277,7 +287,8 @@ def render_markdown(report: dict) -> str:
         "## Order flow",
         "",
         f"- Sessions screened: {ev['screened_sessions']}; actionable plans: {ev['actionable_plans']}; "
-        f"deferred by the heat cap: {ev['deferred_heat']}; zero-share plans: {ev['constrained']}",
+        f"deferred by the heat cap: {ev['deferred_heat']}; zero-share plans: {ev['constrained']}"
+        + (f"; over the risk cap: {ev['rejected_risk']}" if ev.get("rejected_risk") else ""),
         f"- Orders filled {ev['orders_filled']}, expired untriggered {ev['orders_expired']} "
         f"(of which gapped past the limit {ev['orders_gapped_past_limit']}), rejected for cash "
         f"{ev['orders_rejected_cash']}, circuit-locked {ev['orders_locked']}",
@@ -306,7 +317,7 @@ def render_markdown(report: dict) -> str:
             f"{y['trades']} | | |"
         )
     for title, key in (
-        ("By rating band", "by_rating_band"),
+        ("By rating", "by_rating_band"),
         ("By market regime at signal", "by_regime_at_entry"),
     ):
         lines += [
@@ -340,34 +351,53 @@ def render_markdown(report: dict) -> str:
                 f" | {_num(m['trade_stats']['avg_r'], 3)} | {_num(m['trade_stats']['profit_factor'])} |"
             )
     p = report["base"]["params"]
+    lines += ["", "## Settings and caveats", ""]
+    if report["strategy"] == "vcp":
+        lines += [
+            f"- Capital {format_inr(p['capital'])}; risk {p['risk_pct']}% per trade (scaled by "
+            f"rating band); heat cap {p['max_portfolio_heat_pct']}%; position cap "
+            f"{p['max_position_pct']}%; target {p['target_r_multiple']}R; stop buffer "
+            f"{p['stop_buffer_pct']}%; max chase {p['max_chase_pct']}%; orders valid "
+            f"{p['valid_sessions']} session(s); slippage {p['slippage_bps']} bps on stop entries "
+            f"and stop exits; time stop {p['max_hold_sessions'] or 'none'}.",
+            f"- Planner rules: worst-case risk cap {p['max_risk_pct']}%, minimum score "
+            f"{p['min_score']}"
+            + (
+                f", scores {p['min_score']:g}-69 sized at {p['developing_multiplier']}x"
+                if p["min_score"] < 70
+                else ""
+            )
+            + (
+                " — **research variant, differs from the live planner (8%, 70+)**"
+                if (p["max_risk_pct"], p["min_score"]) != (8.0, 70.0)
+                else " (live planner rules)"
+            )
+            + ".",
+        ]
+    else:
+        lines += [
+            f"- Signals: screener state ACTIONABLE_DAY1 or MANUAL_REVIEW with setup score >= "
+            f"{p['min_score']:g} on the signal session (80 = ACTIONABLE_DAY1 only); possible "
+            "upper-circuit closes skipped (the screener sends them to manual review).",
+            f"- Entry: buy limit at the signal close + {p['max_chase_pct']}% for the next "
+            f"{p['valid_sessions']} session(s) (fills at the open when below the limit); stop at "
+            f"the trigger-day low; skipped when limit-to-stop exceeds {p['max_risk_pct']}%.",
+            f"- Exit: stop (less {p['slippage_bps']} bps), "
+            + (f"target {p['target_r_multiple']}R, " if p["target_r_multiple"] else "no target, ")
+            + f"else the close of the {p['max_hold_sessions']}th session held. Exits start the "
+            "session after entry.",
+            f"- Capital {format_inr(p['capital'])}; risk {p['risk_pct']}% per trade with charges, "
+            f"heat cap {p['max_portfolio_heat_pct']}%, position cap {p['max_position_pct']}%, "
+            f"{p['max_adv_pct']}% of 20-session turnover.",
+        ]
     lines += [
-        "",
-        "## Settings and caveats",
-        "",
-        f"- Capital {format_inr(p['capital'])}; risk {p['risk_pct']}% per trade (scaled by rating band); "
-        f"heat cap {p['max_portfolio_heat_pct']}%; position cap {p['max_position_pct']}%; target "
-        f"{p['target_r_multiple']}R; stop buffer {p['stop_buffer_pct']}%; max chase {p['max_chase_pct']}%; "
-        f"orders valid {p['valid_sessions']} session(s); slippage {p['slippage_bps']} bps on stop "
-        f"entries and stop exits; time stop {p['max_hold_sessions'] or 'none'}.",
-        f"- Planner rules: worst-case risk cap {p['max_risk_pct']}%, minimum score {p['min_score']}"
-        + (
-            f", scores {p['min_score']:g}-69 sized at {p['developing_multiplier']}x"
-            if p["min_score"] < 70
-            else ""
-        )
-        + (
-            " — **research variant, differs from the live planner (8%, 70+)**"
-            if (p["max_risk_pct"], p["min_score"]) != (8.0, 70.0)
-            else " (live planner rules)"
-        )
-        + ".",
         f"- Screener settings: {report['screener_settings']}.",
         "- **Survivorship bias:** the universe is today's index membership; stocks that left the "
         "index (often after falling) are missing, which flatters results.",
         "- Bars are adjusted for later splits/bonuses, so a few prices and tick sizes differ from "
         "what was quoted at the time; rupee P&L is unaffected.",
         "- One daily bar cannot show intraday order: a bar touching both stop and target counts "
-        "as a stop. Late-breakout revalidation plans are not traded. Taxes are not modelled.",
+        "as a stop. Taxes are not modelled; no human chart review is simulated.",
         "- Past results on ~2 years of one market are weak evidence; not investment advice.",
         "",
     ]
@@ -397,15 +427,21 @@ def write_csv(path: Path, rows: list) -> None:
 def build_parser() -> argparse.ArgumentParser:
     defaults = engine.SimParams()
     p = argparse.ArgumentParser(
-        description="Backtest the India VCP breakout workflow on past NSE sessions."
+        description="Backtest an India swing workflow (VCP breakouts or momentum bursts) on "
+        "past NSE sessions."
     )
+    p.add_argument("--strategy", choices=engine.STRATEGIES, default="vcp")
     p.add_argument("--universe", default="nifty500", help="Nifty universe (default: nifty500)")
     p.add_argument("--symbols", nargs="+", help="Explicit NSE symbols instead of --universe")
     p.add_argument("--benchmark", default="NIFTY 500", help="RS and comparison index")
-    p.add_argument("--start", help="First test session (default: after a 252-session warm-up)")
+    p.add_argument(
+        "--start", help="First test session (default: after a warm-up, 252 vcp / 100 momentum)"
+    )
     p.add_argument("--end", help="Last test session (default: latest completed session)")
     p.add_argument("--data-start", default=DEFAULT_DATA_START, help="First bar to load")
-    p.add_argument("--top", type=int, default=20, help="Screener results passed to the planner")
+    p.add_argument(
+        "--top", type=int, default=20, help="vcp: screener results passed to the planner"
+    )
     p.add_argument(
         "--screener-args", default="", help='Extra screener flags, e.g. "--trend-min-score 80"'
     )
@@ -414,20 +450,22 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument(
             "--" + name.replace("_", "-"),
             type=int if name == "valid_sessions" else float,
-            default=getattr(defaults, name),
+            default=None if name == "target_r_multiple" else getattr(defaults, name),
         )
-    p.add_argument("--max-hold-sessions", type=int, default=None, help="Time stop (default: none)")
+    p.add_argument(
+        "--max-hold-sessions", type=int, default=None, help="Time stop (vcp: none, momentum: 5)"
+    )
     p.add_argument(
         "--max-risk-pct",
         type=float,
-        default=defaults.max_risk_pct,
-        help="Research: worst-entry-to-stop cap (live planner: 8)",
+        default=None,
+        help="Entry-to-stop cap: vcp research (live planner 8), momentum limit-to-stop (10)",
     )
     p.add_argument(
         "--min-score",
         type=float,
-        default=defaults.min_score,
-        help="Research: lowest composite score planned (live planner: 70)",
+        default=None,
+        help="Lowest score traded: vcp composite (live 70), momentum setup score (80)",
     )
     p.add_argument(
         "--developing-multiplier",
@@ -448,21 +486,27 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
     now_fn = now_fn or (lambda: datetime.now(timezone.utc))
     try:
         screener, planner, paper = load_all()
+        momentum = load("momentum") if args.strategy == "momentum-burst" else None
     except SiblingMissingError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
     screener._log = lambda _message: None  # per-session funnel chatter
     cache_root = Path(args.cache_dir) if args.cache_dir else india.default_cache_dir()
     try:
-        screener_argv = shlex.split(args.screener_args)
-        screener_argv += ["--benchmark", args.benchmark, "--top", str(args.top)]
-        if args.symbols:
-            screener_argv += ["--symbols", *args.symbols]
+        where = ["--symbols", *args.symbols] if args.symbols else ["--universe", args.universe]
+        vcp_argv = ["--benchmark", args.benchmark, "--top", str(args.top), *where]
+        extra = shlex.split(args.screener_args)
+        if args.strategy == "vcp":
+            screener_argv = extra + vcp_argv
+            sargs = screener.parse_arguments(screener_argv)
+            rows_args = sargs
         else:
-            screener_argv += ["--universe", args.universe]
-        sargs = screener.parse_arguments(screener_argv)
+            screener_argv = extra + where
+            sargs = momentum.parse_arguments(screener_argv)
+            rows_args = screener.parse_arguments(vcp_argv)
         sweep = engine.parse_sweep(args.sweep)
-        base = engine.SimParams(
+        base = engine.SimParams.for_strategy(
+            args.strategy,
             capital=args.capital,
             max_hold_sessions=args.max_hold_sessions,
             max_risk_pct=args.max_risk_pct,
@@ -476,7 +520,7 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
         for overrides in sweep:
             engine.validate_params(engine.apply_overrides(base, overrides))
         end = args.end or india.latest_completed_session(now_fn()).isoformat()
-        rows, universe_desc = screener.load_universe_rows(sargs, cache_root)
+        rows, universe_desc = screener.load_universe_rows(rows_args, cache_root)
         log(f"Loading {len(rows)} symbols and {args.benchmark} from {args.data_start} to {end}")
         data, missing = load_market_data(
             rows,
@@ -494,28 +538,39 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
 
+    warmup = WARMUP_SESSIONS[args.strategy]
     all_sessions = [d for d in data.sessions if d <= end]
-    if len(all_sessions) <= WARMUP_SESSIONS + 1:
+    if len(all_sessions) <= warmup + 1:
         print(
             f"Error: only {len(all_sessions)} sessions of {args.benchmark}; need more history",
             file=sys.stderr,
         )
         return 1
-    start = args.start or all_sessions[WARMUP_SESSIONS]
+    start = args.start or all_sessions[warmup]
     sessions = [d for d in all_sessions if start <= d <= end]
     if len(sessions) < 2:
         print(f"Error: no NSE sessions between {start} and {end}", file=sys.stderr)
         return 1
 
-    key = engine.screen_key(universe_desc, args.benchmark, sargs, args.top, data)
-    cache_path = cache_root / "backtest" / f"vcp_screens_{key}.jsonl"
+    key = engine.screen_key(universe_desc, args.benchmark, sargs, args.top, data, args.strategy)
+    prefix = "vcp" if args.strategy == "vcp" else "momentum"
+    cache_path = cache_root / "backtest" / f"{prefix}_screens_{key}.jsonl"
     if args.rescreen and cache_path.exists():
         cache_path.unlink()
     screen_cache = engine.ScreenCache(cache_path)
     todo = sum(1 for d in sessions if d not in screen_cache.days)
     log(f"Screening {todo} of {len(sessions)} sessions ({cache_path.name})")
     t0 = clock.time()
-    screens = engine.screen_range(sessions, data, screener, sargs, args.top, screen_cache, log)
+    screens = engine.screen_range(
+        sessions,
+        data,
+        screener if args.strategy == "vcp" else momentum,
+        sargs,
+        args.top,
+        screen_cache,
+        log,
+        strategy=args.strategy,
+    )
     log(f"Screens ready in {clock.time() - t0:.0f}s; simulating")
 
     bench_points = [
@@ -535,6 +590,7 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
     report = {
         "schema_version": "1.0",
         "skill": SKILL_ID,
+        "strategy": args.strategy,
         "exchange": india.EXCHANGE,
         "currency": india.CURRENCY,
         "generated_at": now_fn().astimezone(india.IST).isoformat(timespec="seconds"),
@@ -558,7 +614,8 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
     }
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    stem = out / f"india_vcp_backtest_{sessions[0]}_{sessions[-1]}"
+    slug = "custom" if args.symbols else args.universe.lower()
+    stem = out / f"india_swing_backtest_{args.strategy}_{slug}_{sessions[0]}_{sessions[-1]}"
     stem.with_suffix(".json").write_text(
         json.dumps(report, indent=2, default=str) + "\n", encoding="utf-8"
     )
@@ -567,7 +624,8 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
     write_csv(Path(f"{stem}_equity.csv"), base_run["curve"])
     st, ts = base_summary["strategy"], base_summary["trade_stats"]
     print(
-        f"India VCP backtest {sessions[0]} to {sessions[-1]}: return {_pct(st['total_return_pct'])} "
+        f"{TITLES[args.strategy]} {sessions[0]} to {sessions[-1]}: return "
+        f"{_pct(st['total_return_pct'])} "
         f"vs {args.benchmark} {_pct(base_summary['benchmark']['total_return_pct'])}, max drawdown "
         f"{_pct(st['max_drawdown_pct'])}, {ts['trades']} closed trades, win rate "
         f"{_num((ts['win_rate'] or 0) * 100, 1)}%, avg R {_num(ts['avg_r'], 3)}"
