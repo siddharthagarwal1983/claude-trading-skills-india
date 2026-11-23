@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 90 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 92 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -87,9 +87,11 @@ A comprehensive catalog of all 90 Claude Trading Skills organized by category. B
 | `india-paper-ledger` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-pre-trade-discipline-gate` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-signal-postmortem` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-weekly-performance-digest` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
 | `kanchi-dividend-review-monitor` | `workflow_step` | — |
 | `kanchi-dividend-sop` | `workflow_step` | — |
@@ -218,6 +220,7 @@ A comprehensive catalog of all 90 Claude Trading Skills organized by category. B
 | **[Drawdown Circuit Breaker]({{ '/en/skills/drawdown-circuit-breaker/' | relative_url }})** | Account-level risk gate that reads trader-memory-core state and returns TRADING_ALLOWED / COOLDOWN / HALTED from realized P&L, losing-streak, and weekly/monthly drawdown rules | <span class="badge badge-free">No API</span> |
 | **[India Drawdown Circuit Breaker]({{ '/en/skills/india-drawdown-circuit-breaker/' | relative_url }})** | NSE account-level risk gate on paper-ledger state: realized rupee P&L for the IST day, week and month plus a losing-streak cooldown, halts released on the next NSE session. Beta | <span class="badge badge-free">No API</span> |
 | **[Weekly Performance Digest]({{ '/en/skills/weekly-performance-digest/' | relative_url }})** | Aggregate the week's closed trades into win rate, expectancy, profit factor, R-multiple, and MAE/MFE, with win/loss pattern analysis by source skill, exit reason, thesis type, sector, and mechanism. Pure local calculation | <span class="badge badge-free">No API</span> |
+| **[India Weekly Performance Digest]({{ '/en/skills/india-weekly-performance-digest/' | relative_url }})** | Weekly digest of NSE paper trades from india-paper-ledger: the US digest metrics in rupees plus charges and gross-vs-net P&L, dividends, NIFTY 50 over each trade's holding sessions, MAE/MFE from official NSE closes and the screener behind each trade. Beta | <span class="badge badge-free">No API</span> |
 | **[Position Sizer]({{ '/en/skills/position-sizer/' | relative_url }})** | Risk-based position sizing using Fixed Fractional, ATR-based, and Kelly Criterion methods. Portfolio constraints (max position %, max sector %). Works offline | <span class="badge badge-free">No API</span> |
 | **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** | Rupee position sizing for NSE delivery trades: whole shares, SME lots, tick-rounded ATR stops, and STT / exchange / SEBI / stamp / GST / DP charges counted inside the risk budget. Works offline. Beta | <span class="badge badge-free">No API</span> |
 | **[Futures Position Sizer]({{ '/en/skills/futures-position-sizer/' | relative_url }})** | Contract-based futures position sizing from direction/entry/stop using a verified 23-market contract-spec table (multiplier, tick size, tick value). Explicit flags or contrarian-setup-gate READY_FOR_PLAN handoff. Beta. Works offline | <span class="badge badge-free">No API</span> |
@@ -259,6 +262,7 @@ A comprehensive catalog of all 90 Claude Trading Skills organized by category. B
 | **Edge Pipeline Orchestrator** | Orchestrates the full edge research pipeline end-to-end with review-revision feedback loop (max 2 iterations). Supports resume, review-only, and dry-run modes | <span class="badge badge-free">No API</span> |
 | **[Edge Signal Aggregator]({{ '/en/skills/edge-signal-aggregator/' | relative_url }})** | Aggregates outputs from edge-candidate-agent, theme-detector, sector-analyst, and institutional-flow-tracker with configurable weighting, deduplication, and contradiction handling into a ranked conviction dashboard | <span class="badge badge-free">No API</span> |
 | **[Signal Postmortem]({{ '/en/skills/signal-postmortem/' | relative_url }})** | Records and analyzes post-trade outcomes for signals generated by edge pipeline and screeners. Classifies outcomes (true positive, false positive, regime mismatch), generates weight feedback for edge-signal-aggregator and skill improvement backlog entries | <span class="badge badge-optional">FMP Optional</span> |
+| **[India Signal Postmortem]({{ '/en/skills/india-signal-postmortem/' | relative_url }})** | Scores India screener signals (VCP, momentum burst, earnings reaction, dividend) against NSE closes 5 and 20 sessions later, traded or not: signal-postmortem classes, excess return over NIFTY 50, grade and regime breakdowns, winners never taken. Free NSE data. Beta | <span class="badge badge-free">No API</span> |
 | **[Residual Edge Analyzer]({{ '/en/skills/residual-edge-analyzer/' | relative_url }})** | Separates a strategy return series into declared baseline exposure and residual edge via OLS attribution with HAC inference, rolling stability, alternate-baseline sensitivity, and regime breakdowns. Answers whether returns contain alpha independent of market, momentum, or sector exposure | <span class="badge badge-free">No API</span> |
 
 ---
@@ -341,6 +345,8 @@ A comprehensive catalog of all 90 Claude Trading Skills organized by category. B
 - **[India Pre-Trade Discipline Gate]({{ '/en/skills/india-pre-trade-discipline-gate/' | relative_url }})** -- Final check before placing an NSE order
 - **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
 - **[India Paper Ledger]({{ '/en/skills/india-paper-ledger/' | relative_url }})** -- Paper-trade NSE stocks in rupees with end-of-day fills
+- **[India Weekly Performance Digest]({{ '/en/skills/india-weekly-performance-digest/' | relative_url }})** -- How this week's closed NSE paper trades did, after charges and against NIFTY 50
+- **[India Signal Postmortem]({{ '/en/skills/india-signal-postmortem/' | relative_url }})** -- Which India screener's signals actually worked, traded or not
 - **[India Market Breadth Analyzer]({{ '/en/skills/india-market-breadth-analyzer/' | relative_url }})** -- How broad the NSE move is, scored 0-100
 - **[India IBD Distribution Day Monitor]({{ '/en/skills/india-ibd-distribution-day-monitor/' | relative_url }})** -- Institutional selling on NIFTY 50 / NIFTY 500
 - **[India FTD Detector]({{ '/en/skills/india-ftd-detector/' | relative_url }})** -- Bottom confirmation after an NSE correction
@@ -397,9 +403,11 @@ A comprehensive catalog of all 90 Claude Trading Skills organized by category. B
 | India Paper Ledger | -- | -- | -- |
 | India Position Sizer | -- | -- | -- |
 | India Pre-Trade Discipline Gate | -- | -- | -- |
+| India Signal Postmortem | -- | -- | -- |
 | India Stock Analysis | -- | -- | -- |
 | India Stockbee Momentum Burst Screener | -- | -- | -- |
 | India VCP Screener | -- | -- | -- |
+| India Weekly Performance Digest | -- | -- | -- |
 | Institutional Flow Tracker | Required | -- | -- |
 | Kanchi Dividend Review Monitor | Recommended | -- | -- |
 | Kanchi Dividend SOP | Recommended | -- | -- |

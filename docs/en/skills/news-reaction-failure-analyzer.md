@@ -3,7 +3,7 @@ layout: default
 title: "News Reaction Failure Analyzer"
 grand_parent: English
 parent: Skill Guides
-nav_order: 61
+nav_order: 63
 lang_peer: /ja/skills/news-reaction-failure-analyzer/
 permalink: /en/skills/news-reaction-failure-analyzer/
 generated: true

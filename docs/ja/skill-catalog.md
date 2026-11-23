@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全90個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全92個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -87,9 +87,11 @@ permalink: /ja/skill-catalog/
 | `india-paper-ledger` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-position-sizer` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-pre-trade-discipline-gate` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-signal-postmortem` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-weekly-performance-digest` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
 | `kanchi-dividend-review-monitor` | `workflow_step` | — |
 | `kanchi-dividend-sop` | `workflow_step` | — |
@@ -218,6 +220,7 @@ permalink: /ja/skill-catalog/
 | **[Drawdown Circuit Breaker]({{ '/ja/skills/drawdown-circuit-breaker/' | relative_url }})** | trader-memory-coreの状態を読み、実現損益・連敗・週次/月次ドローダウンから TRADING_ALLOWED / COOLDOWN / HALTED を返す口座レベルの新規リスクゲート | <span class="badge badge-free">API不要</span> |
 | **[India Drawdown Circuit Breaker]({{ '/ja/skills/india-drawdown-circuit-breaker/' | relative_url }})** | ペーパー台帳の状態に基づくNSE向け口座レベルのリスクゲート。IST基準の日次・週次・月次の確定損益と連敗クールダウンを判定し、停止はNSEの次の営業日に解除。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Weekly Performance Digest]({{ '/ja/skills/weekly-performance-digest/' | relative_url }})** | クローズドトレードから週次パフォーマンスサマリを生成。勝率・期待値・プロフィットファクター・Rマルチプル・MAE/MFE と、ソーススキル／エグジット理由／テシスタイプ／セクター／メカニズム別の勝敗パターン分析を出力。ローカル計算のみ | <span class="badge badge-free">API不要</span> |
+| **[India Weekly Performance Digest]({{ '/ja/skills/india-weekly-performance-digest/' | relative_url }})** | india-paper-ledgerでクローズしたNSEペーパートレードの週次サマリ。米国版と同じ指標をルピー建てで出し、手数料と手数料控除前後の損益、配当、保有期間中のNIFTY 50との比較、NSE公式終値によるMAE/MFE、各トレードの元になったスクリーナーを追加。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Position Sizer]({{ '/ja/skills/position-sizer/' | relative_url }})** | Fixed Fractional、ATRベース、Kelly Criterionの3手法でリスクベースポジションサイズを計算 | <span class="badge badge-free">API不要</span> |
 | **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** | NSE現物（デリバリー）取引のルピー建てポジションサイズ計算。整数株、SMEロット、ティック丸めのATRストップに対応し、STT・取引所手数料・SEBI手数料・印紙税・GST・DP手数料をリスク予算に含める。オフライン動作。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Futures Position Sizer]({{ '/ja/skills/futures-position-sizer/' | relative_url }})** | 方向・エントリー・ストップから先物のコントラクト数を計算。検証済みの23銘柄契約仕様テーブル（乗数・ティックサイズ・ティック価値）を使用し、明示フラグまたはcontrarian-setup-gateのREADY_FOR_PLAN引き継ぎに対応。Beta。オフラインで動作 | <span class="badge badge-free">API不要</span> |
@@ -259,6 +262,7 @@ permalink: /ja/skill-catalog/
 | **Edge Pipeline Orchestrator** | エッジ研究パイプライン全体をエンドツーエンドでオーケストレーション。レビュー→修正フィードバックループ付き | <span class="badge badge-free">API不要</span> |
 | **Edge Signal Aggregator** | edge-candidate-agent、theme-detector、sector-analyst、institutional-flow-trackerの出力を重み付け・重複排除・矛盾処理して確信度順ダッシュボードを生成 | <span class="badge badge-free">API不要</span> |
 | **[Signal Postmortem]({{ '/ja/skills/signal-postmortem/' | relative_url }})** | エッジパイプラインやスクリーナーのシグナル結果を記録・分析。TRUE_POSITIVE/FALSE_POSITIVE/REGIME_MISMATCH分類、edge-signal-aggregatorへのウェイトフィードバック、スキル改善バックログ生成 | <span class="badge badge-optional">FMP任意</span> |
+| **[India Signal Postmortem]({{ '/ja/skills/india-signal-postmortem/' | relative_url }})** | インド版スクリーナー（VCP・モメンタムバースト・決算反応・配当）のシグナルを、取引の有無に関係なく5・20営業日後のNSE終値で採点。signal-postmortemと同じ分類に、NIFTY 50に対する超過リターン、グレード別・相場環境別の集計、見送った勝ちシグナルを追加。無料のNSEデータのみ。ベータ | <span class="badge badge-free">API不要</span> |
 | **[Residual Edge Analyzer]({{ '/ja/skills/residual-edge-analyzer/' | relative_url }})** | 戦略のリターン系列を、宣言したベースライン・エクスポージャーと残差エッジに分解。HAC推定を用いたOLSアトリビューション、ローリング安定性、代替ベースライン感応度、レジーム別内訳を出力し、市場・モメンタム・セクターへの連動を超えた独自アルファの有無を判定 | <span class="badge badge-free">API不要</span> |
 
 ---
@@ -338,6 +342,8 @@ permalink: /ja/skill-catalog/
 - **[India Pre-Trade Discipline Gate]({{ '/ja/skills/india-pre-trade-discipline-gate/' | relative_url }})** - NSE発注前の最終チェック
 - **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
 - **[India Paper Ledger]({{ '/ja/skills/india-paper-ledger/' | relative_url }})** - 日足約定でNSE銘柄をルピー建てでペーパートレード
+- **[India Weekly Performance Digest]({{ '/ja/skills/india-weekly-performance-digest/' | relative_url }})** - 今週クローズしたNSEペーパートレードの手数料控除後の成績とNIFTY 50との比較
+- **[India Signal Postmortem]({{ '/ja/skills/india-signal-postmortem/' | relative_url }})** - どのインド版スクリーナーのシグナルが実際に機能したか（取引の有無を問わず）
 - **[India Market Breadth Analyzer]({{ '/ja/skills/india-market-breadth-analyzer/' | relative_url }})** - NSE全体の上昇の広がりを0-100でスコア化
 - **[India IBD Distribution Day Monitor]({{ '/ja/skills/india-ibd-distribution-day-monitor/' | relative_url }})** - NIFTY 50 / NIFTY 500の機関の売り抜けを検出
 - **[India FTD Detector]({{ '/ja/skills/india-ftd-detector/' | relative_url }})** - NSEの調整後の底打ち確認
@@ -394,9 +400,11 @@ permalink: /ja/skill-catalog/
 | India Paper Ledger | - | - | - |
 | India Position Sizer | - | - | - |
 | India Pre-Trade Discipline Gate | - | - | - |
+| India Signal Postmortem | - | - | - |
 | India Stock Analysis | - | - | - |
 | India Stockbee Momentum Burst Screener | - | - | - |
 | India VCP Screener | - | - | - |
+| India Weekly Performance Digest | - | - | - |
 | Institutional Flow Tracker | 必須 | - | - |
 | Kanchi Dividend Review Monitor | 推奨 | - | - |
 | Kanchi Dividend SOP | 推奨 | - | - |

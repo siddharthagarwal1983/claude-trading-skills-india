@@ -3,7 +3,7 @@ layout: default
 title: "India VCP Screener"
 grand_parent: 日本語
 parent: スキルガイド
-nav_order: 51
+nav_order: 52
 lang_peer: /en/skills/india-vcp-screener/
 permalink: /ja/skills/india-vcp-screener/
 generated: true

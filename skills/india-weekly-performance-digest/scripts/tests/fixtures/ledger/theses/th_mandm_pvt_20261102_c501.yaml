@@ -1,0 +1,78 @@
+thesis_id: th_mandm_pvt_20261102_c501
+ticker: MANDM
+created_at: '2026-11-02T00:00:00+00:00'
+updated_at: '2026-11-23T10:14:27+00:00'
+thesis_type: pivot_breakout
+setup_type: null
+catalyst: null
+status: PARTIALLY_CLOSED
+status_history:
+- status: IDEA
+  at: '2026-11-02T00:00:00+00:00'
+  reason: registered
+- status: ENTRY_READY
+  at: '2026-11-02T00:00:00+00:00'
+  reason: paper order po_20261102_mandm_ddac85 placed
+- status: ACTIVE
+  at: '2026-11-03T10:00:00+00:00'
+  reason: paper fill 2026-11-03 close ₹2908.00 x30; charges ₹103.49
+- status: PARTIALLY_CLOSED
+  at: '2026-11-17T10:00:00+00:00'
+  reason: paper manual 2026-11-17 close ₹3399.00 x10; charges ₹51.15
+  shares_sold: 10
+  price: 3393.885
+  proceeds: 33938.85
+  realized_pnl: 4824.35
+thesis_statement: Paper close entry in M&M (NSE)
+mechanism_tag: null
+evidence: []
+kill_criteria: []
+confidence: null
+confidence_score: null
+origin_fingerprint: ce656366c728e795  # pragma: allowlist secret
+entry:
+  target_price: null
+  conditions: []
+  actual_price: 2911.4497
+  actual_date: '2026-11-03T00:00:00+00:00'
+exit:
+  stop_loss: 2750.0
+  stop_loss_pct: null
+  take_profit: null
+  take_profit_rr: null
+  time_stop_days: null
+  actual_price: null
+  actual_date: null
+  exit_reason: null
+position:
+  shares: 30
+  shares_remaining: 20
+market_context: null
+monitoring:
+  review_interval_days: 30
+  next_review_date: '2026-12-02'
+  last_review_date: null
+  review_status: OK
+  triggers_config: []
+  alerts: []
+origin:
+  skill: india-paper-ledger
+  output_file: state/india-paper/orders.json
+  screening_grade: null
+  screening_score: null
+  raw_provenance:
+    order_id: po_20261102_mandm_ddac85
+    nse_symbol: M&M
+    exchange: NSE
+    currency: INR
+    order_type: CLOSE
+    qty: 30
+linked_reports: []
+outcome:
+  pnl_dollars: null
+  pnl_pct: null
+  holding_days: null
+  mae_pct: null
+  mfe_pct: null
+  mae_mfe_source: null
+  lessons_learned: null

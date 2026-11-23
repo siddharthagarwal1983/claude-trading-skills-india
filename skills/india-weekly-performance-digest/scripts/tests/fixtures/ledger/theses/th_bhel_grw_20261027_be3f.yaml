@@ -1,0 +1,78 @@
+thesis_id: th_bhel_grw_20261027_be3f
+ticker: BHEL
+created_at: '2026-10-27T00:00:00+00:00'
+updated_at: '2026-11-23T10:14:26+00:00'
+thesis_type: growth_momentum
+setup_type: null
+catalyst: null
+status: CLOSED
+status_history:
+- status: IDEA
+  at: '2026-10-27T00:00:00+00:00'
+  reason: registered
+- status: ENTRY_READY
+  at: '2026-10-27T00:00:00+00:00'
+  reason: paper order po_20261027_bhel_7caf26 placed
+- status: ACTIVE
+  at: '2026-10-28T10:00:00+00:00'
+  reason: paper fill 2026-10-28 close ₹405.30 x500; charges ₹240.39
+- status: CLOSED
+  at: '2026-11-06T10:00:00+00:00'
+  reason: 'closed: manual'
+  shares_sold: 500
+  price: 418.3342
+  proceeds: 209167.1
+  realized_pnl: 6276.7
+thesis_statement: Paper close entry in BHEL (NSE)
+mechanism_tag: null
+evidence: []
+kill_criteria: []
+confidence: null
+confidence_score: null
+origin_fingerprint: 75ccf0b86fc8ff8d  # pragma: allowlist secret
+entry:
+  target_price: null
+  conditions: []
+  actual_price: 405.7808
+  actual_date: '2026-10-28T00:00:00+00:00'
+exit:
+  stop_loss: 370.0
+  stop_loss_pct: null
+  take_profit: null
+  take_profit_rr: null
+  time_stop_days: null
+  actual_price: 418.3342
+  actual_date: '2026-11-06T00:00:00+00:00'
+  exit_reason: manual
+position:
+  shares: 500
+  shares_remaining: 0
+market_context: null
+monitoring:
+  review_interval_days: 30
+  next_review_date: '2026-11-26'
+  last_review_date: null
+  review_status: OK
+  triggers_config: []
+  alerts: []
+origin:
+  skill: india-paper-ledger
+  output_file: state/india-paper/orders.json
+  screening_grade: null
+  screening_score: null
+  raw_provenance:
+    order_id: po_20261027_bhel_7caf26
+    nse_symbol: BHEL
+    exchange: NSE
+    currency: INR
+    order_type: CLOSE
+    qty: 500
+linked_reports: []
+outcome:
+  pnl_dollars: 6276.7
+  pnl_pct: 3.09
+  holding_days: 9
+  mae_pct: null
+  mfe_pct: null
+  mae_mfe_source: null
+  lessons_learned: null

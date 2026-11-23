@@ -2512,6 +2512,66 @@ skills:
   outputs:
   - pre_trade_discipline_decision
   workflows: []
+- id: india-weekly-performance-digest
+  display_name: India Weekly Performance Digest
+  category: trade-memory
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Weekly digest of NSE paper trades closed in india-paper-ledger state, with US-digest
+    metrics plus rupee charges, dividends, NIFTY 50 comparison, MAE/MFE from NSE closes and the
+    screener behind each trade.
+  timeframe: weekly
+  difficulty: beginner
+  integrations:
+  - id: local_calculation
+    type: calculation
+    requirement: not_required
+    note: Reads india-paper-ledger state (theses, journal, account); pure calculation
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: optional
+    note: Free official NSE closes for NIFTY 50 comparison and MAE/MFE; --no-fetch uses the cache
+      only
+  inputs:
+  - thesis_state
+  - paper_fills_journal
+  outputs:
+  - weekly_performance_digest
+  - performance_pattern_analysis
+  workflows: []
+- id: india-signal-postmortem
+  display_name: India Signal Postmortem
+  category: trade-memory
+  status: beta
+  operational_role:
+    type: standalone
+    rationale: India layer skill; NSE workflow manifests are added in a later phase.
+  summary: Score India screener signals against NSE closes 5 and 20 sessions later, with
+    signal-postmortem classes, excess return over NIFTY 50, regime and grade breakdowns, untaken
+    winners and advisory weight feedback.
+  timeframe: weekly
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day history and corporate actions over HTTP; no API key
+  - id: local_state
+    type: local_file
+    requirement: optional
+    note: india-exposure-coach reports for regimes and india-paper-ledger orders for the taken
+      flag
+  inputs:
+  - vcp_candidates
+  - momentum_burst_candidates
+  - earnings_reaction_grades
+  - dividend_candidates
+  outputs:
+  - postmortem_findings
+  - screener_quality_scores
+  workflows: []
 - id: india-position-sizer
   display_name: India Position Sizer
   category: trade-planning

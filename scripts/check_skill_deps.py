@@ -303,6 +303,20 @@ SMOKE_CONTRACTS: dict[str, list[SmokeContract]] = {
             expect_out=("usage:", "--accept-results-risk"),
         )
     ],
+    "india-weekly-performance-digest": [
+        SmokeContract(
+            "skills/india-weekly-performance-digest/scripts/india_weekly_digest.py",
+            ("--help",),
+            expect_out=("usage:", "--week-ending"),
+        )
+    ],
+    "india-signal-postmortem": [
+        SmokeContract(
+            "skills/india-signal-postmortem/scripts/india_signal_postmortem.py",
+            ("--help",),
+            expect_out=("usage:", "summary"),
+        )
+    ],
     "india-paper-ledger": [
         SmokeContract(
             "skills/india-paper-ledger/scripts/india_paper_ledger.py",

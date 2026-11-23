@@ -19,7 +19,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 
 | Total | production | beta | Knowledge-only | Executable | With tests | Without tests |
 |---:|---:|---:|---:|---:|---:|---:|
-| 90 | 62 | 28 | 3 | 87 | 87 | 0 |
+| 92 | 62 | 30 | 3 | 89 | 89 | 0 |
 
 ## Test coverage
 
@@ -39,7 +39,7 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | other external provider | 13 |
-| offline (no external data source) | 43 |
+| offline (no external data source) | 45 |
 
 ## Beta pipeline
 
@@ -60,9 +60,11 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | `india-paper-ledger` | not yet measured |
 | `india-position-sizer` | not yet measured |
 | `india-pre-trade-discipline-gate` | not yet measured |
+| `india-signal-postmortem` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
 | `india-vcp-screener` | not yet measured |
+| `india-weekly-performance-digest` | not yet measured |
 | `manifoldbt-backtester` | not yet measured |
 | `mt5-robot-tester` | not yet measured |
 | `residual-edge-analyzer` | not yet measured |
@@ -119,9 +121,11 @@ Snapshot as of: `2026-11-17T15:35:54Z`
 | **India Paper Ledger** (`india-paper-ledger`) | beta | yes | yes | not yet measured |
 | **India Position Sizer** (`india-position-sizer`) | beta | yes | yes | not yet measured |
 | **India Pre-Trade Discipline Gate** (`india-pre-trade-discipline-gate`) | beta | yes | yes | not yet measured |
+| **India Signal Postmortem** (`india-signal-postmortem`) | beta | yes | yes | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | beta | yes | yes | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | beta | yes | yes | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | beta | yes | yes | not yet measured |
+| **India Weekly Performance Digest** (`india-weekly-performance-digest`) | beta | yes | yes | not yet measured |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | production | yes | yes | 78.5% |
 | **Kanchi Dividend Review Monitor** (`kanchi-dividend-review-monitor`) | production | yes | yes | 82.2% |
 | **Kanchi Dividend SOP** (`kanchi-dividend-sop`) | production | yes | yes | 84.4% |

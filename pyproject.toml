@@ -119,6 +119,8 @@ testpaths = [
     "skills/india-market-breadth-analyzer/scripts/tests",
     "skills/india-paper-ledger/scripts/tests",
     "skills/india-pre-trade-discipline-gate/scripts/tests",
+    "skills/india-signal-postmortem/scripts/tests",
+    "skills/india-weekly-performance-digest/scripts/tests",
     "skills/india-position-sizer/scripts/tests",
     "skills/india-stock-analysis/scripts/tests",
     "skills/india-stockbee-momentum-burst-screener/scripts/tests",

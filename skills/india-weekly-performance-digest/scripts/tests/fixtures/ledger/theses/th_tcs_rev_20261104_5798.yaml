@@ -1,0 +1,78 @@
+thesis_id: th_tcs_rev_20261104_5798
+ticker: TCS
+created_at: '2026-11-04T00:00:00+00:00'
+updated_at: '2026-11-23T10:14:26+00:00'
+thesis_type: mean_reversion
+setup_type: null
+catalyst: null
+status: CLOSED
+status_history:
+- status: IDEA
+  at: '2026-11-04T00:00:00+00:00'
+  reason: registered
+- status: ENTRY_READY
+  at: '2026-11-04T00:00:00+00:00'
+  reason: paper order po_20261104_tcs_6642ba placed
+- status: ACTIVE
+  at: '2026-11-05T10:00:00+00:00'
+  reason: paper fill 2026-11-05 close ₹2495.70 x40; charges ₹118.42
+- status: CLOSED
+  at: '2026-11-16T10:00:00+00:00'
+  reason: 'closed: stop_hit'
+  shares_sold: 40
+  price: 2384.7378
+  proceeds: 95389.51
+  realized_pnl: -4556.91
+thesis_statement: Paper close entry in TCS (NSE)
+mechanism_tag: null
+evidence: []
+kill_criteria: []
+confidence: null
+confidence_score: null
+origin_fingerprint: 84439c54d199eca9  # pragma: allowlist secret
+entry:
+  target_price: null
+  conditions: []
+  actual_price: 2498.6605
+  actual_date: '2026-11-05T00:00:00+00:00'
+exit:
+  stop_loss: 2390.0
+  stop_loss_pct: null
+  take_profit: null
+  take_profit_rr: null
+  time_stop_days: null
+  actual_price: 2384.7378
+  actual_date: '2026-11-16T00:00:00+00:00'
+  exit_reason: stop_hit
+position:
+  shares: 40
+  shares_remaining: 0
+market_context: null
+monitoring:
+  review_interval_days: 30
+  next_review_date: '2026-12-04'
+  last_review_date: null
+  review_status: OK
+  triggers_config: []
+  alerts: []
+origin:
+  skill: india-paper-ledger
+  output_file: state/india-paper/orders.json
+  screening_grade: null
+  screening_score: null
+  raw_provenance:
+    order_id: po_20261104_tcs_6642ba
+    nse_symbol: TCS
+    exchange: NSE
+    currency: INR
+    order_type: CLOSE
+    qty: 40
+linked_reports: []
+outcome:
+  pnl_dollars: -4556.91
+  pnl_pct: -4.56
+  holding_days: 11
+  mae_pct: null
+  mfe_pct: null
+  mae_mfe_source: null
+  lessons_learned: null

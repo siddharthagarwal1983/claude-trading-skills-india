@@ -272,9 +272,11 @@ The table below is **auto-generated** from `skills-index.yaml` by `scripts/gener
 | **India Paper Ledger** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day bars and corporate actions over HTTP; no API key; Paper state under state/india-paper/; the sibling trader-memory-core skill stores each position as a thesis |
 | **India Position Sizer** | ❌ Not used | ❌ Not used | ❌ Not used | Pure calculation with statutory NSE delivery charge rates; works offline |
 | **India Pre-Trade Discipline Gate** | ❌ Not used | ❌ Not used | ❌ Not used | Reads plan, checklist, India regime and circuit-breaker reports and paper-ledger state; works offline; india-earnings-calendar results archive for results-date risk |
+| **India Signal Postmortem** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; india-exposure-coach reports for regimes and india-paper-ledger orders for the taken flag |
 | **India Stock Analysis** | ❌ Not used | ❌ Not used | ❌ Not used | Free NSE prices, corporate actions and index history for the fact sheet; DalalOS get_company_report (~1 credit, cached 7 days) for results, valuation and ownership; Recent news and management commentary |
 | **India Stockbee Momentum Burst Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files when scanning a Nifty universe; Offline OHLCV JSON for no-network screening and tests |
 | **India VCP Screener** | ❌ Not used | ❌ Not used | ❌ Not used | Free official NSE end-of-day history and corporate actions over HTTP; no API key; NSE index constituent CSV files for the screening universe |
+| **India Weekly Performance Digest** | ❌ Not used | ❌ Not used | ❌ Not used | Reads india-paper-ledger state (theses, journal, account); pure calculation; Free official NSE closes for NIFTY 50 comparison and MAE/MFE; --no-fetch uses the cache only |
 | **Institutional Flow Tracker** | ✅ Required | ❌ Not used | ❌ Not used | Financial Modeling Prep API |
 | **Kanchi Dividend Review Monitor** | 🟡 Optional (Recommended) | ❌ Not used | ❌ Not used | Dividend / price monitoring via FMP |
 | **Kanchi Dividend SOP** | 🟡 Optional (Recommended) | ❌ Not used | ❌ Not used | US dividend stock data via FMP |

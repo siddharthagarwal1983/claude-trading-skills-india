@@ -19,7 +19,7 @@ generated: true
 
 | 合計 | 本番 | ベータ | 知識のみ | 実行可能 | テストあり | テストなし |
 |---:|---:|---:|---:|---:|---:|---:|
-| 90 | 62 | 28 | 3 | 87 | 87 | 0 |
+| 92 | 62 | 30 | 3 | 89 | 89 | 0 |
 
 ## テストカバレッジ
 
@@ -39,7 +39,7 @@ generated: true
 | FINVIZ | 4 |
 | ALPACA | 2 |
 | その他の外部プロバイダ | 13 |
-| オフライン（外部データなし） | 43 |
+| オフライン（外部データなし） | 45 |
 
 ## ベータパイプライン
 
@@ -60,9 +60,11 @@ generated: true
 | `india-paper-ledger` | not yet measured |
 | `india-position-sizer` | not yet measured |
 | `india-pre-trade-discipline-gate` | not yet measured |
+| `india-signal-postmortem` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
 | `india-vcp-screener` | not yet measured |
+| `india-weekly-performance-digest` | not yet measured |
 | `manifoldbt-backtester` | not yet measured |
 | `mt5-robot-tester` | not yet measured |
 | `residual-edge-analyzer` | not yet measured |
@@ -119,9 +121,11 @@ generated: true
 | **India Paper Ledger** (`india-paper-ledger`) | ベータ | はい | はい | not yet measured |
 | **India Position Sizer** (`india-position-sizer`) | ベータ | はい | はい | not yet measured |
 | **India Pre-Trade Discipline Gate** (`india-pre-trade-discipline-gate`) | ベータ | はい | はい | not yet measured |
+| **India Signal Postmortem** (`india-signal-postmortem`) | ベータ | はい | はい | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | ベータ | はい | はい | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | ベータ | はい | はい | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | ベータ | はい | はい | not yet measured |
+| **India Weekly Performance Digest** (`india-weekly-performance-digest`) | ベータ | はい | はい | not yet measured |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | 本番 | はい | はい | 78.5% |
 | **Kanchi Dividend Review Monitor** (`kanchi-dividend-review-monitor`) | 本番 | はい | はい | 82.2% |
 | **Kanchi Dividend SOP** (`kanchi-dividend-sop`) | 本番 | はい | はい | 84.4% |

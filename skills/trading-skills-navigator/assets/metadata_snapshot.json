@@ -873,6 +873,31 @@
       "timeframe": "daily"
     },
     {
+      "category": "trade-memory",
+      "difficulty": "intermediate",
+      "display_name": "India Signal Postmortem",
+      "id": "india-signal-postmortem",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "local_state",
+          "requirement": "optional",
+          "type": "local_file"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Score India screener signals against NSE closes 5 and 20 sessions later, with signal-postmortem classes, excess return over NIFTY 50, regime and grade breakdowns, untaken winners and advisory weight feedback.",
+      "timeframe": "weekly"
+    },
+    {
       "category": "trade-planning",
       "difficulty": "intermediate",
       "display_name": "India Stock Analysis",
@@ -956,6 +981,31 @@
       "status": "beta",
       "summary": "Screen NSE stocks (default NIFTY 500) for Mark Minervini's Volatility Contraction Pattern using free official NSE end-of-day data adjusted for bonuses and splits.",
       "timeframe": "daily"
+    },
+    {
+      "category": "trade-memory",
+      "difficulty": "beginner",
+      "display_name": "India Weekly Performance Digest",
+      "id": "india-weekly-performance-digest",
+      "integrations": [
+        {
+          "id": "local_calculation",
+          "requirement": "not_required",
+          "type": "calculation"
+        },
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "optional",
+          "type": "mcp"
+        }
+      ],
+      "operational_role": {
+        "rationale": "India layer skill; NSE workflow manifests are added in a later phase.",
+        "type": "standalone"
+      },
+      "status": "beta",
+      "summary": "Weekly digest of NSE paper trades closed in india-paper-ledger state, with US-digest metrics plus rupee charges, dividends, NIFTY 50 comparison, MAE/MFE from NSE closes and the screener behind each trade.",
+      "timeframe": "weekly"
     },
     {
       "category": "advanced-satellite",
