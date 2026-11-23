@@ -2572,6 +2572,34 @@ skills:
   - postmortem_findings
   - screener_quality_scores
   workflows: []
+- id: india-vcp-backtester
+  display_name: India VCP Backtester
+  category: strategy-research
+  status: beta
+  operational_role:
+    type: research_only
+  summary: Backtest the India VCP breakout workflow on past NSE sessions by replaying the screener,
+    breakout planner and paper-ledger fill rules with delivery charges, with sweeps of planner, exit
+    and research-only rule settings.
+  timeframe: research
+  difficulty: intermediate
+  integrations:
+  - id: nse_bhavcopy
+    type: mcp
+    requirement: required
+    note: Free official NSE end-of-day history and corporate actions over HTTP; no API key
+  - id: yfinance
+    type: market_data
+    requirement: optional
+    note: NIFTY 500 / NIFTY 50 history before 2025 (NSE index history starts then), used only when it
+      matches NSE on the overlap
+  inputs:
+  - nse_ohlcv
+  - nse_index_ohlcv
+  outputs:
+  - round_trip_statistics
+  - backtest_expert_inputs
+  workflows: []
 - id: india-position-sizer
   display_name: India Position Sizer
   category: trade-planning

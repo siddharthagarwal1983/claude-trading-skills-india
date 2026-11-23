@@ -3,7 +3,7 @@ layout: default
 title: "India Weekly Performance Digest"
 grand_parent: English
 parent: Skill Guides
-nav_order: 53
+nav_order: 54
 lang_peer: /ja/skills/india-weekly-performance-digest/
 permalink: /en/skills/india-weekly-performance-digest/
 generated: true

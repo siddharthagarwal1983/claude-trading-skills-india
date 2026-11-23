@@ -10,7 +10,7 @@ permalink: /en/skill-catalog/
 # Skill Catalog
 {: .no_toc }
 
-A comprehensive catalog of all 92 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
+A comprehensive catalog of all 93 Claude Trading Skills organized by category. Badge indicators show API requirements at a glance.
 {: .fs-6 .fw-300 }
 
 > Use English skill names ("CANSLIM", "VCP", "FinViz", etc.) for best search results on this page.
@@ -90,6 +90,7 @@ A comprehensive catalog of all 92 Claude Trading Skills organized by category. B
 | `india-signal-postmortem` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-vcp-backtester` | `research_only` | — |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-weekly-performance-digest` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
@@ -200,6 +201,7 @@ A comprehensive catalog of all 92 Claude Trading Skills organized by category. B
 | **[Scenario Analyzer]({{ '/en/skills/scenario-analyzer/' | relative_url }})** | Builds 18-month scenario projections from news headlines. Dual-agent architecture with 1st/2nd/3rd order effects and recommended tickers | <span class="badge badge-free">No API</span> |
 | **[Backtest Expert]({{ '/en/skills/backtest-expert/' | relative_url }})** | Professional-grade strategy validation framework with hypothesis definition, parameter robustness checks, walk-forward testing, and failure post-mortems | <span class="badge badge-free">No API</span> |
 | **[manifoldbt Backtester]({{ '/en/skills/manifoldbt-backtester/' | relative_url }})** | Runs a declarative strategy spec over OHLCV bars with the manifoldbt Rust engine and emits the eight inputs backtest-expert scores | <span class="badge badge-free">No API</span> |
+| **[India VCP Backtester]({{ '/en/skills/india-vcp-backtester/' | relative_url }})** | Backtests the India VCP breakout workflow on past NSE sessions by replaying the India VCP screener, breakout planner and paper-ledger fill rules with delivery charges; compares with NIFTY 500 and sweeps planner, exit and research-only rule settings. Beta | <span class="badge badge-free">No API</span> |
 | **[MT5 Robot Tester]({{ '/en/skills/mt5-robot-tester/' | relative_url }})** | Batch-tests local MetaTrader 5 Expert Advisors through a resumable three-round pipeline with fail-closed file handling, deterministic gates, and cross-run learnings. Requires Windows, MT5, EA files, and broker tick data | <span class="badge badge-free">No API</span> |
 | **[Stockbee 20% Study]({{ '/en/skills/stockbee-20pct-study/' | relative_url }})** | Builds a daily +20%/-20% mover model book, classifies catalyst and chart context, updates forward outcomes, and mines cohorts for research prompts. Study workflow only — not a buy/sell signal service | <span class="badge badge-api">FMP Required</span> <span class="badge badge-optional">Local JSON Optional</span> |
 | **Options Strategy Advisor** | Educational options tool using Black-Scholes pricing. Calculates Greeks (Delta, Gamma, Theta, Vega, Rho), supports 17+ strategies, P/L simulation | <span class="badge badge-optional">FMP Optional</span> |
@@ -341,6 +343,7 @@ A comprehensive catalog of all 92 Claude Trading Skills organized by category. B
 - **[India Stockbee Momentum Burst Screener]({{ '/en/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** -- 3-5 day momentum bursts with circuit and turnover checks
 - **[India Downtrend Duration Analyzer]({{ '/en/skills/india-downtrend-duration-analyzer/' | relative_url }})** -- How long NSE corrections last by industry and size tier
 - **[India Breakout Trade Planner]({{ '/en/skills/india-breakout-trade-planner/' | relative_url }})** -- Entry, stop, target and size for NSE VCP breakouts
+- **[India VCP Backtester]({{ '/en/skills/india-vcp-backtester/' | relative_url }})** -- How the VCP breakout workflow would have done on past NSE sessions
 - **[India Drawdown Circuit Breaker]({{ '/en/skills/india-drawdown-circuit-breaker/' | relative_url }})** -- Should you take new NSE risk today after recent losses?
 - **[India Pre-Trade Discipline Gate]({{ '/en/skills/india-pre-trade-discipline-gate/' | relative_url }})** -- Final check before placing an NSE order
 - **[India Position Sizer]({{ '/en/skills/india-position-sizer/' | relative_url }})** -- Rupee sizing with Indian delivery charges inside the risk budget
@@ -406,6 +409,7 @@ A comprehensive catalog of all 92 Claude Trading Skills organized by category. B
 | India Signal Postmortem | -- | -- | -- |
 | India Stock Analysis | -- | -- | -- |
 | India Stockbee Momentum Burst Screener | -- | -- | -- |
+| India VCP Backtester | -- | -- | -- |
 | India VCP Screener | -- | -- | -- |
 | India Weekly Performance Digest | -- | -- | -- |
 | Institutional Flow Tracker | Required | -- | -- |

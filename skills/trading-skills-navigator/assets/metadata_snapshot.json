@@ -958,6 +958,30 @@
       "timeframe": "daily"
     },
     {
+      "category": "strategy-research",
+      "difficulty": "intermediate",
+      "display_name": "India VCP Backtester",
+      "id": "india-vcp-backtester",
+      "integrations": [
+        {
+          "id": "nse_bhavcopy",
+          "requirement": "required",
+          "type": "mcp"
+        },
+        {
+          "id": "yfinance",
+          "requirement": "optional",
+          "type": "market_data"
+        }
+      ],
+      "operational_role": {
+        "type": "research_only"
+      },
+      "status": "beta",
+      "summary": "Backtest the India VCP breakout workflow on past NSE sessions by replaying the screener, breakout planner and paper-ledger fill rules with delivery charges, with sweeps of planner, exit and research-only rule settings.",
+      "timeframe": "research"
+    },
+    {
       "category": "swing-opportunity",
       "difficulty": "intermediate",
       "display_name": "India VCP Screener",

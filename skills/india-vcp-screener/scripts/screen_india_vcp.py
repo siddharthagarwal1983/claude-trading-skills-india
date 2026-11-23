@@ -455,6 +455,129 @@ def rescore(r: dict) -> None:
     r["cap_reason"] = composite.get("cap_reason")
 
 
+def prepare_history(
+    sym: str, bars: list[dict], warnings: list[dict], as_of: str
+) -> tuple[list[dict] | None, str | None]:
+    """Most-recent-first history for one symbol, or (None, outcome) when unusable.
+
+    ``bars`` are the oldest-first adjusted NSE bars of the screening window ending
+    at ``as_of``; ``warnings`` are the unexplained price jumps of those bars.
+    """
+    history = to_history(bars)
+    if len(history) < MIN_HISTORY_BARS:
+        return None, "insufficient_history"
+    if history[0]["date"] != as_of:
+        return None, "stale_price_data"
+    jump = recent_unadjusted_jump(warnings, history)
+    if jump:
+        _log(f"  {sym}: skipped, {jump['change_pct']}% move on {jump['date']} ({jump['note']})")
+        return None, "unadjusted_corporate_action"
+    return history, None
+
+
+def run_funnel(
+    rows: list[dict],
+    histories: dict,
+    benchmark_history: list[dict],
+    args: argparse.Namespace,
+    outcomes: dict,
+) -> tuple[list[dict], list, list]:
+    """Pre-filter, trend template, VCP analysis, universe RS rank and entry readiness.
+
+    Shared by ``main`` and india-vcp-backtester so a backtest screens each past
+    session exactly as the live screener does. ``outcomes`` is updated in place.
+    Returns (results sorted by composite score, pre_filtered, trend_passed).
+    """
+    pre_filtered = []
+    for row in rows:
+        sym = row["symbol"]
+        history = histories.get(sym)
+        if history is None:
+            continue
+        quote = synthesize_quote(history, row.get("company", ""), row.get("industry") or "Unknown")
+        passed, likelihood = pre_filter_stock(quote, args.min_price, args.min_turnover_cr)
+        outcomes[sym] = None
+        if passed:
+            pre_filtered.append((sym, likelihood, quote))
+
+    pre_filtered.sort(key=lambda item: item[1], reverse=True)
+    candidates = pre_filtered[: args.max_candidates]
+    for sym, _score, _quote in pre_filtered[args.max_candidates :]:
+        outcomes[sym] = "candidate_limit"
+
+    trend_passed = []
+    for sym, _likelihood, quote in candidates:
+        hist = histories[sym]
+        rs_result = calculate_relative_strength(hist, benchmark_history)
+        tt_result = calculate_trend_template(
+            hist,
+            quote,
+            rs_rank=rs_result.get("rs_rank_estimate", 0),
+            ext_threshold=args.ext_threshold,
+        )
+        if rs_result.get("error") or tt_result.get("error"):
+            outcomes[sym] = "analysis_failed"
+            continue
+        if passes_trend_filter(tt_result, args.trend_min_score):
+            trend_passed.append((sym, quote))
+
+    results = []
+    for sym, quote in trend_passed:
+        hist = histories[sym]
+        if is_stale_price(hist, threshold=args.min_atr_pct):
+            _log(f"  Skipping {sym} (flat price action)")
+            continue
+        analysis = analyze_stock(
+            sym,
+            hist,
+            quote,
+            benchmark_history,
+            quote.get("sector", "Unknown"),
+            quote.get("name") or sym,
+            ext_threshold=args.ext_threshold,
+            min_contractions=args.min_contractions,
+            t1_depth_min=args.t1_depth_min,
+            contraction_ratio=args.contraction_ratio,
+            atr_multiplier=args.atr_multiplier,
+            min_contraction_days=args.min_contraction_days,
+            lookback_days=args.lookback_days,
+            breakout_volume_ratio=args.breakout_volume_ratio,
+            max_sma200_extension=args.max_sma200_extension,
+            wide_and_loose_threshold=args.wide_and_loose_threshold,
+        )
+        if analysis:
+            analysis["avg_turnover_cr"] = round(quote["avgTurnover"] / CRORE, 2)
+            results.append(analysis)
+        else:
+            outcomes[sym] = "analysis_failed"
+
+    if results:
+        ranked = rank_relative_strength_universe(
+            {r["symbol"]: r["relative_strength"] for r in results}
+        )
+        for r in results:
+            r["relative_strength"] = ranked[r["symbol"]]
+            rescore(r)
+    for r in results:
+        r["entry_ready"] = compute_entry_ready(
+            r,
+            max_above_pivot=args.max_above_pivot,
+            max_risk=args.max_risk,
+            require_valid_vcp=not args.no_require_valid_vcp,
+        )
+    results.sort(key=lambda r: r["composite_score"], reverse=True)
+    if args.mode == "prebreakout":
+        results = [r for r in results if r.get("entry_ready")]
+    if args.strict:
+        results = [
+            r
+            for r in results
+            if r.get("valid_vcp") and r.get("execution_state") in ("Pre-breakout", "Breakout")
+        ]
+
+    return results, pre_filtered, trend_passed
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -554,7 +677,6 @@ def main(  # noqa: C901 - one linear screening funnel, mirrors the US screener
     _log(f"India VCP screener: {universe_desc}, as of {as_of}, benchmark {args.benchmark}")
     outcomes: dict = {}
     histories: dict = {}
-    pre_filtered = []
     for position, row in enumerate(rows, 1):
         sym = row["symbol"]
         if position % 50 == 0 or position == len(rows):
@@ -568,99 +690,17 @@ def main(  # noqa: C901 - one linear screening funnel, mirrors the US screener
             _log(f"  {sym}: {exc}")
             outcomes[sym] = "provider_error"
             continue
-        history = to_history(data["bars"])
-        if len(history) < MIN_HISTORY_BARS:
-            outcomes[sym] = "insufficient_history"
-            continue
-        if history[0]["date"] != as_of.isoformat():
-            outcomes[sym] = "stale_price_data"
-            continue
-        jump = recent_unadjusted_jump(data.get("warnings") or [], history)
-        if jump:
-            _log(f"  {sym}: skipped, {jump['change_pct']}% move on {jump['date']} ({jump['note']})")
-            outcomes[sym] = "unadjusted_corporate_action"
+        history, outcome = prepare_history(
+            sym, data["bars"], data.get("warnings") or [], as_of.isoformat()
+        )
+        if history is None:
+            outcomes[sym] = outcome
             continue
         histories[sym] = history
-        quote = synthesize_quote(history, row.get("company", ""), row.get("industry") or "Unknown")
-        passed, likelihood = pre_filter_stock(quote, args.min_price, args.min_turnover_cr)
-        outcomes[sym] = None
-        if passed:
-            pre_filtered.append((sym, likelihood, quote))
 
-    pre_filtered.sort(key=lambda item: item[1], reverse=True)
-    candidates = pre_filtered[: args.max_candidates]
-    for sym, _score, _quote in pre_filtered[args.max_candidates :]:
-        outcomes[sym] = "candidate_limit"
-
-    trend_passed = []
-    for sym, _likelihood, quote in candidates:
-        hist = histories[sym]
-        rs_result = calculate_relative_strength(hist, benchmark_history)
-        tt_result = calculate_trend_template(
-            hist,
-            quote,
-            rs_rank=rs_result.get("rs_rank_estimate", 0),
-            ext_threshold=args.ext_threshold,
-        )
-        if rs_result.get("error") or tt_result.get("error"):
-            outcomes[sym] = "analysis_failed"
-            continue
-        if passes_trend_filter(tt_result, args.trend_min_score):
-            trend_passed.append((sym, quote))
-
-    results = []
-    for sym, quote in trend_passed:
-        hist = histories[sym]
-        if is_stale_price(hist, threshold=args.min_atr_pct):
-            _log(f"  Skipping {sym} (flat price action)")
-            continue
-        analysis = analyze_stock(
-            sym,
-            hist,
-            quote,
-            benchmark_history,
-            quote.get("sector", "Unknown"),
-            quote.get("name") or sym,
-            ext_threshold=args.ext_threshold,
-            min_contractions=args.min_contractions,
-            t1_depth_min=args.t1_depth_min,
-            contraction_ratio=args.contraction_ratio,
-            atr_multiplier=args.atr_multiplier,
-            min_contraction_days=args.min_contraction_days,
-            lookback_days=args.lookback_days,
-            breakout_volume_ratio=args.breakout_volume_ratio,
-            max_sma200_extension=args.max_sma200_extension,
-            wide_and_loose_threshold=args.wide_and_loose_threshold,
-        )
-        if analysis:
-            analysis["avg_turnover_cr"] = round(quote["avgTurnover"] / CRORE, 2)
-            results.append(analysis)
-        else:
-            outcomes[sym] = "analysis_failed"
-
-    if results:
-        ranked = rank_relative_strength_universe(
-            {r["symbol"]: r["relative_strength"] for r in results}
-        )
-        for r in results:
-            r["relative_strength"] = ranked[r["symbol"]]
-            rescore(r)
-    for r in results:
-        r["entry_ready"] = compute_entry_ready(
-            r,
-            max_above_pivot=args.max_above_pivot,
-            max_risk=args.max_risk,
-            require_valid_vcp=not args.no_require_valid_vcp,
-        )
-    results.sort(key=lambda r: r["composite_score"], reverse=True)
-    if args.mode == "prebreakout":
-        results = [r for r in results if r.get("entry_ready")]
-    if args.strict:
-        results = [
-            r
-            for r in results
-            if r.get("valid_vcp") and r.get("execution_state") in ("Pre-breakout", "Breakout")
-        ]
+    results, pre_filtered, trend_passed = run_funnel(
+        rows, histories, benchmark_history, args, outcomes
+    )
 
     os.makedirs(args.output_dir, exist_ok=True)
     stamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")

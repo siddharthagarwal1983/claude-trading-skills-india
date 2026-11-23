@@ -10,7 +10,7 @@ permalink: /ja/skill-catalog/
 # スキル一覧
 {: .no_toc }
 
-全92個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
+全93個のClaude Trading Skillsをカテゴリ別に紹介します。各スキルのAPI要件バッジで、利用に必要な外部サービスをすぐに確認できます。
 {: .fs-6 .fw-300 }
 
 > 検索は英語スキル名（"CANSLIM", "VCP", "FinViz"等）での検索を推奨します。日本語の部分一致検索は制限があります。
@@ -90,6 +90,7 @@ permalink: /ja/skill-catalog/
 | `india-signal-postmortem` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stock-analysis` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-stockbee-momentum-burst-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
+| `india-vcp-backtester` | `research_only` | — |
 | `india-vcp-screener` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `india-weekly-performance-digest` | `standalone` | India layer skill; NSE workflow manifests are added in a later phase. |
 | `institutional-flow-tracker` | `standalone` | Produces an independent institutional ownership and flow assessment on demand. |
@@ -200,6 +201,7 @@ permalink: /ja/skill-catalog/
 | **[Scenario Analyzer]({{ '/ja/skills/scenario-analyzer/' | relative_url }})** | ニュースヘッドラインから18ヶ月シナリオ分析。1次・2次・3次影響と推奨銘柄を生成 | <span class="badge badge-free">API不要</span> |
 | **[Backtest Expert]({{ '/ja/skills/backtest-expert/' | relative_url }})** | 戦略仮説のパラメータ堅牢性検証、ウォークフォワード検証を含むプロフェッショナルグレード検証フレームワーク | <span class="badge badge-free">API不要</span> |
 | **[manifoldbt Backtester]({{ '/ja/skills/manifoldbt-backtester/' | relative_url }})** | Runs a declarative strategy spec over OHLCV bars with the manifoldbt Rust engine and emits the eight inputs backtest-expert scores _(EN, awaiting translation)_ | <span class="badge badge-free">API不要</span> |
+| **[India VCP Backtester]({{ '/ja/skills/india-vcp-backtester/' | relative_url }})** | インド版VCPスクリーナー・ブレイクアウトプランナー・ペーパーレジャーの約定ルールを過去のNSE各営業日で再現し、手数料込みでVCPブレイクアウト戦略をバックテスト。NIFTY 500と比較し、プランナー・決済・研究用ルールの設定をスイープ。ベータ | <span class="badge badge-free">API不要</span> |
 | **[MT5 Robot Tester]({{ '/ja/skills/mt5-robot-tester/' | relative_url }})** | ローカルのMetaTrader 5 EAを再開可能な3ラウンドで一括検証し、上書きを防ぐファイル処理、決定論的ゲート、実行間学習を提供。Windows、MT5、EAファイル、ブローカーのtick dataが必要 | <span class="badge badge-free">API不要</span> |
 | **[Stockbee 20% Study]({{ '/ja/skills/stockbee-20pct-study/' | relative_url }})** | +20% / -20% mover のモデルブックを日次で作成し、カタリスト、チャート文脈、将来リターン、コホート傾向を研究用に整理。売買シグナルではなく仮説作成専用 | <span class="badge badge-api">FMP必須</span> <span class="badge badge-optional">ローカルJSON任意</span> |
 | **Options Strategy Advisor** | Black-Scholesモデルで理論価格・グリークス算出。17以上のオプション戦略を教育的に解説 | <span class="badge badge-optional">FMP任意</span> |
@@ -338,6 +340,7 @@ permalink: /ja/skill-catalog/
 - **[India Stockbee Momentum Burst Screener]({{ '/ja/skills/india-stockbee-momentum-burst-screener/' | relative_url }})** - サーキット・売買代金チェック付きの3〜5日モメンタムバースト
 - **[India Downtrend Duration Analyzer]({{ '/ja/skills/india-downtrend-duration-analyzer/' | relative_url }})** - NSE銘柄の調整期間を業種・規模区分別に分析
 - **[India Breakout Trade Planner]({{ '/ja/skills/india-breakout-trade-planner/' | relative_url }})** - NSEのVCPブレイクアウトのエントリー・損切り・目標・株数
+- **[India VCP Backtester]({{ '/ja/skills/india-vcp-backtester/' | relative_url }})** - VCPブレイクアウト戦略を過去のNSE営業日で検証
 - **[India Drawdown Circuit Breaker]({{ '/ja/skills/india-drawdown-circuit-breaker/' | relative_url }})** - 直近の損失後に新規のNSEリスクを取ってよいか
 - **[India Pre-Trade Discipline Gate]({{ '/ja/skills/india-pre-trade-discipline-gate/' | relative_url }})** - NSE発注前の最終チェック
 - **[India Position Sizer]({{ '/ja/skills/india-position-sizer/' | relative_url }})** - インドのデリバリー手数料をリスク予算に含めたルピー建てサイズ計算
@@ -403,6 +406,7 @@ permalink: /ja/skill-catalog/
 | India Signal Postmortem | - | - | - |
 | India Stock Analysis | - | - | - |
 | India Stockbee Momentum Burst Screener | - | - | - |
+| India VCP Backtester | - | - | - |
 | India VCP Screener | - | - | - |
 | India Weekly Performance Digest | - | - | - |
 | Institutional Flow Tracker | 必須 | - | - |

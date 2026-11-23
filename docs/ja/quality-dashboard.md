@@ -19,7 +19,7 @@ generated: true
 
 | 合計 | 本番 | ベータ | 知識のみ | 実行可能 | テストあり | テストなし |
 |---:|---:|---:|---:|---:|---:|---:|
-| 92 | 62 | 30 | 3 | 89 | 89 | 0 |
+| 93 | 62 | 31 | 3 | 90 | 90 | 0 |
 
 ## テストカバレッジ
 
@@ -38,7 +38,7 @@ generated: true
 | FMP | 32 |
 | FINVIZ | 4 |
 | ALPACA | 2 |
-| その他の外部プロバイダ | 13 |
+| その他の外部プロバイダ | 14 |
 | オフライン（外部データなし） | 45 |
 
 ## ベータパイプライン
@@ -63,6 +63,7 @@ generated: true
 | `india-signal-postmortem` | not yet measured |
 | `india-stock-analysis` | not yet measured |
 | `india-stockbee-momentum-burst-screener` | not yet measured |
+| `india-vcp-backtester` | not yet measured |
 | `india-vcp-screener` | not yet measured |
 | `india-weekly-performance-digest` | not yet measured |
 | `manifoldbt-backtester` | not yet measured |
@@ -124,6 +125,7 @@ generated: true
 | **India Signal Postmortem** (`india-signal-postmortem`) | ベータ | はい | はい | not yet measured |
 | **India Stock Analysis** (`india-stock-analysis`) | ベータ | はい | はい | not yet measured |
 | **India Stockbee Momentum Burst Screener** (`india-stockbee-momentum-burst-screener`) | ベータ | はい | はい | not yet measured |
+| **India VCP Backtester** (`india-vcp-backtester`) | ベータ | はい | はい | not yet measured |
 | **India VCP Screener** (`india-vcp-screener`) | ベータ | はい | はい | not yet measured |
 | **India Weekly Performance Digest** (`india-weekly-performance-digest`) | ベータ | はい | はい | not yet measured |
 | **Institutional Flow Tracker** (`institutional-flow-tracker`) | 本番 | はい | はい | 78.5% |
