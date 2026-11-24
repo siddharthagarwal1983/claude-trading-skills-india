@@ -131,7 +131,23 @@ gates by patching the planner module only while each simulated plan is made.
 Reports label such runs **research variant**; adopting one in the live planner is
 a deliberate, separate change.
 
-### Step 4: Read the report
+### Step 4: Choose the simulation modes
+
+Defaults are the Phase 1.1 corrected behaviour (`references/india-swing-backtest-method.md`):
+buy limits stop out on the entry session when its low reaches the stop, equity is
+net of estimated selling charges, screens see prices as quoted that day, and VCP
+relative strength joins stock and benchmark on dates. Two modes stay off by default
+and are for sensitivity runs only:
+
+- `--regime-mode sma200_proxy` — a labelled one-input proxy, **not** the
+  india-exposure-coach gate; `--regime-mode exposure_file --regime-file <json>`
+  takes per-session coach actions. Report the mode and its limitation with results.
+- `--limit-fill trade_through` — buy limits fill only when traded a tick through.
+
+`--legacy` restores every earlier mode, which reproduces pre-Phase-1.1 reports.
+Universes are today's index members (survivorship-biased); say so with results.
+
+### Step 5: Read the report
 
 `reports/india_swing_backtest_<strategy>_<universe>_<start>_<end>.md` / `.json`,
 plus `_trades.csv` and `_equity.csv`. Lead with strategy vs NIFTY 500, closed

@@ -58,6 +58,10 @@ python3 skills/india-vcp-screener/scripts/screen_india_vcp.py --symbols TRENT DI
 
 Tuning flags match the US screener (`--trend-min-score`, `--min-contractions`,
 `--t1-depth-min`, `--contraction-ratio`, `--breakout-volume-ratio`, `--strict`, ...).
+Relative strength joins stock and benchmark bars on trading dates, so a session
+missing from either side never shifts the comparison; each result's
+`relative_strength.alignment` lists dropped dates. `--rs-alignment offset` restores
+the earlier position-by-position comparison.
 
 ### Step 3: Read the results
 

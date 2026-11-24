@@ -96,7 +96,23 @@ gates by patching the planner module only while each simulated plan is made.
 Reports label such runs **research variant**; adopting one in the live planner is
 a deliberate, separate change.
 
-### Step 4: Read the report
+### Step 4: Choose the simulation modes
+
+Defaults are the Phase 1.1 corrected behaviour (`references/india-swing-backtest-method.md`):
+buy limits stop out on the entry session when its low reaches the stop, equity is
+net of estimated selling charges, screens see prices as quoted that day, and VCP
+relative strength joins stock and benchmark on dates. Two modes stay off by default
+and are for sensitivity runs only:
+
+- `--regime-mode sma200_proxy` — a labelled one-input proxy, **not** the
+  india-exposure-coach gate; `--regime-mode exposure_file --regime-file <json>`
+  takes per-session coach actions. Report the mode and its limitation with results.
+- `--limit-fill trade_through` — buy limits fill only when traded a tick through.
+
+`--legacy` restores every earlier mode, which reproduces pre-Phase-1.1 reports.
+Universes are today's index members (survivorship-biased); say so with results.
+
+### Step 5: Read the report
 
 `reports/india_swing_backtest_<strategy>_<universe>_<start>_<end>.md` / `.json`,
 plus `_trades.csv` and `_equity.csv`. Lead with strategy vs NIFTY 500, closed
@@ -140,7 +156,7 @@ plateaus to peaks, and check average R before charges in the trade list.
 
 1. **Replay, don't reimplement** — screeners, planner and fills are the live code;
    only the momentum-burst order rules are new, taken from its references.
-2. **No look-ahead** — a session sees only bars dated on or before it; orders fill
-   from the next session.
+2. **No look-ahead** — a session sees only bars dated on or before it, priced as
+   quoted that day; orders fill from the next session.
 3. **Costs in** — statutory delivery charges, DP charge and stop slippage.
 4. **Sample size first** — few trades or a peaked sweep means no conclusion.

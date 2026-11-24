@@ -23,9 +23,18 @@ Every NSE session D of the test window:
 4. **Plan** — D's screen (the screener's own code on bars up to D) is turned into
    orders for the next session.
 
-Nothing after D is visible when D is screened or planned. Bars are adjusted for
-splits and bonuses as of the data download, so share counts are in today's
-units; rupee amounts are unaffected.
+Nothing after D is visible when D is screened or planned. The simulation runs on
+bars adjusted for splits and bonuses as of the data download, so share counts are
+in today's units; rupee amounts are unaffected. Screens see each session's prices
+as quoted then (point in time): only actions with ex-date on or before D adjust
+the bars a screen of D reads, and plan prices are converted back to today's units.
+
+Phase 1.1 corrections (docs/research/PHASE1_1A_BACKTESTER_FIX_REPORT.md), each with
+a switch that restores the earlier behaviour: LIMIT entries are stopped on the entry
+session when its low reaches the stop (F2); equity is valued net of estimated
+selling charges (F3); an optional historical regime gate (F4, off by default);
+point-in-time screening prices (F7b); an optional trade-through rule for limit
+fills (A1, off by default).
 """
 
 from __future__ import annotations
@@ -34,13 +43,14 @@ import argparse
 import bisect
 import hashlib
 import json
+import math
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any, Callable
 
-from _india_data import IST, round_to_tick
+from _india_data import IST, PRICE_FIELDS, adjustment_factors, nse_tick_size, round_to_tick
 
 SCREEN_SCHEMA = 1
 HISTORY_CALENDAR_DAYS = 430  # same window as the live screener
@@ -49,6 +59,23 @@ REGIME_SMA = 200
 STRATEGIES = ("vcp", "momentum-burst")
 MB_SIGNAL_STATES = ("ACTIONABLE_DAY1", "MANUAL_REVIEW")
 MB_SKIP_TAGS = ("possible_upper_circuit",)  # the screener sends these to manual review
+
+# Phase 1.1 modes. The first value of each is the default.
+LIQUIDATION_VALUATIONS = ("net", "gross")
+REGIME_MODES = ("no_gate", "sma200_proxy", "exposure_file")
+LIMIT_FILLS = ("touch", "trade_through")
+SCREEN_PRICES = ("point_in_time", "back_adjusted")
+REGIME_ACTIONS = ("NEW_ENTRY_ALLOWED", "REDUCE_ONLY", "CASH_PRIORITY")
+ENTRY_ALLOWED = "NEW_ENTRY_ALLOWED"
+REGIME_DESCRIPTIONS = {
+    "no_gate": "no regime gate: entries in every regime (pre-Phase-1.1 behaviour); "
+    "momentum screens use the screener's default market gate (neutral) every session",
+    "sma200_proxy": "PROXY, not the india-exposure-coach: NIFTY 500 close vs its 200-session "
+    "average at the signal close (at or above = NEW_ENTRY_ALLOWED, below = REDUCE_ONLY, "
+    "fewer than 200 closes = unknown, treated as REDUCE_ONLY)",
+    "exposure_file": "per-session india-exposure-coach actions read from --regime-file; "
+    "sessions missing from the file are unknown and treated as REDUCE_ONLY",
+}
 
 
 # --------------------------------------------------------------------------- market data
@@ -66,6 +93,7 @@ class Series:
         self.bars = sorted(self.bars, key=lambda b: b["date"])
         self.dates = [b["date"] for b in self.bars]
         self.by_date = {b["date"]: b for b in self.bars}
+        self.adj_events = adjustment_factors(self.actions)  # [(ex_date, price factor)]
 
     def window(self, start: str, end: str) -> list:
         lo = bisect.bisect_left(self.dates, start)
@@ -91,6 +119,100 @@ class MarketData:
 
 def _window_start(day: str) -> str:
     return (date.fromisoformat(day) - timedelta(days=HISTORY_CALENDAR_DAYS)).isoformat()
+
+
+# --------------------------------------------------------------------------- point in time
+
+
+def future_factor(series: Series, day: str) -> float:
+    """Product of split/bonus price factors with ex-date after ``day`` (1.0 if none).
+
+    The series is back-adjusted for every action in the data; dividing its prices by
+    this factor (and multiplying volumes) gives the prices as quoted on ``day``.
+    """
+    f = 1.0
+    for ex_date, factor in series.adj_events:
+        if ex_date > day:
+            f *= factor
+    return f
+
+
+def point_in_time_bars(bars: list, factor: float) -> list:
+    """Back-adjusted bars restated in the units quoted when ``factor`` was still ahead."""
+    if math.isclose(factor, 1.0):
+        return bars
+    out = []
+    for bar in bars:
+        new = dict(bar)
+        for name in PRICE_FIELDS:
+            if new.get(name) is not None:
+                new[name] = round(new[name] / factor, 4)
+        if new.get("volume") is not None:
+            new["volume"] = int(round(new["volume"] * factor))
+        if new.get("adj_factor") is not None:
+            new["adj_factor"] = new["adj_factor"] / factor
+        out.append(new)
+    return out
+
+
+def to_sim_units(price: float | None, factor: float) -> float | None:
+    """A price quoted on the signal day, in the simulation's (today's) units."""
+    if price is None or math.isclose(factor, 1.0):
+        return price
+    return round(price * factor, 6)
+
+
+# --------------------------------------------------------------------------- regime
+
+
+def sma200_action(benchmark: Series, day: str) -> str | None:
+    """Proxy posture at ``day``'s close: benchmark at/above its 200-session SMA, else not."""
+    i = bisect.bisect_right(benchmark.dates, day)
+    if i < REGIME_SMA:
+        return None
+    closes = [b["close"] for b in benchmark.bars[i - REGIME_SMA : i]]
+    return ENTRY_ALLOWED if closes[-1] >= sum(closes) / REGIME_SMA else "REDUCE_ONLY"
+
+
+def regime_actions(
+    mode: str, benchmark: Series, sessions: list, file_map: dict | None = None
+) -> dict | None:
+    """{session: action or None} for a gated mode; None for ``no_gate``."""
+    if mode not in REGIME_MODES:
+        raise ValueError(f"regime_mode must be one of {REGIME_MODES}")
+    if mode == "no_gate":
+        return None
+    if mode == "sma200_proxy":
+        return {d: sma200_action(benchmark, d) for d in sessions}
+    if file_map is None:
+        raise ValueError("regime_mode exposure_file needs a regime file")
+    return {d: file_map.get(d) for d in sessions}
+
+
+def load_regime_file(path) -> dict:
+    """{date: action} from JSON: {"rows": [{date, action}]}, a list of rows, or {date: action}."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if isinstance(data, dict) and isinstance(data.get("rows"), list):
+        data = data["rows"]
+    if isinstance(data, list):
+        pairs = [(row.get("date"), row.get("action")) for row in data]
+    elif isinstance(data, dict):
+        pairs = list(data.items())
+    else:
+        raise ValueError("regime file must be a JSON object or list")
+    out = {}
+    for day, action in pairs:
+        date.fromisoformat(str(day))
+        if action not in REGIME_ACTIONS:
+            raise ValueError(f"regime file: unknown action {action!r} on {day}")
+        out[str(day)] = action
+    return out
+
+
+def market_gate_for(action: str | None) -> str:
+    """india-exposure-coach SKILL.md step 4: NEW_ENTRY_ALLOWED -> allowed, otherwise
+    restrictive (CASH_PRIORITY also skips new entries; unknown counts as REDUCE_ONLY)."""
+    return "allowed" if action == ENTRY_ALLOWED else "restrictive"
 
 
 # --------------------------------------------------------------------------- screening
@@ -127,11 +249,24 @@ def slim_result(r: dict) -> dict:
     return out
 
 
-def screen_day(day: str, data: MarketData, screener, args: argparse.Namespace, top: int) -> dict:
-    """india-vcp-screener's funnel as of ``day`` using only bars dated on or before it."""
+def screen_day(
+    day: str,
+    data: MarketData,
+    screener,
+    args: argparse.Namespace,
+    top: int,
+    *,
+    pit: bool = True,
+) -> dict:
+    """india-vcp-screener's funnel as of ``day`` using only bars dated on or before it.
+
+    With ``pit`` (default) the bars are restated as quoted on ``day``; the factor used
+    for each restated symbol is returned in ``pit_factors`` so plans can be converted.
+    """
     start = _window_start(day)
     outcomes: dict = {}
     histories: dict = {}
+    pit_factors: dict = {}
     for row in data.rows:
         sym = row["symbol"]
         series = data.stocks.get(sym)
@@ -142,6 +277,11 @@ def screen_day(day: str, data: MarketData, screener, args: argparse.Namespace, t
         if not bars:
             outcomes[sym] = "missing_data"
             continue
+        if pit:
+            factor = future_factor(series, day)
+            if not math.isclose(factor, 1.0):
+                bars = point_in_time_bars(bars, factor)
+                pit_factors[sym] = factor
         warnings = [w for w in series.warnings if w["date"] <= day]
         history, outcome = screener.prepare_history(sym, bars, warnings, day)
         if history is None:
@@ -155,6 +295,7 @@ def screen_day(day: str, data: MarketData, screener, args: argparse.Namespace, t
     return {
         "date": day,
         "results": [slim_result(r) for r in results[:top]],
+        "pit_factors": pit_factors,
         "funnel": {
             "universe": len(data.rows),
             "evaluated": len(histories),
@@ -181,35 +322,76 @@ MB_FIELDS = (
 )
 
 
-def screen_day_momentum(day: str, data: MarketData, mb, args: argparse.Namespace) -> dict:
-    """india-stockbee-momentum-burst-screener's analysis as of ``day`` (bars up to it)."""
+def screen_day_momentum(
+    day: str,
+    data: MarketData,
+    mb,
+    args: argparse.Namespace,
+    *,
+    pit: bool = True,
+    gate: str | None = None,
+) -> dict:
+    """india-stockbee-momentum-burst-screener's analysis as of ``day`` (bars up to it).
+
+    ``pit``: bars as quoted on ``day`` (see ``screen_day``). ``gate``: the session's
+    ``--market-gate`` value; None keeps ``args.market_gate`` (the screener default).
+    """
     args._expected_session = date.fromisoformat(day)
     start = (
         date.fromisoformat(day) - timedelta(days=int(args.history_days * 1.6) + 30)
     ).isoformat()
-    results = []
-    for row in data.rows:
-        series = data.stocks.get(row["symbol"])
-        if series is None:
-            continue
-        bars = mb.normalize_bars(series.window(start, day))
-        if bars:
-            results.append(mb.analyze_symbol(row["symbol"], bars, args))
+    saved_gate = getattr(args, "market_gate", None)
+    if gate is not None:
+        args.market_gate = gate
+    results, pit_factors = [], {}
+    try:
+        for row in data.rows:
+            series = data.stocks.get(row["symbol"])
+            if series is None:
+                continue
+            window = series.window(start, day)
+            if pit and window:
+                factor = future_factor(series, day)
+                if not math.isclose(factor, 1.0):
+                    window = point_in_time_bars(window, factor)
+                    pit_factors[row["symbol"]] = factor
+            bars = mb.normalize_bars(window)
+            if bars:
+                results.append(mb.analyze_symbol(row["symbol"], bars, args))
+    finally:
+        if gate is not None:
+            args.market_gate = saved_gate
     states: dict = {}
     for r in results:
         states[r["state"]] = states.get(r["state"], 0) + 1
     kept = [r for r in mb.sort_results(results) if r["state"] != "REJECTED"]
-    return {
+    out = {
         "date": day,
         "results": [{k: r.get(k) for k in MB_FIELDS} for r in kept],
+        "pit_factors": {
+            r["symbol"]: pit_factors[r["symbol"]] for r in kept if r["symbol"] in pit_factors
+        },
         "funnel": {"universe": len(data.rows), "analyzed": len(results), "states": states},
     }
+    if gate is not None:
+        out["market_gate"] = gate
+    return out
 
 
 def screen_key(
-    universe: str, benchmark: str, args: argparse.Namespace, top: int, data, strategy: str = "vcp"
+    universe: str,
+    benchmark: str,
+    args: argparse.Namespace,
+    top: int,
+    data,
+    strategy: str = "vcp",
+    extra: dict | None = None,
 ) -> str:
-    """Cache key: strategy, screener settings plus every split/bonus factor in the data."""
+    """Cache key: strategy, screener settings plus every split/bonus factor in the data.
+
+    ``extra`` holds backtest-side screening settings (point-in-time prices, per-session
+    market gates); left out when empty so pre-Phase-1.1 caches keep their keys.
+    """
     settings = {
         k: v
         for k, v in sorted(vars(args).items())
@@ -221,20 +403,19 @@ def screen_key(
         for a in s.actions
         if a.get("factor") not in (None, 1, 1.0)
     )
-    blob = json.dumps(
-        {
-            "schema": SCREEN_SCHEMA,
-            "strategy": strategy,
-            "universe": universe,
-            "symbols": sorted(data.stocks),
-            "benchmark": benchmark,
-            "top": top,
-            "settings": settings,
-            "factors": factors,
-        },
-        sort_keys=True,
-        default=str,
-    )
+    payload = {
+        "schema": SCREEN_SCHEMA,
+        "strategy": strategy,
+        "universe": universe,
+        "symbols": sorted(data.stocks),
+        "benchmark": benchmark,
+        "top": top,
+        "settings": settings,
+        "factors": factors,
+    }
+    if extra:
+        payload["extra"] = extra
+    blob = json.dumps(payload, sort_keys=True, default=str)
     return hashlib.sha1(blob.encode()).hexdigest()[:16]
 
 
@@ -270,13 +451,17 @@ def screen_range(
     cache: ScreenCache,
     progress: Callable[[str], None] = lambda _m: None,
     strategy: str = "vcp",
+    pit: bool = True,
+    gates: dict | None = None,
 ) -> dict:
+    """Screen every session not yet cached. ``gates``: {session: market gate} (momentum)."""
     todo = [d for d in sessions if d not in cache.days]
     for n, day in enumerate(todo, 1):
         if strategy == "vcp":
-            cache.add(screen_day(day, data, screener, args, top))
+            cache.add(screen_day(day, data, screener, args, top, pit=pit))
         else:
-            cache.add(screen_day_momentum(day, data, screener, args))
+            gate = gates.get(day) if gates is not None else None
+            cache.add(screen_day_momentum(day, data, screener, args, pit=pit, gate=gate))
         if n % 20 == 0 or n == len(todo):
             progress(f"  screened {n}/{len(todo)} sessions (last {day})")
     return {d: cache.days[d] for d in sessions}
@@ -308,6 +493,12 @@ class SimParams:
     max_risk_pct: float = 8.0
     min_score: float = 70.0
     developing_multiplier: float = 0.5
+    # Phase 1.1 switches (see the module docstring); defaults are the corrected behaviour,
+    # except the regime gate and the limit-fill rule, which keep the earlier semantics.
+    entry_session_stop: bool = True  # F2: LIMIT fills stopped on the entry session
+    liquidation_valuation: str = "net"  # F3: "net" of estimated selling charges, or "gross"
+    regime_mode: str = "no_gate"  # F4: "no_gate", "sma200_proxy" or "exposure_file"
+    limit_fill: str = "touch"  # A1: "touch" or "trade_through" (sensitivity)
 
     @classmethod
     def for_strategy(cls, strategy: str, **values) -> SimParams:
@@ -358,6 +549,18 @@ def validate_params(p: SimParams) -> None:
         raise ValueError("developing_multiplier must be between 0 and 1.75")
     if p.max_hold_sessions is not None and p.max_hold_sessions < 1:
         raise ValueError("max_hold_sessions must be at least 1")
+    if not isinstance(p.entry_session_stop, bool):
+        raise ValueError("entry_session_stop must be true or false")
+    for name, allowed in (
+        ("liquidation_valuation", LIQUIDATION_VALUATIONS),
+        ("regime_mode", REGIME_MODES),
+        ("limit_fill", LIMIT_FILLS),
+    ):
+        if getattr(p, name) not in allowed:
+            raise ValueError(f"{name} must be one of {allowed}")
+
+
+MODE_FIELDS = ("entry_session_stop", "liquidation_valuation", "regime_mode", "limit_fill")
 
 
 @contextmanager
@@ -393,13 +596,25 @@ def planner_rules(planner, p: SimParams):
 
 
 class Simulator:
-    def __init__(self, data: MarketData, screens: dict, params: SimParams, planner, paper):
+    def __init__(
+        self,
+        data: MarketData,
+        screens: dict,
+        params: SimParams,
+        planner,
+        paper,
+        regime: dict | None = None,
+    ):
+        """``regime``: {session: exposure action or None}, required for a gated regime_mode."""
         validate_params(params)
+        if params.regime_mode != "no_gate" and regime is None:
+            raise ValueError(f"regime_mode {params.regime_mode} needs a regime map")
         self.data = data
         self.screens = screens
         self.p = params
         self.planner = planner
         self.eng = paper
+        self.regime = regime if params.regime_mode != "no_gate" else None
         self.cash = float(params.capital)
         self.positions: dict = {}  # symbol -> position
         self.pending: list = []  # orders for the next session
@@ -419,6 +634,11 @@ class Simulator:
             "orders_suspended": 0,
             "exits_locked": 0,
             "dividends": 0.0,
+            "entry_session_stops": 0,  # F2: LIMIT fills stopped on the entry session
+            "entry_session_stop_touch_kept": 0,  # entry-day low <= stop, position kept
+            "regime_blocked_sessions": 0,  # F4: screened sessions with entries blocked
+            "limit_touch_only": 0,  # A1: limit fills where the low only touched the limit
+            "limit_touch_skipped": 0,  # A1: of those, not filled under trade_through
         }
         self._calendar = [date.fromisoformat(d) for d in data.sessions]
 
@@ -453,11 +673,27 @@ class Simulator:
             risk += max(0.0, (pos["entry_effective"] - pos["stop"]) * pos["qty"] + stop_charges)
         return risk
 
-    def _equity(self, day: str) -> tuple:
-        value = sum(
+    def _valuation(self, day: str) -> dict:
+        """Gross market value of open positions and their estimated selling charges.
+
+        Uses ``sum()`` (compensated float summation on Python 3.12+) exactly as the
+        pre-Phase-1.1 code did, so gross valuations are bit-for-bit unchanged.
+        """
+        values = [
             p["qty"] * (self._close(s, day) or p["entry_price"]) for s, p in self.positions.items()
+        ]
+        costs = (
+            sum(self._charges(v, buy=False)["total"] for v in values)
+            if self.p.liquidation_valuation == "net"
+            else 0
         )
-        return self.cash + value, value
+        return {"market_value": sum(values), "est_liquidation_costs": costs}
+
+    def _equity(self, day: str) -> tuple:
+        """(equity, gross invested value); equity is net of estimated selling charges
+        unless ``liquidation_valuation`` is "gross"."""
+        v = self._valuation(day)
+        return self.cash + v["market_value"] - v["est_liquidation_costs"], v["market_value"]
 
     # ------------------------------------------------------------- session steps
 
@@ -532,6 +768,9 @@ class Simulator:
                 else None,
                 "dividends": round(pos["dividends"], 2),
                 "regime_at_entry": pos["regime"],
+                "regime_action_at_signal": pos.get("regime_action"),
+                "entry_basis": pos.get("entry_basis"),
+                "entry_day_stop_touched": pos.get("entry_day_stop_touched", False),
             }
         )
 
@@ -557,6 +796,11 @@ class Simulator:
                 )
                 if fill is None and float(bar["open"]) > order["limit"]:
                     self.events["orders_gapped_past_limit"] += 1
+                if fill is not None and self._touch_only(order, bar, fill):
+                    self.events["limit_touch_only"] += 1
+                    if self.p.limit_fill == "trade_through":
+                        self.events["limit_touch_skipped"] += 1
+                        fill = None
             if fill is None:
                 order["sessions_left"] -= 1
                 if order["sessions_left"] > 0:
@@ -596,15 +840,53 @@ class Simulator:
                 "sessions_held": 0,
                 "dividends": 0.0,
                 "regime": self._regime(order["signal_session"]),
+                "regime_action": order.get("regime_action"),
+                "entry_basis": fill["basis"],
+                "entry_day_stop_touched": False,
             }
+            self._entry_session_stop(sym, day, bar, order)
+
+    def _touch_only(self, order: dict, bar: dict, fill: dict) -> bool:
+        """A LIMIT fill at the limit whose session low did not trade a tick below it."""
+        if order["order_type"] != "LIMIT" or fill["basis"] != "limit":
+            return False
+        factor = order.get("pit_factor", 1.0)
+        tick = nse_tick_size(order["limit"] / factor) * factor  # tick as quoted then
+        return float(bar["low"]) > order["limit"] - tick + 1e-9
+
+    def _entry_session_stop(self, sym: str, day: str, bar: dict, order: dict) -> None:
+        """F2. A buy limit fills at the open or as the price falls through the limit, so a
+        session low at or under the (lower) stop came after the fill: exit that session at
+        the stop, or at the open when it opened there. Buy-stops fill on the way up and a
+        daily bar cannot show whether the low came first, so their stop is checked from
+        the next session (the paper ledger's policy) and the touch is recorded."""
+        if float(bar["low"]) > order["stop"]:
+            return
+        pos = self.positions[sym]
+        pos["entry_day_stop_touched"] = True
+        if order["order_type"] != "LIMIT" or not self.p.entry_session_stop:
+            self.events["entry_session_stop_touch_kept"] += 1
+            return
+        fill = self.eng.exit_fill(bar, stop=order["stop"], target=None)
+        fill["price"] = self.eng.apply_slippage(fill["price"], self.p.slippage_bps, "SELL")
+        fill["exit_reason"] = "stop_hit_entry_session"
+        self.events["entry_session_stops"] += 1
+        self._sell(sym, day, fill)
 
     def _plan(self, day: str, equity: float, invested: float) -> None:
         screen = self.screens.get(day)
         if not screen or screen.get("skipped"):
             return
         self.events["screened_sessions"] += 1
+        action = None
+        if self.regime is not None:
+            # D's posture is known after D's close, before D's plans; exits are unaffected.
+            action = self.regime.get(day)
+            if action != ENTRY_ALLOWED:
+                self.events["regime_blocked_sessions"] += 1
+                return
         if self.p.strategy == "momentum-burst":
-            self._plan_momentum(day, screen, equity)
+            self._plan_momentum(day, screen, equity, action)
             return
         held = set(self.positions)
         pending = {o["symbol"] for o in self.pending}
@@ -635,24 +917,30 @@ class Simulator:
             )
         self.events["deferred_heat"] += len(plans["deferred"])
         self.events["constrained"] += len(plans["constrained"])
+        pit_factors = screen.get("pit_factors") or {}
         for plan in plans["actionable_orders"]:
             self.events["actionable_plans"] += 1
             order = plan["paper_order"]
+            # Plans are priced (and tick-rounded) as quoted on D; convert to today's units.
+            f = pit_factors.get(order["symbol"], 1.0)
+            qty = order["qty"] if math.isclose(f, 1.0) else math.floor(order["qty"] / f + 1e-9)
             self.pending.append(
                 {
                     "symbol": order["symbol"],
-                    "qty": order["qty"],
+                    "qty": qty,
                     "order_type": order["order_type"],
-                    "trigger": order["trigger"],
-                    "limit": order["limit"],
-                    "stop": order["stop"],
-                    "target": order["target"],
+                    "trigger": to_sim_units(order["trigger"], f),
+                    "limit": to_sim_units(order["limit"], f),
+                    "stop": to_sim_units(order["stop"], f),
+                    "target": to_sim_units(order["target"], f),
+                    "pit_factor": f,
                     "sessions_left": order["valid_sessions"],
                     "signal_session": day,
                     "risk_inr": plan["trade_plan"]["risk_inr"],
                     "sector": plan.get("sector"),
                     "rating_band": plan.get("rating_band"),
                     "composite_score": plan.get("composite_score"),
+                    "regime_action": action,
                 }
             )
 
@@ -665,9 +953,13 @@ class Simulator:
         ]
         return sum(values) / len(values) / 1e7 if values else None
 
-    def _plan_momentum(self, day: str, screen: dict, equity: float) -> None:
-        """Next-session buy limits for the day's bursts, sized like the breakout planner."""
+    def _plan_momentum(self, day: str, screen: dict, equity: float, action=None) -> None:
+        """Next-session buy limits for the day's bursts, sized like the breakout planner.
+
+        Limit and stop are tick-rounded as quoted on D, then converted to today's units.
+        """
         p = self.p
+        pit_factors = screen.get("pit_factors") or {}
         busy = set(self.positions) | {o["symbol"] for o in self.pending}
         heat = self._open_risk() / equity * 100 if equity > 0 else 0.0
         cash = self.cash
@@ -691,11 +983,13 @@ class Simulator:
             ref, stop = r.get("entry_reference"), r.get("stop_reference")
             if not ref or not stop or stop <= 0 or stop >= ref:
                 continue
-            limit = round_to_tick(ref * (1 + p.max_chase_pct / 100), "down")
-            stop = round_to_tick(stop, "down")
-            if (limit - stop) / limit * 100 > p.max_risk_pct:
+            quoted_limit = round_to_tick(ref * (1 + p.max_chase_pct / 100), "down")
+            quoted_stop = round_to_tick(stop, "down")
+            if (quoted_limit - quoted_stop) / quoted_limit * 100 > p.max_risk_pct:
                 self.events["rejected_risk"] += 1
                 continue
+            f = pit_factors.get(sym, 1.0)
+            limit, stop = to_sim_units(quoted_limit, f), to_sim_units(quoted_stop, f)
             self.events["actionable_plans"] += 1
             sector = sectors.get(sym, "Unknown")
             sizing = self.planner.size_position(
@@ -727,7 +1021,10 @@ class Simulator:
             )
             target = None
             if p.target_r_multiple > 0:
-                target = round_to_tick(limit + p.target_r_multiple * (limit - stop), "nearest")
+                quoted_target = round_to_tick(
+                    quoted_limit + p.target_r_multiple * (quoted_limit - quoted_stop), "nearest"
+                )
+                target = to_sim_units(quoted_target, f)
             busy.add(sym)
             self.pending.append(
                 {
@@ -738,6 +1035,8 @@ class Simulator:
                     "limit": limit,
                     "stop": stop,
                     "target": target,
+                    "pit_factor": f,
+                    "regime_action": action,
                     "sessions_left": p.valid_sessions,
                     "signal_session": day,
                     "risk_inr": sizing["risk_inr"],
@@ -753,7 +1052,9 @@ class Simulator:
         for i, day in enumerate(sessions):
             self._exits(day, i)
             self._entries(day)
-            equity, invested = self._equity(day)
+            v = self._valuation(day)
+            equity = self.cash + v["market_value"] - v["est_liquidation_costs"]
+            invested = v["market_value"]
             self.curve.append(
                 {
                     "date": day,
@@ -762,33 +1063,59 @@ class Simulator:
                     "invested": round(invested, 2),
                     "positions": len(self.positions),
                     "open_risk": round(self._open_risk(), 2),
+                    "market_value": round(v["market_value"], 2),
+                    "est_liquidation_costs": round(v["est_liquidation_costs"], 2),
                 }
             )
             if i < len(sessions) - 1:
                 self._plan(day, equity, invested)
         last = sessions[-1] if sessions else None
         open_positions = [
-            {
-                "symbol": s,
-                "qty": p["qty"],
-                "entry_session": p["entry_session"],
-                "entry_price": p["entry_price"],
-                "last_close": self._close(s, last),
-                "stop": p["stop"],
-                "target": p["target"],
-                "unrealized": round(
-                    p["qty"] * ((self._close(s, last) or p["entry_price"]) - p["entry_price"]), 2
-                ),
-            }
-            for s, p in sorted(self.positions.items())
+            self._open_position(s, p, last) for s, p in sorted(self.positions.items())
         ]
+        final = (
+            self._valuation(last) if last else {"market_value": 0.0, "est_liquidation_costs": 0.0}
+        )
         self.events["dividends"] = round(self.events["dividends"], 2)
         return {
             "params": {k: v for k, v in asdict(self.p).items()},
             "curve": self.curve,
             "trades": self.trades,
             "open_positions": open_positions,
+            "final_valuation": {
+                "mode": self.p.liquidation_valuation,
+                "market_value": round(final["market_value"], 2),
+                "est_liquidation_costs": round(final["est_liquidation_costs"], 2),
+                "net_liquidation_value": round(
+                    final["market_value"] - final["est_liquidation_costs"], 2
+                ),
+                "cash": round(self.cash, 2),
+            },
             "events": self.events,
+        }
+
+    def _open_position(self, sym: str, p: dict, last: str | None) -> dict:
+        """An open position at the end: gross and net of buy and estimated sell charges."""
+        close = self._close(sym, last) if last else None
+        market_value = p["qty"] * (close or p["entry_price"])
+        sell = self._charges(market_value, buy=False)["total"]
+        cost = p["entry_turnover"] + p["buy_charges"]
+        return {
+            "symbol": sym,
+            "qty": p["qty"],
+            "entry_session": p["entry_session"],
+            "entry_price": p["entry_price"],
+            "last_close": close,
+            "stop": p["stop"],
+            "target": p["target"],
+            "unrealized": round(p["qty"] * ((close or p["entry_price"]) - p["entry_price"]), 2),
+            "market_value": round(market_value, 2),
+            "buy_charges": round(p["buy_charges"], 2),
+            "est_sell_charges": round(sell, 2),
+            "net_liquidation_value": round(market_value - sell, 2),
+            "unrealized_net": round(market_value - sell - cost, 2),
+            "regime_action_at_signal": p.get("regime_action"),
+            "entry_day_stop_touched": p.get("entry_day_stop_touched", False),
         }
 
 
@@ -806,6 +1133,8 @@ def parse_sweep(specs: list) -> list:
     axes = []
     known = asdict(SimParams())
     known.pop("strategy")
+    for name in MODE_FIELDS:  # modes are CLI flags, not numeric sweep axes
+        known.pop(name)
     for spec in specs or []:
         if "=" not in spec:
             raise ValueError(f"--sweep needs name=v1,v2,..., got {spec!r}")

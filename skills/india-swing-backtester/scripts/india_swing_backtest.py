@@ -43,6 +43,88 @@ TITLES = {"vcp": "India VCP Breakout Backtest", "momentum-burst": "India Momentu
 NSE_INDEX_FIRST = "2025-01-01"  # NSE bhavcopy index history starts here
 YF_TICKERS = {"NIFTY 500": "^CRSLDX", "NIFTY 50": "^NSEI"}
 BACKFILL_TOLERANCE = 0.0005  # 0.05% on closes
+MUHURAT_POLICY = "include"  # Diwali one-hour sessions are simulated like any session
+# --legacy: the pre-Phase-1.1 behaviour of every corrected or optional rule
+LEGACY_MODES = {
+    "entry_session_stop": "off",
+    "liquidation_valuation": "gross",
+    "screen_prices": "back_adjusted",
+    "rs_alignment": "offset",
+    "limit_fill": "touch",
+    "regime_mode": "no_gate",
+}
+DEFAULT_MODES = {
+    "entry_session_stop": "on",
+    "liquidation_valuation": "net",
+    "screen_prices": "point_in_time",
+    "rs_alignment": "date",
+    "limit_fill": "touch",
+    "regime_mode": "no_gate",
+}
+REGIME_LIMITATIONS = {
+    "no_gate": "Entries are taken in every market regime. The live workflow gates entries "
+    "with india-exposure-coach; this mode does not.",
+    "sma200_proxy": "A single-input stand-in for the india-exposure-coach, which also weighs "
+    "breadth, distribution days, FTD state, INDIA VIX, valuation and flows. Results under "
+    "this proxy are not results of the live workflow.",
+    "exposure_file": "Only as faithful as the file: each action must come from the coach run "
+    "as of that session with inputs available then.",
+}
+
+
+def regime_summary(mode: str, regime: dict | None, sessions: list, args) -> dict:
+    counts: dict = {}
+    for day in sessions:
+        action = (regime or {}).get(day) if regime is not None else None
+        key = action or "unknown"
+        counts[key] = counts.get(key, 0) + 1
+    gate = (
+        "per session (allowed / restrictive)"
+        if regime is not None
+        else "neutral (constant, screener default)"
+    )
+    return {
+        "mode": mode,
+        "description": engine.REGIME_DESCRIPTIONS[mode],
+        "limitations": REGIME_LIMITATIONS[mode],
+        "file": args.regime_file,
+        "sessions": counts if regime is not None else {"not gated": len(sessions)},
+        "momentum_market_gate": gate if args.strategy == "momentum-burst" else None,
+    }
+
+
+def muhurat_trades(run: dict) -> dict:
+    muhurat = {d.isoformat() for d in india.MUHURAT_SESSIONS}
+    held = run["trades"] + run["open_positions"]
+    return {
+        "entries": sum(1 for t in held if t.get("entry_session") in muhurat),
+        "exits": sum(1 for t in run["trades"] if t.get("exit_session") in muhurat),
+    }
+
+
+def calendar_audit(data, data_start: str, end: str, sessions: list) -> dict:
+    """Stock-majority sessions the benchmark lacks, and Muhurat sessions in the data/window.
+
+    The simulation steps through the benchmark's sessions; a session most stocks traded
+    but the benchmark lacks is never simulated, and relative strength drops it.
+    """
+    counts: dict = {}
+    for series in data.stocks.values():
+        for day in series.dates:
+            if data_start <= day <= end:
+                counts[day] = counts.get(day, 0) + 1
+    n = len(data.stocks)
+    majority = {d for d, c in counts.items() if n and c * 2 > n}
+    bench = set(data.benchmark.dates)
+    first = data.benchmark.dates[0] if data.benchmark.dates else end
+    muhurat = sorted(d.isoformat() for d in india.MUHURAT_SESSIONS)
+    window = set(sessions)
+    return {
+        "benchmark_missing_sessions": sorted(d for d in majority if d not in bench and d >= first),
+        "muhurat_policy": MUHURAT_POLICY,
+        "muhurat_sessions_in_data": [d for d in muhurat if d in majority or d in bench],
+        "muhurat_sessions_in_window": [d for d in muhurat if d in window],
+    }
 
 
 def log(message: str) -> None:
@@ -350,6 +432,7 @@ def render_markdown(report: dict) -> str:
                 f" | {m['trade_stats']['trades']} | {_num((m['trade_stats']['win_rate'] or 0) * 100, 1)}%"
                 f" | {_num(m['trade_stats']['avg_r'], 3)} | {_num(m['trade_stats']['profit_factor'])} |"
             )
+    lines += simulation_settings_lines(report)
     p = report["base"]["params"]
     lines += ["", "## Settings and caveats", ""]
     if report["strategy"] == "vcp":
@@ -384,8 +467,13 @@ def render_markdown(report: dict) -> str:
             f"the trigger-day low; skipped when limit-to-stop exceeds {p['max_risk_pct']}%.",
             f"- Exit: stop (less {p['slippage_bps']} bps), "
             + (f"target {p['target_r_multiple']}R, " if p["target_r_multiple"] else "no target, ")
-            + f"else the close of the {p['max_hold_sessions']}th session held. Exits start the "
-            "session after entry.",
+            + f"else the close of the {p['max_hold_sessions']}th session held. "
+            + (
+                "The stop also applies on the entry session (a buy limit fills before a later "
+                "low); the target and time stop start the session after entry."
+                if p.get("entry_session_stop")
+                else "Exits start the session after entry."
+            ),
             f"- Capital {format_inr(p['capital'])}; risk {p['risk_pct']}% per trade with charges, "
             f"heat cap {p['max_portfolio_heat_pct']}%, position cap {p['max_position_pct']}%, "
             f"{p['max_adv_pct']}% of 20-session turnover.",
@@ -409,6 +497,81 @@ def render_markdown(report: dict) -> str:
             "",
         ]
     return "\n".join(lines)
+
+
+def simulation_settings_lines(report: dict) -> list:
+    """Phase 1.1 modes, regime gate, valuation and calendar notes for the Markdown report."""
+    c = report.get("corrections") or {}
+    r = report.get("regime") or {}
+    cal = report.get("calendar") or {}
+    s = report["base"]["summary"]
+    ev = s["events"]
+    fv = s.get("final_valuation") or {}
+    lines = [
+        "",
+        "## Simulation settings",
+        "",
+        f"- Regime mode: `{r.get('mode')}` — {r.get('description')}. {r.get('limitations')}",
+    ]
+    if r.get("momentum_market_gate"):
+        lines.append(f"- Momentum market gate: {r['momentum_market_gate']}.")
+    if r.get("sessions"):
+        lines.append(
+            "- Sessions by regime action: "
+            + ", ".join(f"{k} {v}" for k, v in sorted(r["sessions"].items()))
+            + f"; screened sessions with entries blocked: {ev.get('regime_blocked_sessions', 0)}."
+        )
+    lines += [
+        "- Entry-session stop for LIMIT entries (F2): "
+        + ("on" if c.get("entry_session_stop") else "off (pre-Phase-1.1)")
+        + f"; stopped on the entry session {ev.get('entry_session_stops', 0)}; entry-day stop "
+        f"touches kept open (buy-stop fills, order of events unknowable) "
+        f"{ev.get('entry_session_stop_touch_kept', 0)}.",
+        f"- Valuation of open positions (F3): {c.get('liquidation_valuation')}. Market value "
+        f"{format_inr(fv.get('market_value'))}; estimated liquidation costs "
+        f"{format_inr(fv.get('est_liquidation_costs'))}; Net liquidation value "
+        f"{format_inr(fv.get('net_liquidation_value'))}.",
+        f"- Screening prices (F7b): {c.get('screen_prices')}"
+        + (
+            " — each screen sees prices and volumes as quoted that day; plans convert to today's "
+            "units for the simulation"
+            if c.get("screen_prices") == "point_in_time"
+            else " — bars back-adjusted for later splits/bonuses (pre-Phase-1.1; hindsight in "
+            "₹ and share thresholds)"
+        )
+        + ".",
+    ]
+    if report["strategy"] == "vcp":
+        lines.append(f"- Relative strength alignment (F9): {c.get('rs_alignment')}.")
+    lines.append(
+        f"- Limit fills (A1): {c.get('limit_fill')}; fills where the low only touched the "
+        f"limit {ev.get('limit_touch_only', 0)}"
+        + (
+            f", not filled under trade_through {ev.get('limit_touch_skipped', 0)}"
+            if c.get("limit_fill") == "trade_through"
+            else ""
+        )
+        + "."
+    )
+    if c.get("legacy"):
+        lines.append("- `--legacy`: pre-Phase-1.1 behaviour unless a flag overrode it.")
+    missing = cal.get("benchmark_missing_sessions") or []
+    lines.append(
+        "- Calendar: "
+        + (
+            f"the benchmark lacks {len(missing)} session(s) most stocks traded "
+            f"({', '.join(missing[:10])}); they are not simulated and RS drops them"
+            if missing
+            else "no stock-majority session is missing from the benchmark"
+        )
+        + f". Muhurat policy: {cal.get('muhurat_policy')} (one-hour Diwali sessions are "
+        f"simulated like any session); Muhurat sessions in the data "
+        f"{', '.join(cal.get('muhurat_sessions_in_data') or []) or 'none'}, in the test window "
+        f"{', '.join(cal.get('muhurat_sessions_in_window') or []) or 'none'}; entries/exits on "
+        f"them {(cal.get('muhurat_trades') or {}).get('entries', 0)}/"
+        f"{(cal.get('muhurat_trades') or {}).get('exits', 0)}."
+    )
+    return lines
 
 
 def write_csv(path: Path, rows: list) -> None:
@@ -473,6 +636,47 @@ def build_parser() -> argparse.ArgumentParser:
         default=defaults.developing_multiplier,
         help="Research: size multiplier for scores 60-69 when --min-score < 70 (good = 0.75)",
     )
+    corrections = p.add_argument_group(
+        "Phase 1.1 simulation modes",
+        "Defaults are the corrected behaviour; --legacy restores every earlier mode "
+        "(explicit flags still win).",
+    )
+    corrections.add_argument(
+        "--entry-session-stop",
+        choices=("on", "off"),
+        help="F2: stop LIMIT entries on the entry session when its low reaches the stop "
+        "(default on)",
+    )
+    corrections.add_argument(
+        "--liquidation-valuation",
+        choices=engine.LIQUIDATION_VALUATIONS,
+        help="F3: value open positions net of estimated selling charges (default net)",
+    )
+    corrections.add_argument(
+        "--screen-prices",
+        choices=engine.SCREEN_PRICES,
+        help="F7b: screens see prices as quoted on the day (default point_in_time)",
+    )
+    corrections.add_argument(
+        "--rs-alignment",
+        choices=("date", "offset"),
+        help="F9 (vcp): join stock and benchmark bars on dates for RS (default date)",
+    )
+    corrections.add_argument(
+        "--limit-fill",
+        choices=engine.LIMIT_FILLS,
+        help="A1: fill limit orders on a touch (default) or only when traded a tick through",
+    )
+    corrections.add_argument(
+        "--regime-mode",
+        choices=engine.REGIME_MODES,
+        help="F4: entry gate. no_gate (default), sma200_proxy (labelled proxy) or "
+        "exposure_file (india-exposure-coach actions per session, needs --regime-file)",
+    )
+    corrections.add_argument("--regime-file", help="JSON of {date: action} or rows of date/action")
+    corrections.add_argument(
+        "--legacy", action="store_true", help="Pre-Phase-1.1 behaviour for every mode above"
+    )
     p.add_argument("--sweep", nargs="+", help="name=v1,v2 ... e.g. target_r_multiple=1.5,2,3")
     p.add_argument("--cache-dir", help="NSE bar cache (default: .cache/india-data)")
     p.add_argument("--no-fetch", action="store_true", help="Use cached bars only")
@@ -492,9 +696,23 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
         return 1
     screener._log = lambda _message: None  # per-session funnel chatter
     cache_root = Path(args.cache_dir) if args.cache_dir else india.default_cache_dir()
+    fallback = LEGACY_MODES if args.legacy else DEFAULT_MODES
+    modes = {k: getattr(args, k) or fallback[k] for k in DEFAULT_MODES}
+    pit = modes["screen_prices"] == "point_in_time"
     try:
+        if modes["regime_mode"] == "exposure_file" and not args.regime_file:
+            raise ValueError("--regime-mode exposure_file needs --regime-file")
+        file_map = engine.load_regime_file(args.regime_file) if args.regime_file else None
         where = ["--symbols", *args.symbols] if args.symbols else ["--universe", args.universe]
-        vcp_argv = ["--benchmark", args.benchmark, "--top", str(args.top), *where]
+        vcp_argv = [
+            "--benchmark",
+            args.benchmark,
+            "--top",
+            str(args.top),
+            "--rs-alignment",
+            modes["rs_alignment"],
+            *where,
+        ]
         extra = shlex.split(args.screener_args)
         if args.strategy == "vcp":
             screener_argv = extra + vcp_argv
@@ -512,6 +730,10 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
             max_risk_pct=args.max_risk_pct,
             min_score=args.min_score,
             developing_multiplier=args.developing_multiplier,
+            entry_session_stop=modes["entry_session_stop"] == "on",
+            liquidation_valuation=modes["liquidation_valuation"],
+            regime_mode=modes["regime_mode"],
+            limit_fill=modes["limit_fill"],
             **{n: getattr(args, n) for n in engine.SimParams.PLAN_FIELDS + ("slippage_bps",)},
         )
         if not base.capital > 0:
@@ -552,7 +774,18 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
         print(f"Error: no NSE sessions between {start} and {end}", file=sys.stderr)
         return 1
 
-    key = engine.screen_key(universe_desc, args.benchmark, sargs, args.top, data, args.strategy)
+    regime = engine.regime_actions(modes["regime_mode"], data.benchmark, sessions, file_map)
+    gates = None
+    if regime is not None and args.strategy == "momentum-burst":
+        gates = {d: engine.market_gate_for(regime.get(d)) for d in sessions}
+    key_extra: dict = {}
+    if pit:
+        key_extra["screen_prices"] = "point_in_time"
+    if gates is not None:
+        key_extra["gates"] = gates
+    key = engine.screen_key(
+        universe_desc, args.benchmark, sargs, args.top, data, args.strategy, extra=key_extra
+    )
     prefix = "vcp" if args.strategy == "vcp" else "momentum"
     cache_path = cache_root / "backtest" / f"{prefix}_screens_{key}.jsonl"
     if args.rescreen and cache_path.exists():
@@ -570,6 +803,8 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
         screen_cache,
         log,
         strategy=args.strategy,
+        pit=pit,
+        gates=gates,
     )
     log(f"Screens ready in {clock.time() - t0:.0f}s; simulating")
 
@@ -578,7 +813,7 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
     ]
 
     def simulate(params):
-        run = engine.Simulator(data, screens, params, planner, paper).run(sessions)
+        run = engine.Simulator(data, screens, params, planner, paper, regime=regime).run(sessions)
         return run, metrics.summarize_run(run, bench_points, args.benchmark)
 
     base_run, base_summary = simulate(base)
@@ -602,6 +837,19 @@ def main(argv: list | None = None, *, now_fn=None, cache=None) -> int:
             "data_start": args.data_start,
         },
         "screener_settings": " ".join(screener_argv),
+        "corrections": {
+            "entry_session_stop": base.entry_session_stop,
+            "liquidation_valuation": base.liquidation_valuation,
+            "screen_prices": modes["screen_prices"],
+            "rs_alignment": modes["rs_alignment"],
+            "limit_fill": base.limit_fill,
+            "legacy": bool(args.legacy),
+        },
+        "regime": regime_summary(modes["regime_mode"], regime, sessions, args),
+        "calendar": {
+            **calendar_audit(data, args.data_start, end, sessions),
+            "muhurat_trades": muhurat_trades(base_run),
+        },
         "screen_cache": str(cache_path),
         "missing_symbols": [m for m in missing if not m.startswith("NOTE ")],
         "data_notes": [m[5:] for m in missing if m.startswith("NOTE ")],

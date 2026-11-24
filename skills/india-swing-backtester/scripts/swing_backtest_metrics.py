@@ -165,5 +165,6 @@ def summarize_run(run: dict, benchmark_points: list, benchmark_name: str) -> dic
         "by_year": by_year,
         "halves": half,
         "open_positions": len(run["open_positions"]),
+        "final_valuation": run.get("final_valuation"),
         "events": run["events"],
     }

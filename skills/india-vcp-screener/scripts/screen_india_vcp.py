@@ -65,6 +65,55 @@ def passes_trend_filter(tt_result: dict, trend_min_score: float = 85.0) -> bool:
     return tt_result.get("raw_score", 0) >= trend_min_score
 
 
+RS_ALIGNMENTS = ("date", "offset")
+
+
+def align_for_rs(stock_history: list[dict], benchmark_history: list[dict]) -> tuple:
+    """Newest-first stock and benchmark bars restricted to their common trading dates.
+
+    The RS calculator compares ``closes[0]`` with ``closes[n]`` of each series on its own,
+    so both must hold the same dates in the same order. A date missing from either side is
+    dropped from both and listed in the returned info; no date is ever paired with another.
+    Returns ``(stock, benchmark, info)``.
+    """
+    stock_dates = {b["date"] for b in stock_history}
+    bench_dates = {b["date"] for b in benchmark_history}
+    stock = [b for b in stock_history if b["date"] in bench_dates]
+    bench = [b for b in benchmark_history if b["date"] in stock_dates]
+    if stock_history and benchmark_history:
+        lo = max(stock_history[-1]["date"], benchmark_history[-1]["date"])
+        hi = min(stock_history[0]["date"], benchmark_history[0]["date"])
+    else:
+        lo, hi = "", ""
+
+    def gaps(bars, other):  # sessions inside the shared span that the other series lacks
+        return sorted(b["date"] for b in bars if lo <= b["date"] <= hi and b["date"] not in other)
+
+    latest_common = stock[0]["date"] if stock else None
+    info = {
+        "mode": "date",
+        "common_sessions": len(stock),
+        "dropped_stock_dates": gaps(stock_history, bench_dates),
+        "dropped_benchmark_dates": gaps(benchmark_history, stock_dates),
+        "latest_common_date": latest_common,
+        "latest_date_mismatch": bool(stock_history) and latest_common != stock_history[0]["date"],
+    }
+    return stock, bench, info
+
+
+def relative_strength(
+    stock_history: list[dict], benchmark_history: list[dict], alignment: str = "date"
+) -> dict:
+    """``calculate_relative_strength`` on date-aligned bars (``alignment="offset"``: as is)."""
+    if alignment not in RS_ALIGNMENTS:
+        raise ValueError(f"rs alignment must be one of {RS_ALIGNMENTS}")
+    if alignment == "offset":
+        result = calculate_relative_strength(stock_history, benchmark_history)
+        return {**result, "alignment": {"mode": "offset"}}
+    stock, bench, info = align_for_rs(stock_history, benchmark_history)
+    return {**calculate_relative_strength(stock, bench), "alignment": info}
+
+
 def analyze_stock(
     symbol: str,
     historical: list[dict],
@@ -83,6 +132,7 @@ def analyze_stock(
     max_sma200_extension: float = 50.0,
     wide_and_loose_threshold: float = 15.0,
     as_of_offset: int = 0,
+    rs_alignment: str = "date",
 ) -> dict | None:
     """
     Full VCP analysis for a single stock (Phase 3).
@@ -98,6 +148,8 @@ def analyze_stock(
             ``benchmark_history`` is sliced identically so RS comparisons stay
             aligned. Bars more recent than ``historical[as_of_offset]`` are
             ignored.
+        rs_alignment: ``"date"`` (default) joins stock and benchmark bars on trading
+            dates before RS; ``"offset"`` compares them position by position (pre-1.1).
     """
     # Historical mode: shift the as-of cursor by slicing both arrays so
     # historical[as_of_offset] becomes index 0 for every downstream calculator.
@@ -126,7 +178,7 @@ def analyze_stock(
     market_cap = quote.get("marketCap", 0)
 
     # 1. Relative Strength (needed for Trend Template criterion 7)
-    rs_result = calculate_relative_strength(historical, benchmark_history)
+    rs_result = relative_strength(historical, benchmark_history, rs_alignment)
     rs_rank = rs_result.get("rs_rank_estimate", 0)
 
     # 2. Trend Template
@@ -505,10 +557,11 @@ def run_funnel(
     for sym, _score, _quote in pre_filtered[args.max_candidates :]:
         outcomes[sym] = "candidate_limit"
 
+    rs_alignment = getattr(args, "rs_alignment", "date")
     trend_passed = []
     for sym, _likelihood, quote in candidates:
         hist = histories[sym]
-        rs_result = calculate_relative_strength(hist, benchmark_history)
+        rs_result = relative_strength(hist, benchmark_history, rs_alignment)
         tt_result = calculate_trend_template(
             hist,
             quote,
@@ -544,6 +597,7 @@ def run_funnel(
             breakout_volume_ratio=args.breakout_volume_ratio,
             max_sma200_extension=args.max_sma200_extension,
             wide_and_loose_threshold=args.wide_and_loose_threshold,
+            rs_alignment=rs_alignment,
         )
         if analysis:
             analysis["avg_turnover_cr"] = round(quote["avgTurnover"] / CRORE, 2)
@@ -633,6 +687,13 @@ def parse_arguments(argv: list | None = None) -> argparse.Namespace:
     parser.add_argument("--max-sma200-extension", type=float, default=50.0)
     parser.add_argument("--wide-and-loose-threshold", type=float, default=15.0)
     parser.add_argument("--strict", action="store_true")
+    parser.add_argument(
+        "--rs-alignment",
+        choices=RS_ALIGNMENTS,
+        default="date",
+        help="RS vs the benchmark: join bars on trading dates (default) or compare by "
+        "position ('offset', the pre-Phase-1.1 behaviour)",
+    )
     return parser.parse_args(argv)
 
 
