@@ -925,7 +925,9 @@ class _SessionContext:
 
     # ------------------------------------------------------------ sells
 
-    def _sell(self, positions, tid, qty, price, basis, exit_reason, *, order_id):
+    def _sell(self, positions, tid, qty, price, basis, exit_reason, *, order_id, exit_timing=None):
+        """Sell ``qty`` of a position. ``exit_timing="entry_session"`` marks a LIMIT entry's
+        same-session stop in the journal and events (absent for every other exit)."""
         pos = positions[tid]
         event_id = f"fill:{order_id}" if order_id else f"exit:{tid}:{self.session}"
         charges = self._charges(price * qty, buy=False)
@@ -935,6 +937,7 @@ class _SessionContext:
             note = (
                 f"paper {exit_reason} {self.session} {basis} ₹{price:.2f} x{qty}; "
                 f"charges ₹{charges['total']:.2f}"
+                + ("; same session as the entry" if exit_timing else "")
             )
             if qty >= pos["qty"]:
                 self.ts.close(
@@ -955,25 +958,27 @@ class _SessionContext:
                     reason=note,
                     event_date=self.close_at,
                 )
-            self._journal(
-                {
-                    "event_id": event_id,
-                    "event": "FILL",
-                    "side": "SELL",
-                    "session": self.session,
-                    "order_id": order_id,
-                    "thesis_id": tid,
-                    "symbol": pos["symbol"],
-                    "qty": qty,
-                    "price": price,
-                    "basis": basis,
-                    "exit_reason": exit_reason,
-                    "charges": charges,
-                    "effective_price": eff,
-                    "realized_pnl": realized,
-                    "cash_delta": round(charges["turnover"] - charges["total"], 2),
-                }
-            )
+            entry = {
+                "event_id": event_id,
+                "event": "FILL",
+                "side": "SELL",
+                "session": self.session,
+                "order_id": order_id,
+                "thesis_id": tid,
+                "symbol": pos["symbol"],
+                "qty": qty,
+                "price": price,
+                "basis": basis,
+                "exit_reason": exit_reason,
+                "charges": charges,
+                "effective_price": eff,
+                "realized_pnl": realized,
+                "cash_delta": round(charges["turnover"] - charges["total"], 2),
+            }
+            if exit_timing:
+                entry["exit_timing"] = exit_timing
+            self._journal(entry)
+        extra = {"exit_timing": exit_timing} if exit_timing else {}
         self._event(
             type="SELL",
             thesis_id=tid,
@@ -982,6 +987,7 @@ class _SessionContext:
             price=price,
             exit_reason=exit_reason,
             realized_pnl=realized,
+            **extra,
         )
         if qty >= pos["qty"]:
             del positions[tid]
@@ -1079,6 +1085,22 @@ class _SessionContext:
                 )
                 self._event(type="EXPIRED", order_id=order["order_id"], symbol=order["symbol"])
 
+    @staticmethod
+    def _entry_session_stop(order, bar) -> bool:
+        """True when a LIMIT buy's own session low reached its (intraday-basis) stop.
+
+        A buy limit fills at the open (open <= limit) or as the price falls through the
+        limit; the stop is below the limit, so that low came after the fill and the stop
+        is executed the same session. Buy-stops fill on the way up (a daily bar cannot
+        show whether the low came first), CLOSE orders fill at the close itself, and
+        close-basis stops are outside this rule: all keep the next-session policy.
+        """
+        return (
+            order["order_type"] == "LIMIT"
+            and order["stop_basis"] == "intraday"
+            and float(bar["low"]) <= order["stop"]
+        )
+
     def _buy(self, order, positions, bar, fill):
         price = fill["price"]
         if order["order_type"] in ("STOP", "STOP_LIMIT"):
@@ -1090,6 +1112,7 @@ class _SessionContext:
         cost = round(charges["turnover"] + charges["total"], 2)
         event_id = f"fill:{order['order_id']}"
         gap = False
+        stop_now = self._entry_session_stop(order, bar)
         if event_id not in self.journal_ids:
             cash = self._cash()
             if cost > cash:
@@ -1103,7 +1126,7 @@ class _SessionContext:
                 return
             eff = eng.effective_price(price, qty, charges["total"], side="BUY")
             gap = eff < order["stop"]
-            if gap:
+            if gap and not stop_now:
                 self._warn(
                     f"{order['symbol']}: filled at {format_inr(price)}, below its stop "
                     f"{format_inr(order['stop'])}; the stop will trigger next session"
@@ -1166,6 +1189,28 @@ class _SessionContext:
         self._event(
             type="BUY", order_id=order["order_id"], symbol=order["symbol"], qty=qty, price=price
         )
+        if stop_now:
+            # Same exit rule as later sessions (stop only; no target or other exit on the
+            # entry session): the open when it was already at/under the stop, else the stop.
+            exit_fill = eng.exit_fill(bar, stop=order["stop"], target=None, stop_basis="intraday")
+            exit_price = eng.apply_slippage(exit_fill["price"], self.acct["slippage_bps"], "SELL")
+            self._warn(
+                f"{order['symbol']}: LIMIT filled at {format_inr(price)} and the session low "
+                f"{format_inr(float(bar['low']))} reached the stop {format_inr(order['stop'])}; "
+                f"a buy limit fills before a lower low, so the stop exited the same session at "
+                f"{format_inr(exit_price)}"
+            )
+            self._sell(
+                positions,
+                order["thesis_id"],
+                qty,
+                exit_price,
+                exit_fill["basis"],
+                exit_fill["exit_reason"],
+                order_id=None,
+                exit_timing="entry_session",
+            )
+            return
         same_day = eng.exit_fill(
             bar, stop=order["stop"], target=order["target"], stop_basis=order["stop_basis"]
         )

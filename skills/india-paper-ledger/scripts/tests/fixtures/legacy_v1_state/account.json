@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "currency": "INR",
+  "exchange": "NSE",
+  "product": "CNC (delivery)",
+  "starting_capital": 500000.0,
+  "brokerage_per_order": 0.0,
+  "dp_charge": 15.93,
+  "slippage_bps": 10.0,
+  "created_on": "2026-11-20"
+}

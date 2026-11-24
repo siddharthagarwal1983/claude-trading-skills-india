@@ -158,7 +158,8 @@ uv run python skills/india-paper-ledger/scripts/india_paper_ledger.py status
 
 Summarise equity, cash, return, open risk and each position's distance to its stop in
 rupees with Indian digit grouping. Surface every warning (gap fills, circuit-locked
-sessions, corporate-action blocks, entry-day stop touches) and say what the user must do.
+sessions, corporate-action blocks, entry-day stop touches, same-session limit stops) and
+say what the user must do.
 State that results are paper fills from end-of-day data, not broker executions.
 
 ---

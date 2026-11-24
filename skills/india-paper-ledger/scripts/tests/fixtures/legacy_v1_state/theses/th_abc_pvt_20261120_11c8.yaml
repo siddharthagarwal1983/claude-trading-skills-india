@@ -1,0 +1,78 @@
+thesis_id: th_abc_pvt_20261120_11c8
+ticker: ABC
+created_at: '2026-11-20T00:00:00+00:00'
+updated_at: '2026-11-24T03:38:56+00:00'
+thesis_type: pivot_breakout
+setup_type: null
+catalyst: null
+status: CLOSED
+status_history:
+- status: IDEA
+  at: '2026-11-20T00:00:00+00:00'
+  reason: registered
+- status: ENTRY_READY
+  at: '2026-11-20T00:00:00+00:00'
+  reason: paper order po_20261120_abc_241133 placed
+- status: ACTIVE
+  at: '2026-11-23T10:00:00+00:00'
+  reason: paper fill 2026-11-23 close ₹100.00 x100; charges ₹11.86
+- status: CLOSED
+  at: '2026-11-24T10:00:00+00:00'
+  reason: 'closed: stop_hit'
+  shares_sold: 100
+  price: 95.6413
+  proceeds: 9564.13
+  realized_pnl: -447.73
+thesis_statement: legacy closed trade
+mechanism_tag: null
+evidence: []
+kill_criteria: []
+confidence: null
+confidence_score: null
+origin_fingerprint: 3ccb659ae3f86ff2  # pragma: allowlist secret
+entry:
+  target_price: null
+  conditions: []
+  actual_price: 100.1186
+  actual_date: '2026-11-23T00:00:00+00:00'
+exit:
+  stop_loss: 96.0
+  stop_loss_pct: null
+  take_profit: null
+  take_profit_rr: null
+  time_stop_days: null
+  actual_price: 95.6413
+  actual_date: '2026-11-24T00:00:00+00:00'
+  exit_reason: stop_hit
+position:
+  shares: 100
+  shares_remaining: 0
+market_context: null
+monitoring:
+  review_interval_days: 30
+  next_review_date: '2026-12-20'
+  last_review_date: null
+  review_status: OK
+  triggers_config: []
+  alerts: []
+origin:
+  skill: india-paper-ledger
+  output_file: tests/fixtures/legacy_v1_state/orders.json
+  screening_grade: null
+  screening_score: null
+  raw_provenance:
+    order_id: po_20261120_abc_241133
+    nse_symbol: ABC
+    exchange: NSE
+    currency: INR
+    order_type: CLOSE
+    qty: 100
+linked_reports: []
+outcome:
+  pnl_dollars: -447.73
+  pnl_pct: -4.47
+  holding_days: 1
+  mae_pct: null
+  mfe_pct: null
+  mae_mfe_source: null
+  lessons_learned: null

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "theses": {
+    "th_abc_pvt_20261120_11c8": {
+      "ticker": "ABC",
+      "status": "CLOSED",
+      "thesis_type": "pivot_breakout",
+      "created_at": "2026-11-20",
+      "updated_at": "2026-11-24",
+      "next_review_date": "2026-12-20",
+      "review_status": "OK",
+      "origin_fingerprint": "3ccb659ae3f86ff2"
+    },
+    "th_xyz_pvt_20261120_e17a": {
+      "ticker": "XYZ",
+      "status": "ACTIVE",
+      "thesis_type": "pivot_breakout",
+      "created_at": "2026-11-20",
+      "updated_at": "2026-11-24",
+      "next_review_date": "2026-12-20",
+      "review_status": "OK",
+      "origin_fingerprint": "8d22b16e96a63cbf"
+    },
+    "th_lim_pvt_20261124_ec41": {
+      "ticker": "LIM",
+      "status": "ENTRY_READY",
+      "thesis_type": "pivot_breakout",
+      "created_at": "2026-11-24",
+      "updated_at": "2026-11-24",
+      "next_review_date": "2026-12-24",
+      "review_status": "OK",
+      "origin_fingerprint": "f7f4819b3c967fc5"
+    }
+  }
+}

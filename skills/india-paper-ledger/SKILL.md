@@ -119,7 +119,8 @@ uv run python skills/india-paper-ledger/scripts/india_paper_ledger.py status
 
 Summarise equity, cash, return, open risk and each position's distance to its stop in
 rupees with Indian digit grouping. Surface every warning (gap fills, circuit-locked
-sessions, corporate-action blocks, entry-day stop touches) and say what the user must do.
+sessions, corporate-action blocks, entry-day stop touches, same-session limit stops) and
+say what the user must do.
 State that results are paper fills from end-of-day data, not broker executions.
 
 ## Fill Rules (summary)
@@ -137,7 +138,11 @@ Read `references/fill_rules.md` before explaining a specific fill.
 
 - One bar touching both stop and target → stop first (conservative).
 - High = low (one-price, circuit-locked session) → no fill that session.
-- Exits start the session after entry; an entry-day stop touch is reported, not acted on.
+- Exits start the session after entry, except that a **limit** entry whose session low
+  reaches its (intraday) stop is stopped out that same session — a buy limit fills
+  before a lower low (journal `exit_timing: entry_session`). For stop, stop-limit and
+  close entries an entry-day stop touch is reported, not acted on (daily bars cannot
+  show the order of events).
 - Cash is checked at fill time; an unaffordable order is REJECTED.
 
 ## Corporate Actions

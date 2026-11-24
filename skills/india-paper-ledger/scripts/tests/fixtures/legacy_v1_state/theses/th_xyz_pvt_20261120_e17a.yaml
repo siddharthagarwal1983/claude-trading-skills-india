@@ -1,0 +1,71 @@
+thesis_id: th_xyz_pvt_20261120_e17a
+ticker: XYZ
+created_at: '2026-11-20T00:00:00+00:00'
+updated_at: '2026-11-24T03:38:56+00:00'
+thesis_type: pivot_breakout
+setup_type: null
+catalyst: null
+status: ACTIVE
+status_history:
+- status: IDEA
+  at: '2026-11-20T00:00:00+00:00'
+  reason: registered
+- status: ENTRY_READY
+  at: '2026-11-20T00:00:00+00:00'
+  reason: paper order po_20261120_xyz_80c896 placed
+- status: ACTIVE
+  at: '2026-11-23T10:00:00+00:00'
+  reason: paper fill 2026-11-23 close ₹502.00 x20; charges ₹11.91
+thesis_statement: legacy open position
+mechanism_tag: null
+evidence: []
+kill_criteria: []
+confidence: null
+confidence_score: null
+origin_fingerprint: 8d22b16e96a63cbf  # pragma: allowlist secret
+entry:
+  target_price: null
+  conditions: []
+  actual_price: 502.5955
+  actual_date: '2026-11-23T00:00:00+00:00'
+exit:
+  stop_loss: 480.0
+  stop_loss_pct: null
+  take_profit: 560.0
+  take_profit_rr: null
+  time_stop_days: null
+  actual_price: null
+  actual_date: null
+  exit_reason: null
+position:
+  shares: 20
+  shares_remaining: 20
+market_context: null
+monitoring:
+  review_interval_days: 30
+  next_review_date: '2026-12-20'
+  last_review_date: null
+  review_status: OK
+  triggers_config: []
+  alerts: []
+origin:
+  skill: india-paper-ledger
+  output_file: tests/fixtures/legacy_v1_state/orders.json
+  screening_grade: null
+  screening_score: null
+  raw_provenance:
+    order_id: po_20261120_xyz_80c896
+    nse_symbol: XYZ
+    exchange: NSE
+    currency: INR
+    order_type: CLOSE
+    qty: 20
+linked_reports: []
+outcome:
+  pnl_dollars: null
+  pnl_pct: null
+  holding_days: null
+  mae_pct: null
+  mfe_pct: null
+  mae_mfe_source: null
+  lessons_learned: null

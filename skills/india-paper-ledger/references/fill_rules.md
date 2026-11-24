@@ -30,11 +30,26 @@ the last 30 minutes (15:00-15:30). Validity counts sessions the stock actually t
   Slippage never pushes the price above L.
 
 A buy that fills at or below its own stop (for example a close order on a sharp down
-day) is recorded honestly, flagged as a gap fill, and the stop exits it next session.
+day) is recorded honestly, flagged as a gap fill, and the stop exits it next session —
+except a limit order, which is stopped the same session (below).
 
 ## Exit Fills
 
-Exits are evaluated from the session after the entry session.
+Exits are evaluated from the session after the entry session, with one exception:
+
+- **Limit entry, intraday-basis stop: same-session stop.** A buy limit fills at the
+  open (open ≤ limit) or as the price falls through the limit, and the stop is below
+  the limit, so a session low at or under the stop came after the fill. The position
+  is stopped out that session: at the open if the open was already at or under the
+  stop, else at the stop, less slippage, with normal sell charges. The thesis closes
+  as `stop_hit`; the journal entry and the run's events carry
+  `"exit_timing": "entry_session"`. No target or other exit applies on the entry
+  session.
+- **Buy-stop and stop-limit entries** fill on the way up; a daily bar cannot show
+  whether that session's low came before or after the trigger, so their stop starts
+  the next session and an entry-day touch is reported as a warning. **Close orders**
+  fill at the close itself (any earlier low preceded the fill), and **close-basis
+  stops** are evaluated from the next session; both are unchanged.
 
 - **Stop, intraday basis** — if open ≤ stop, fill at the open (gap down); else if
   low ≤ stop, fill at the stop. Slippage is deducted.

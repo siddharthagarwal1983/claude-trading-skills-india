@@ -1,0 +1,19 @@
+{
+  "positions": {
+    "th_xyz_pvt_20261120_e17a": {
+      "thesis_id": "th_xyz_pvt_20261120_e17a",
+      "order_id": "po_20261120_xyz_80c896",
+      "symbol": "XYZ",
+      "ledger_ticker": "XYZ",
+      "qty": 20,
+      "entry_session": "2026-11-23",
+      "entry_price": 502.0,
+      "entry_effective": 502.5955,
+      "stop": 480.0,
+      "target": 560.0,
+      "stop_basis": "intraday",
+      "last_evaluated": "2026-11-24",
+      "blocked": null
+    }
+  }
+}
